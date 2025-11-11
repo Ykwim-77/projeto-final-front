@@ -1,0 +1,45 @@
+<div class="form">
+    <div class="leftside">
+      <img src="assets/imagens/esqueceuSenha.png" alt="Tela de login">
+    </div>
+    <div class="rightside">
+      <div class="login-title">
+        <img src="assets/imagens/logoprogestao.png" alt="Logo" class="login-logo">
+        <h2>ProGest</h2>
+      </div>
+      <br>
+      <div id="texto">
+        <p>Por favor, informe o E-mail<br> em que deseja receber seu código</p>
+      </div>
+      <br>
+      
+      <!-- ✅ CORREÇÃO: Botão corrigido para type="submit" -->
+      <form class="input-container" (ngSubmit)="onSubmit($event)">
+        <div class="input">
+          <i class="fa fa-user"></i>
+          <input
+            type="email"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="Email"
+            required
+          />
+        </div>
+  
+        <br>
+  
+        <div *ngIf="errorMessage" class="error-message">
+          {{ errorMessage }}
+        </div>
+  
+        <!-- ✅ CORREÇÃO: type="submit" e [disabled]="isLoading" -->
+        <button type="submit" class="login" [disabled]="isLoading">
+          {{ isLoading ? 'Enviando...' : 'Proximo' }}
+        </button>
+      </form>
+      <!-- ✅ ADICIONADO: Botão Voltar -->
+        <button  class="voltar-login" (click)="voltarParaLogin()">
+          Voltar para Login
+        </button>
+    </div>
+  </div>
