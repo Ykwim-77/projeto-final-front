@@ -29,8 +29,8 @@ export interface Usuario {
   providedIn: 'root'
 })
 export class AuthService {
-  getUsuarioLogado(): unknown {
-    return null
+  getUsuarioLogado() {
+    // this.http.get<any>(`${this.apiUrl}/usuario/logado`, { withCredentials: true }).
   }
   private apiUrl = `${environment.apiUrl}/usuario`;
   private readonly TOKEN_KEY = 'progest_token';

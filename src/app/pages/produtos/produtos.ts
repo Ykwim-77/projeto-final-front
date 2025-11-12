@@ -240,24 +240,18 @@ filtroAberto: string | null = null;
     if (!confirm('Tem certeza que deseja excluir este produto?')) {
       return;
     }
-  
-      // this.produtoService.deletarProduto(id).subscribe({
-      //              next: () => {
-      //           this.messageService.add({
-      //               severity: 'success',
-      //               summary: 'Sucesso',
-      //               detail: 'Conta deletada com sucesso'
-      //           });
-      //           this.carregarProdutos();
-      //       },
-      //       error: () => {
-      //           this.messageService.add({
-      //               severity: 'error',
-      //               summary: 'Erro',
-      //               detail: 'Erro ao deletar conta'
-      //           });
-      //       }
-      // })
+    this.produtoService.deletarProduto(id).subscribe({
+      complete: () => {
+        this.carregarProdutos();
+      },
+      next: () => {
+        
+      },
+      error: (error) => {
+        console.error('Erro ao deletar produto:', error);
+      }
+    });
+
   } 
   // Fechar card de cadastro
   fecharCardCadastro() {
