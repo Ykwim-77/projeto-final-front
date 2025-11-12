@@ -1,9 +1,17 @@
+@font-face {
+  font-family: 'Inter';
+  src: url('./assets/fonts/Inter/Inter-VariableFont_opsz,wght.woff2') format('woff2-variations');
+  font-weight: 100 900; /* Especifica que é uma fonte variável */
+  font-style: normal;
+  font-display: swap; /* Melhora a performance[citation:6] */
+}
 /* You can add global styles to this file, and also import other style files */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
+  font-family: 'Inter', sans-serif;
   /* REMOVA overflow: hidden */
 }
 
