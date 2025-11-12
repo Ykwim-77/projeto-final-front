@@ -5,6 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { CommonModule, DecimalPipe, CurrencyPipe } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 
 // Interface extendida para incluir o ID
 interface ProdutoComId extends Produto {
@@ -28,7 +29,7 @@ interface BarChartData {
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive]
+  imports: [CommonModule, SidebarComponent]
 })
 export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('pieChart') pieChart!: ElementRef<HTMLCanvasElement>;

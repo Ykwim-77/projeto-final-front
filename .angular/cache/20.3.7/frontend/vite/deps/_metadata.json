@@ -1,65 +1,109 @@
 {
+<<<<<<< HEAD
   "hash": "b4a42865",
   "configHash": "901535a4",
   "lockfileHash": "0744ddfe",
   "browserHash": "9c805bcc",
+=======
+  "hash": "2f627997",
+  "configHash": "91217e67",
+  "lockfileHash": "719e61da",
+  "browserHash": "586b55ec",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
   "optimized": {
     "@angular/common": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
+<<<<<<< HEAD
       "fileHash": "e8c54aa7",
+=======
+      "fileHash": "6a8af65d",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": false
     },
     "@angular/common/http": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/http.mjs",
       "file": "@angular_common_http.js",
+<<<<<<< HEAD
       "fileHash": "80f64e15",
+=======
+      "fileHash": "079110b2",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
+<<<<<<< HEAD
       "fileHash": "2d6aa519",
+=======
+      "fileHash": "2aa0c8dc",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": false
     },
     "@angular/forms": {
       "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
       "file": "@angular_forms.js",
+<<<<<<< HEAD
       "fileHash": "6c731164",
+=======
+      "fileHash": "8a267972",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
+<<<<<<< HEAD
       "fileHash": "918d99f2",
+=======
+      "fileHash": "29238586",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
+<<<<<<< HEAD
       "fileHash": "3df5df2f",
+=======
+      "fileHash": "edca232f",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": false
     },
     "rxjs": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
       "file": "rxjs.js",
+<<<<<<< HEAD
       "fileHash": "01a3a476",
+=======
+      "fileHash": "69ab7278",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": false
     },
     "rxjs/operators": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/operators/index.js",
       "file": "rxjs_operators.js",
+<<<<<<< HEAD
       "fileHash": "7ff9602d",
+=======
+      "fileHash": "9f020acd",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": false
     },
     "zone.js": {
       "src": "../../../../../../node_modules/zone.js/fesm2015/zone.js",
       "file": "zone__js.js",
+<<<<<<< HEAD
       "fileHash": "7856a31c",
+=======
+      "fileHash": "73279575",
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
       "needsInterop": true
     }
   },
   "chunks": {
+<<<<<<< HEAD
     "chunk-C74GVPHV": {
       "file": "chunk-C74GVPHV.js"
     },
@@ -68,6 +112,16 @@
     },
     "chunk-D5P5I7SG": {
       "file": "chunk-D5P5I7SG.js"
+=======
+    "chunk-BFDFSLDF": {
+      "file": "chunk-BFDFSLDF.js"
+    },
+    "chunk-D5P5I7SG": {
+      "file": "chunk-D5P5I7SG.js"
+    },
+    "chunk-5LHPWY7D": {
+      "file": "chunk-5LHPWY7D.js"
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
     },
     "chunk-EITAFI4I": {
       "file": "chunk-EITAFI4I.js"
@@ -75,11 +129,19 @@
     "chunk-L7TZZFVV": {
       "file": "chunk-L7TZZFVV.js"
     },
+<<<<<<< HEAD
     "chunk-JRFR6BLO": {
       "file": "chunk-JRFR6BLO.js"
     },
     "chunk-HWYXSU2G": {
       "file": "chunk-HWYXSU2G.js"
+=======
+    "chunk-HWYXSU2G": {
+      "file": "chunk-HWYXSU2G.js"
+    },
+    "chunk-JRFR6BLO": {
+      "file": "chunk-JRFR6BLO.js"
+>>>>>>> 8a2ef080683f92f833a1047c8700e818f93a43fb
     },
     "chunk-MARUHEWW": {
       "file": "chunk-MARUHEWW.js"
