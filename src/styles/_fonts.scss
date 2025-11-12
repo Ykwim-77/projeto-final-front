@@ -1,0 +1,38 @@
+// fonts.scss - Configuração da fonte Inter Variável
+
+// Fonte Inter Variável (normal)
+@font-face {
+    font-family: 'Inter';
+    src: url('../assets/fonts/inter/Inter-VariableFont_opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+  }
+  
+  // Fonte Inter Variável (itálico)
+  @font-face {
+    font-family: 'Inter';
+    src: url('../assets/fonts/inter/Inter-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: italic;
+    font-display: swap;
+  }
+  
+  // Mixins para facilitar o uso
+  @mixin font-inter($weight: 400, $style: normal) {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: $weight;
+    font-style: $style;
+  }
+  
+  // Classes utilitárias
+  .inter-thin { @include font-inter(100); }
+  .inter-extralight { @include font-inter(200); }
+  .inter-light { @include font-inter(300); }
+  .inter-regular { @include font-inter(400); }
+  .inter-italic { @include font-inter(400, italic); }
+  .inter-medium { @include font-inter(500); }
+  .inter-semibold { @include font-inter(600); }
+  .inter-bold { @include font-inter(700); }
+  .inter-extrabold { @include font-inter(800); }
+  .inter-black { @include font-inter(900); }

@@ -6,8 +6,10 @@ import { Router } from '@angular/router';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DecimalPipe } from '@angular/common';
-import { Produto } from '../../services/produto.service';
+import { Produto, ProdutoService } from '../../services/produto.service';
 import { environment } from '../../environments/environment';
+
+
 
 interface MenuItem {
   name: string;
@@ -39,6 +41,7 @@ interface LowStockProduct {
   imports: [CommonModule, FormsModule, RouterLink, DecimalPipe]
 })
 export class ProdutosComponent implements OnInit {
+  
 categoriasUnicas: string[] = [];
 limparFiltroPreco() {
   this.filtros.precoMin = null;
@@ -51,13 +54,16 @@ toggleFiltro(campo: string) {
 }
 
 aplicarFiltros() {
+  this.ngOnInit(); {  
+    this.carregarProdutos();
+  }
   this.produtosFiltrados = this.produtos.filter(p => {
     const produto: any = p;
     const nomeMatch = !this.filtros.nome || (p.nome || '').toLowerCase().includes(this.filtros.nome.toLowerCase());
     const skuMatch = !this.filtros.sku || ((p.sku || produto.codigo_publico || '') + '').toLowerCase().includes(this.filtros.sku.toLowerCase());
     const categoriaMatch = !this.filtros.categoria || (p.categoria || '') === this.filtros.categoria;
-    const precoMinMatch = !this.filtros.precoMin || (p.preco || 0) >= Number(this.filtros.precoMin);
-    const precoMaxMatch = !this.filtros.precoMax || (p.preco || 0) <= Number(this.filtros.precoMax);
+    const precoMinMatch = !this.filtros.precoMin || (p.preco_unitario || 0) >= Number(this.filtros.precoMin);
+    const precoMaxMatch = !this.filtros.precoMax || (p.preco_unitario || 0) <= Number(this.filtros.precoMax);
     const estoqueMinMatch = !this.filtros.estoqueMin || (p.quantidade || 0) >= Number(this.filtros.estoqueMin);
     return nomeMatch && skuMatch && categoriaMatch && precoMinMatch && precoMaxMatch && estoqueMinMatch;
   });
@@ -113,7 +119,8 @@ filtroAberto: string | null = null;
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private produtoService: ProdutoService
   ) {}
 
   // Inicialização
@@ -121,7 +128,6 @@ filtroAberto: string | null = null;
     this.carregarDadosUsuario();
     this.initializeMenu();
     this.carregarProdutos();
-    this.initializeAlerts();
     this.initializeMetrics();
     this.initializeCategories();
     this.initializeLowStockProducts();
@@ -151,7 +157,7 @@ filtroAberto: string | null = null;
       nome: produto.nome || produto.name || '',
       codigo_publico: produto.sku || (produto as any).codigo_publico || '',
       categoria: produto.categoria || '',
-      preco_unitario: produto.preco || (produto as any).preco_unitario || 0,
+      preco_unitario: produto.preco_unitario || (produto as any).preco_unitario || 0,
       unidade_medida: (produto as any).unidade_medida || '',
       descricao: produto.descricao || '',
       id_fornecedor: (produto as any).id_fornecedor || null
@@ -234,26 +240,25 @@ filtroAberto: string | null = null;
     if (!confirm('Tem certeza que deseja excluir este produto?')) {
       return;
     }
-    
-    try {
-      const res = await fetch(`${environment.apiUrl}/produto/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('Erro ao deletar produto:', res.status, errorText);
-        return;
-      }
-      
-      console.log('✅ Produto deletado:', id);
-      await this.carregarProdutos();
-    } catch (err) {
-      console.error('Erro ao deletar produto:', err);
-    }
-  }
-
+  
+      // this.produtoService.deletarProduto(id).subscribe({
+      //              next: () => {
+      //           this.messageService.add({
+      //               severity: 'success',
+      //               summary: 'Sucesso',
+      //               detail: 'Conta deletada com sucesso'
+      //           });
+      //           this.carregarProdutos();
+      //       },
+      //       error: () => {
+      //           this.messageService.add({
+      //               severity: 'error',
+      //               summary: 'Erro',
+      //               detail: 'Erro ao deletar conta'
+      //           });
+      //       }
+      // })
+  } 
   // Fechar card de cadastro
   fecharCardCadastro() {
     this.showCardCadastro = false;
@@ -279,7 +284,7 @@ filtroAberto: string | null = null;
     this.totalProducts = this.produtos.length;
     
     const valorTotal = this.produtos.reduce((total, produto) => 
-      total + ((produto.preco || 0) * (produto.estoque || 0)), 0
+      total + ((produto.preco_unitario || 0) * (produto.estoque || 0)), 0
     );
     
     this.stockValue = new Intl.NumberFormat('pt-BR', {
@@ -379,58 +384,52 @@ filtroAberto: string | null = null;
   private async carregarProdutos(): Promise<void> {
     console.log('🔄 Iniciando carregamento de produtos da API...');
     
-    try {
-      const res = await fetch(`${environment.apiUrl}/produto`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Accept': 'application/json' }
-      });
       
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('❌ Erro ao carregar produtos:', res.status, errorText);
-        this.produtos = [];
-        this.atualizarMetricas();
-        this.initializeAlerts();
-        this.initializeCategories();
-        this.initializeLowStockProducts();
-        return;
-      }
-      
-      const produtos = await res.json();
-      console.log('✅ Produtos carregados da API:', produtos);
-      
+       this.produtoService.listarProdutos().subscribe({
+            next: (produtos) => {
+                this.produtos = produtos;
+            },
+            error: (error) => {
+              console.error('❌ Erro ao carregar produtos:', error);
+              this.produtos = [];
+              this.atualizarMetricas();
+              this.initializeAlerts();
+              this.initializeCategories();
+              this.initializeLowStockProducts();
+            }
+        });
+  
+
       // Ajusta nomes conflitantes retornados pela API
-      this.produtos = (produtos || []).map((p: any) => ({
-        ...p,
-        nome: p.nome || p.name,
-        name: p.name || p.nome,
-        id: p.id || p.id_produto,
-        preco: p.preco || p.preco_unitario || 0,
-        quantidade: p.quantidade ?? p.estoque ?? p.quantidade_atual ?? 0,
-        sku: p.sku || p.codigo_publico || ''
-      }));
+    //   this.produtos = (produtos || []).map((p: any) => ({
+    //     ...p,
+    //     nome: p.nome || p.name,
+    //     id: p.id || p.id_produto,
+    //     preco: p.preco || p.preco_unitario || 0,
+    //     quantidade: p.quantidade ?? p.estoque ?? p.quantidade_atual ?? 0,
+    //     sku: p.sku || p.codigo_publico || ''
+    //   }));
       
-      // Extrair categorias únicas
-      this.categoriasUnicas = [...new Set(this.produtos.map(p => p.categoria).filter(c => c))];
+    //   // Extrair categorias únicas
+    //   this.categoriasUnicas = [...new Set(this.produtos.map(p => p.categoria).filter(c => c))];
       
-      // Aplicar filtros após carregar produtos
-      this.aplicarFiltros();
+    //   // Aplicar filtros após carregar produtos
+    //   this.aplicarFiltros();
       
-      this.atualizarMetricas();
-      this.initializeAlerts();
-      this.initializeCategories();
-      this.initializeLowStockProducts();
-    } catch (error) {
-      console.error('❌ Erro ao carregar produtos da API:', error);
-      this.produtos = [];
-      this.produtosFiltrados = [];
-      this.categoriasUnicas = [];
-      this.atualizarMetricas();
-      this.initializeAlerts();
-      this.initializeCategories();
-      this.initializeLowStockProducts();
-    }
+    //   this.atualizarMetricas();
+    //   this.initializeAlerts();
+    //   this.initializeCategories();
+    //   this.initializeLowStockProducts();
+    // } catch (error) {
+    //   console.error('❌ Erro ao carregar produtos da API:', error);
+    //   this.produtos = [];
+    //   this.produtosFiltrados = [];
+    //   this.categoriasUnicas = [];
+    //   this.atualizarMetricas();
+    //   this.initializeAlerts();
+    //   this.initializeCategories();
+    //   this.initializeLowStockProducts();
+    // }
   }
 
   private gerarIniciais(nome: string): string {

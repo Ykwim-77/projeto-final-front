@@ -30,7 +30,7 @@ export interface Usuario {
 })
 export class AuthService {
   getUsuarioLogado(): unknown {
-    throw new Error('Method not implemented.');
+    return null
   }
   private apiUrl = `${environment.apiUrl}/usuario`;
   private readonly TOKEN_KEY = 'progest_token';

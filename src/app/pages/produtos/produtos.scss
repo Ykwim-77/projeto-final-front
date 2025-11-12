@@ -1,6 +1,5 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
 
-/* ===== CORREÇÃO DEFINITIVA - SUBSTITUIR TODO O ARQUIVO ===== */
 * {
     margin: 0;
     padding: 0;
@@ -15,6 +14,7 @@ html, body {
     padding: 0;
     width: 100%;
     height: 100%;
+    overflow-x: hidden;
 }
 
 body {
