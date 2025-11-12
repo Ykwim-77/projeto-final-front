@@ -1,5 +1,5 @@
-// Importar as fontes - PRIMEIRA LINHA
-@import './styles/fonts';
+// Importar as fontes - PRIMEIRA LINHA CORRIGIDA
+@use './styles/fonts';
 
 // Aplicar Inter globalmente
 * {
@@ -99,17 +99,4 @@ body::before {
   z-index: 9999;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
-}
-/* You can add global styles to this file, and also import other style files */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-}
-
-app-root {
-  display: block;
-  min-height: 100vh;
-  width: 100%;
 }

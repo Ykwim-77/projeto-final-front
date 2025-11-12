@@ -251,7 +251,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  // Gráfico de Barras - Top Produtos por Valor
+  // Gráfico de Barras - Top Produtos por Valor - VERSÃO ATUALIZADA
   drawBarChart(): void {
     if (!this.barChart?.nativeElement) {
       console.warn('⚠️ barChart não está disponível ainda');
@@ -280,69 +280,48 @@ export class HomeComponent implements OnInit, AfterViewInit {
     
     console.log('📊 Dados para gráfico de barras:', this.chartData.bar);
     
-    const padding = 60;
-    const chartWidth = canvas.width - (padding * 2);
-    const chartHeight = canvas.height - (padding * 2);
-    const barSpacing = 20;
+    // Configurações de layout
+    const padding = {
+      top: 70,    // Aumentado para título e valores
+      right: 40,
+      bottom: 90, // Aumentado para labels com 2 linhas
+      left: 65
+    };
+    
+    const chartWidth = canvas.width - (padding.left + padding.right);
+    const chartHeight = canvas.height - (padding.top + padding.bottom);
+    
+    // Configurações para barras - MAIS ESPAÇO
+    const numeroBarras = this.chartData.bar.length;
+    const barSpacing = 50; // MAIS ESPAÇO ENTRE BARRAS
+    const barWidth = 45;   // Largura fixa
     const maxValue = Math.max(...this.chartData.bar.map(item => item.value));
-    const barWidth = (chartWidth - (barSpacing * (this.chartData.bar.length - 1))) / this.chartData.bar.length;
+    
+    // Calcular posição inicial para centralizar
+    const totalBarsWidth = (barWidth * numeroBarras) + (barSpacing * (numeroBarras - 1));
+    const startX = padding.left + Math.max(0, (chartWidth - totalBarsWidth) / 2);
     
     // Desenhar eixos
-    ctx.strokeStyle = '#ccc';
+    ctx.strokeStyle = '#ddd';
     ctx.lineWidth = 1;
     ctx.beginPath();
     // Eixo Y
-    ctx.moveTo(padding, padding);
-    ctx.lineTo(padding, canvas.height - padding);
+    ctx.moveTo(padding.left, padding.top);
+    ctx.lineTo(padding.left, canvas.height - padding.bottom);
     // Eixo X
-    ctx.moveTo(padding, canvas.height - padding);
-    ctx.lineTo(canvas.width - padding, canvas.height - padding);
+    ctx.moveTo(padding.left, canvas.height - padding.bottom);
+    ctx.lineTo(canvas.width - padding.right, canvas.height - padding.bottom);
     ctx.stroke();
     
-    // Desenhar barras
-    this.chartData.bar.forEach((item, index) => {
-      const barHeight = (item.value / maxValue) * chartHeight;
-      const x = padding + (index * (barWidth + barSpacing));
-      const y = canvas.height - padding - barHeight;
-      
-      // Desenhar barra
-      ctx.fillStyle = item.color;
-      ctx.fillRect(x, y, barWidth, barHeight);
-      
-      // Adicionar borda à barra
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x, y, barWidth, barHeight);
-      
-      // Valor no topo da barra
-      ctx.fillStyle = '#333';
-      ctx.font = 'bold 12px Arial';
-      ctx.textAlign = 'center';
-      const valorFormatado = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL'
-      }).format(item.value);
-      ctx.fillText(valorFormatado, x + barWidth / 2, y - 10);
-      
-      // Nome do produto (rotacionado se necessário)
-      ctx.fillStyle = '#666';
-      ctx.font = '11px Arial';
-      ctx.textAlign = 'center';
-      
-      // Quebrar label se for muito longo
-      const label = item.label.length > 15 ? item.label.substring(0, 15) + '...' : item.label;
-      ctx.fillText(label, x + barWidth / 2, canvas.height - padding + 20);
-    });
-    
     // Grade de fundo
-    ctx.strokeStyle = '#f0f0f0';
+    ctx.strokeStyle = '#f5f5f5';
     ctx.lineWidth = 1;
     const gridLines = 5;
     for (let i = 0; i <= gridLines; i++) {
-      const y = canvas.height - padding - (i * chartHeight / gridLines);
+      const y = canvas.height - padding.bottom - (i * chartHeight / gridLines);
       ctx.beginPath();
-      ctx.moveTo(padding, y);
-      ctx.lineTo(canvas.width - padding, y);
+      ctx.moveTo(padding.left, y);
+      ctx.lineTo(canvas.width - padding.right, y);
       ctx.stroke();
       
       // Valores do eixo Y
@@ -355,8 +334,99 @@ export class HomeComponent implements OnInit, AfterViewInit {
         currency: 'BRL',
         minimumFractionDigits: 0
       }).format(value);
-      ctx.fillText(valueFormatted, padding - 5, y + 3);
+      ctx.fillText(valueFormatted, padding.left - 5, y + 3);
     }
+    
+    // Desenhar barras
+    this.chartData.bar.forEach((item, index) => {
+      const barHeight = (item.value / maxValue) * chartHeight;
+      const x = startX + (index * (barWidth + barSpacing));
+      const y = canvas.height - padding.bottom - barHeight;
+      
+      // Desenhar barra
+      ctx.fillStyle = item.color;
+      ctx.fillRect(x, y, barWidth, barHeight);
+      
+      // Borda da barra
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(x, y, barWidth, barHeight);
+      
+      // VALOR ACIMA DA BARRA (não fixo)
+      const valorFormatado = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL'
+      }).format(item.value);
+      
+      // Posicionar valor 15px acima da barra (ou no mínimo no topo do gráfico)
+      const valorY = Math.max(y - 15, padding.top + 10);
+      
+      // Fundo para o valor (opcional, para melhor legibilidade)
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      const textWidth = ctx.measureText(valorFormatado).width;
+      ctx.fillRect(x + barWidth/2 - textWidth/2 - 3, valorY - 10, textWidth + 6, 14);
+      
+      // Texto do valor
+      ctx.fillStyle = '#2D3748';
+      ctx.font = 'bold 10px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(valorFormatado, x + barWidth / 2, valorY);
+      
+      // NOME DO PRODUTO - COM QUEBRA INTELIGENTE
+      ctx.fillStyle = '#4A5568';
+      ctx.font = '10px Arial';
+      ctx.textAlign = 'center';
+      
+      const label = item.label;
+      const maxChars = 14; // Caracteres máximos por linha
+      
+      if (label.length <= maxChars) {
+        // Uma linha só
+        ctx.fillText(label, x + barWidth / 2, canvas.height - padding.bottom + 20);
+      } else {
+        // Quebrar em duas linhas de forma inteligente
+        const words = label.split(' ');
+        let line1 = '';
+        let line2 = '';
+        
+        // Tentar quebrar por palavras primeiro
+        for (const word of words) {
+          if ((line1 + ' ' + word).length <= maxChars + 1) {
+            line1 = line1 ? line1 + ' ' + word : word;
+          } else if (!line2 && (line2 + ' ' + word).length <= maxChars + 1) {
+            line2 = line2 ? line2 + ' ' + word : word;
+          } else {
+            break;
+          }
+        }
+        
+        // Se não conseguiu quebrar bem, faz quebra por caracteres
+        if (!line2 && label.length > maxChars) {
+          line1 = label.substring(0, maxChars);
+          line2 = label.substring(maxChars, maxChars * 2);
+          if (line2.length >= maxChars - 2) {
+            line2 = line2.substring(0, maxChars - 3) + '...';
+          }
+        }
+        
+        // Garantir que temos pelo menos a primeira linha
+        if (!line1) {
+          line1 = label.substring(0, maxChars);
+        }
+        
+        // Desenhar as duas linhas
+        ctx.fillText(line1, x + barWidth / 2, canvas.height - padding.bottom + 15);
+        if (line2) {
+          ctx.fillText(line2, x + barWidth / 2, canvas.height - padding.bottom + 30);
+        }
+      }
+    });
+    
+    // Título do gráfico (apenas um)
+    ctx.fillStyle = '#2D3748';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Top Produtos por Valor', canvas.width / 2, 25);
   }
 
   // Configurar event listeners para interação
