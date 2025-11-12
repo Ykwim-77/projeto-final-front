@@ -14,7 +14,7 @@ import { delay } from 'rxjs/operators';
 })
 export class CodigoVerificacao implements AfterViewInit, OnDestroy {
   @ViewChildren('inputRef') inputs!: QueryList<ElementRef<HTMLInputElement>>;
-  
+
   codigo: string[] = ['', '', '', '', '', ''];
   errorMessage: string = '';
   podeReenviar: boolean = false;
@@ -47,7 +47,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
   onInput(event: any, index: number) {
     const input = event.target as HTMLInputElement;
     const value = input.value;
-    
+
     // Permite apenas números
     if (!/^\d*$/.test(value)) {
       input.value = '';
@@ -83,7 +83,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
 
   onKeyDown(event: KeyboardEvent, index: number) {
     const input = event.target as HTMLInputElement;
-    
+
     // Backspace - volta para o input anterior se estiver vazio
     if (event.key === 'Backspace' && !input.value && index > 0) {
       const prevInput = this.inputs.toArray()[index - 1]?.nativeElement;
@@ -93,7 +93,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
       }
       event.preventDefault();
     }
-    
+
     // ArrowLeft - navega para esquerda
     if (event.key === 'ArrowLeft' && index > 0) {
       const prevInput = this.inputs.toArray()[index - 1]?.nativeElement;
@@ -103,7 +103,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
       }
       event.preventDefault();
     }
-    
+
     // ArrowRight - navega para direita
     if (event.key === 'ArrowRight' && index < 5) {
       const nextInput = this.inputs.toArray()[index + 1]?.nativeElement;
@@ -136,18 +136,18 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
   onPaste(event: ClipboardEvent) {
     event.preventDefault();
     const pastedData = event.clipboardData?.getData('text').trim() || '';
-    
+
     // Verifica se são apenas números e tem pelo menos 1 dígito
     if (/^\d+$/.test(pastedData)) {
       const digits = pastedData.split('').slice(0, 6); // Pega no máximo 6 dígitos
-      
+
       // Preenche os inputs com os dígitos colados
       digits.forEach((digit, index) => {
         if (index < 6) {
           this.codigo[index] = digit;
         }
       });
-      
+
       // Atualiza os valores dos inputs na DOM
       setTimeout(() => {
         digits.forEach((digit, index) => {
@@ -158,7 +158,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
             }
           }
         });
-        
+
         // Foca no próximo input vazio ou no último
         const nextIndex = Math.min(digits.length, 5);
         const nextInput = this.inputs.toArray()[nextIndex]?.nativeElement;
@@ -176,62 +176,18 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
   }
 
   verificarCodigo() {
-    const codigoFinal = this.codigo.join('');
-    
-    if (codigoFinal.length < 6) {
-      this.errorMessage = 'Preencha todos os dígitos do código.';
-      
-      // Encontra o primeiro input vazio e foca nele
-      const emptyIndex = this.codigo.findIndex(digit => digit === '');
-      if (emptyIndex !== -1) {
-        const emptyInput = this.inputs.toArray()[emptyIndex]?.nativeElement;
-        if (emptyInput) {
-          emptyInput.focus();
-        }
-      }
-      return;
-    }
-
-    this.errorMessage = '';
-    this.isLoading = true;
-    
-    console.log('Código digitado:', codigoFinal);
-    
-    // Método 1: Usando o AuthService (descomente quando estiver pronto)
-    this.authService.verificarCodigo(codigoFinal).subscribe({
-      next: (response: any) => {
-        this.isLoading = false;
-        // Código válido - redireciona para a próxima página
-        this.router.navigate(['/nova-senha'], { queryParams: { token: response.token } });
-      },
-      error: (error: any) => {
-        this.isLoading = false;
-        this.errorMessage = 'Código inválido ou expirado. Tente novamente.';
-        this.limparCodigo();
-      }
-    });
-
-    // Método 2: Para teste rápido (comente o método acima e descomente este)
-    /*
-    this.isLoading = true;
-    setTimeout(() => {
-      this.isLoading = false;
-      if (codigoFinal === '123456') {
-        this.router.navigate(['/nova-senha']);
-      } else {
-        this.errorMessage = 'Código inválido. Use 123456 para teste.';
-        this.limparCodigo();
-      }
-    }, 1500);
-    */
+    // vai direto para a próxima página, sem validação e sem tempo de espera
+    this.router.navigate(['/redefinir-senha']);
   }
+
+
 
   reenviarCodigo() {
     if (this.podeReenviar && !this.isLoading) {
       this.isLoading = true;
-      
+
       console.log('Reenviando código...');
-      
+
       // Método 1: Usando o AuthService
       this.authService.reenviarCodigo().subscribe({
         next: (response: any) => {
@@ -269,7 +225,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
 
     this.countdownInterval = setInterval(() => {
       this.tempoRestante--;
-      
+
       if (this.tempoRestante <= 0) {
         this.podeReenviar = true;
         clearInterval(this.countdownInterval);
@@ -295,7 +251,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
     `;
     alertElement.textContent = mensagem;
     document.body.appendChild(alertElement);
-    
+
     setTimeout(() => {
       document.body.removeChild(alertElement);
     }, 3000);
@@ -303,13 +259,13 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
 
   limparCodigo() {
     this.codigo = ['', '', '', '', '', ''];
-    
+
     // Limpa os valores dos inputs na DOM
     setTimeout(() => {
       this.inputs.forEach((input: { nativeElement: { value: string; }; }, index: any) => {
         input.nativeElement.value = '';
       });
-      
+
       // Foca no primeiro input após limpar
       const firstInput = this.inputs.toArray()[0]?.nativeElement;
       if (firstInput) {
@@ -322,7 +278,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
   preencherCodigoTeste() {
     const codigoTeste = '123456';
     const digits = codigoTeste.split('');
-    
+
     digits.forEach((digit, index) => {
       if (index < 6) {
         this.codigo[index] = digit;
@@ -332,7 +288,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
         }
       }
     });
-    
+
     // Foca no último input após preencher
     setTimeout(() => {
       const lastInput = this.inputs.toArray()[5]?.nativeElement;
