@@ -126,7 +126,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // Dados para Gráfico de Barras (top produtos por valor)
     const produtosComValor = this.produtos.map(produto => {
       const quantidade = this.obterQuantidadeProduto(produto);
-      const preco = produto.preco || 0;
+      const preco = produto.preco_unitario || 0;
       const valorTotal = preco * quantidade;
       
       return {
@@ -616,7 +616,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.produtos && this.produtos.length > 0) {
       this.produtos.forEach(produto => {
         const quantidade = this.obterQuantidadeProduto(produto);
-        const preco = produto.preco || 0;
+        const preco = produto.preco_unitario || 0;
         valorTotal += preco * quantidade;
       });
     }
@@ -798,7 +798,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     const produtosComValor = this.produtos.map(produto => {
       const quantidade = this.obterQuantidadeProduto(produto);
-      const preco = produto.preco || 0;
+      const preco = produto.preco_unitario || 0;
       return {
         ...produto,
         quantidade,
