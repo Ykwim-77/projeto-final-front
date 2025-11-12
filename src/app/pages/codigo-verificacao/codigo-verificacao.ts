@@ -21,6 +21,7 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
   tempoRestante: number = 60;
   isLoading: boolean = false;
   private countdownInterval: any;
+  currentStep = 1;
 
   constructor(private router: Router, private authService: AuthService) {
     this.iniciarCountdown();
@@ -53,6 +54,9 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
       this.codigo[index] = '';
       return;
     }
+
+    this.currentStep = 1;
+    this.router.navigate(['/codigo-verificacao']);
 
     // Atualiza o modelo com o valor digitado
     this.codigo[index] = value;
