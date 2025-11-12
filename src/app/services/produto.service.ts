@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 export interface Produto {
-sku: any;
-  id: number;
-  preco: number | undefined;
+  sku: any;
+  id_patrimonio: number;
+  preco_unitario: number | undefined;
   name: string;
   minStock: number;
   estoque: number;
@@ -21,16 +21,6 @@ sku: any;
   status?: boolean;
 }
 
-export interface Estoque {
-  id_estoque: number;
-  id_produto: number;
-  id_sala: number;
-  quantidade_atual: number;
-  quantidade_minima: number;
-  ultima_atualizacao: Date;
-  status?: string;
-  produto?: Produto;
-}
 
 @Injectable({
   providedIn: 'root'
