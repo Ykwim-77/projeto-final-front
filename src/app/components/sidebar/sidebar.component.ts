@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -24,9 +24,9 @@ export class SidebarComponent implements OnInit {
 
 
   ngOnInit(): void {
-    //  const usuario = this.authService.getUsuarioLogado();
-    //   this.usuarioNome = usuario?.nome ?? '';
-    //   this.usuarioEmail = usuario?.email ?? '';
+     const usuario = this.authService.getUsuarioLogado();
+      this.usuarioNome = usuario?.nome ?? '';
+      this.usuarioEmail = usuario?.email ?? '';
   
   }
 
