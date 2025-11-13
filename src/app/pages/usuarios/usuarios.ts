@@ -11,6 +11,16 @@ interface MetricCard {
   trend?: 'positive' | 'negative' | 'neutral';
 }
 
+// Interface para usuários
+interface User {
+  name: string;
+  email: string;
+  since: string;
+  permissions: string;
+  role?: string; // 'admin', 'gerente', 'operador', 'cliente'
+  department?: string;
+}
+
 @Component({
   selector: 'app-dashboard-usuarios',
   templateUrl: './usuarios.html',
@@ -19,7 +29,7 @@ interface MetricCard {
 })
 export class UsuariosComponent implements OnInit {
 
-  // Dados dos cards de métricas - ATUALIZADO PARA USUÁRIOS
+  // Dados dos cards de métricas
   metricCards: MetricCard[] = [
     {
       title: 'Total de Usuários',
@@ -43,18 +53,28 @@ export class UsuariosComponent implements OnInit {
     }
   ];
 
-  // Valores reais para usuários (poderiam vir de um serviço)
+  // Valores reais para usuários
   totalUsers: number = 0;
   administradoresCount: number = 0;
   gerentesCount: number = 0;
   operadoresCount: number = 0;
 
+  // Lista de usuários
+  users: User[] = [];
+
   // Controle do card de cadastro
   isCardCadastroAberto: boolean = false;
 
+  // Controle do modal de edição de permissões
+  isModalEditarPermissoesAberto: boolean = false;
+  usuarioSelecionado: User | null = null;
+  
+  // Simulação do usuário logado
+  userLogado = { role: 'admin' };
+
   ngOnInit(): void {
-    // Simular carregamento de dados
     this.carregarDadosUsuarios();
+    this.carregarListaUsuarios();
   }
 
   /**
@@ -77,11 +97,85 @@ export class UsuariosComponent implements OnInit {
   }
 
   /**
+   * Carrega a lista de usuários (simulando dados do backend)
+   */
+  carregarListaUsuarios(): void {
+    this.users = [
+      {
+        name: 'christian da rosa',
+        email: 'christian.darosa0106@gmail.com',
+        since: 'nov/2025',
+        permissions: 'Visualiza e registra movimentações',
+        role: 'operador'
+      },
+      {
+        name: 'ramoosdaniely',
+        email: 'ramoosdaniely@gmail.com',
+        since: 'nov/2025',
+        permissions: 'Visualiza e registra movimentações',
+        role: 'operador'
+      },
+      {
+        name: 'schimit.gustavo.silva',
+        email: 'schimit.gustavo.silva@gmail.com',
+        since: 'out/2025',
+        permissions: 'Visualiza e registra movimentações',
+        role: 'gerente'
+      },
+      {
+        name: 'Rafael Luiz',
+        email: 'rafaelpilonetto59@gmail.com',
+        since: 'out/2025',
+        permissions: 'Administrador',
+        role: 'admin',
+        department: 'voe'
+      }
+    ];
+
+    // Atualizar contadores após carregar usuários
+    this.atualizarContadores();
+  }
+
+  /**
+   * Retorna a badge para a role do usuário
+   */
+  getRoleBadge(role?: string): string {
+    if (!role) return 'U';
+    
+    switch(role) {
+      case 'admin': return 'A';
+      case 'gerente': return 'G';
+      case 'operador': return 'O';
+      case 'cliente': return 'C';
+      default: return 'U';
+    }
+  }
+
+  /**
+   * Retorna a descrição das permissões baseado na role
+   */
+  getPermissionsDescription(role?: string): string {
+    if (!role) return 'Permissões não definidas';
+    
+    switch(role) {
+      case 'admin': 
+        return 'Acesso total ao sistema';
+      case 'gerente':
+        return 'Todas as funcionalidades e gerenciar usuários';
+      case 'operador':
+        return 'Gerenciar produtos e dar baixa em empréstimos';
+      case 'cliente':
+        return 'Apenas realizar empréstimos';
+      default:
+        return 'Permissões não definidas';
+    }
+  }
+
+  /**
    * Abre/fecha o card de cadastro de usuários
    */
   abrirCardCadastro(): void {
     this.isCardCadastroAberto = !this.isCardCadastroAberto;
-    console.log('Card de cadastro:', this.isCardCadastroAberto ? 'Aberto' : 'Fechado');
   }
 
   /**
@@ -97,53 +191,86 @@ export class UsuariosComponent implements OnInit {
   cadastrarUsuario(usuarioData: any): void {
     console.log('Dados do usuário para cadastro:', usuarioData);
     
-    // Exemplo de implementação com serviço:
-    // this.usuarioService.cadastrar(usuarioData).subscribe({
-    //   next: (response) => {
-    //     console.log('Usuário cadastrado com sucesso:', response);
-    //     this.fecharCardCadastro();
-    //     this.mostrarMensagemSucesso('Usuário cadastrado com sucesso!');
-    //     this.carregarDadosUsuarios(); // Recarregar dados
-    //   },
-    //   error: (error) => {
-    //     console.error('Erro ao cadastrar usuário:', error);
-    //     this.mostrarMensagemErro('Erro ao cadastrar usuário');
-    //   }
-    // });
-  }
-
-  /**
-   * Atualiza os dados do dashboard
-   */
-  atualizarDashboard(): void {
-    this.carregarDadosUsuarios();
-  }
-
-  /**
-   * Calcula estatísticas adicionais (exemplo)
-   */
-  calcularEstatisticas(): void {
-    // Exemplo: calcular porcentagens
-    const porcentagemAdmins = ((this.administradoresCount / this.totalUsers) * 100).toFixed(1);
-    const porcentagemGerentes = ((this.gerentesCount / this.totalUsers) * 100).toFixed(1);
-    const porcentagemOperadores = ((this.operadoresCount / this.totalUsers) * 100).toFixed(1);
+    // Simular adição de usuário
+    const novoUsuario: User = {
+      name: usuarioData.nome,
+      email: usuarioData.email,
+      since: new Date().toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' }),
+      permissions: this.getPermissionsDescription(usuarioData.perfil),
+      role: usuarioData.perfil,
+      department: usuarioData.departamento
+    };
     
-    console.log('Estatísticas:', {
-      admins: `${porcentagemAdmins}%`,
-      gerentes: `${porcentagemGerentes}%`,
-      operadores: `${porcentagemOperadores}%`
-    });
+    this.users.push(novoUsuario);
+    this.atualizarContadores();
+    this.fecharCardCadastro();
   }
 
   /**
-   * Filtra usuários por tipo (exemplo)
+   * Abre modal para editar permissões
    */
-  filtrarUsuariosPorTipo(tipo: string): void {
-    console.log(`Filtrando usuários do tipo: ${tipo}`);
+  abrirModalEditarPermissoes(usuario: User): void {
+    // Criar uma cópia do usuário para edição
+    this.usuarioSelecionado = { ...usuario };
+    this.isModalEditarPermissoesAberto = true;
+  }
+
+  /**
+   * Fecha modal de edição de permissões
+   */
+  fecharModalEditarPermissoes(): void {
+    this.isModalEditarPermissoesAberto = false;
+    this.usuarioSelecionado = null;
+  }
+
+  /**
+   * Manipula mudança de role no select
+   */
+  onRoleChange(newRole: string): void {
+    if (this.usuarioSelecionado) {
+      this.usuarioSelecionado.role = newRole;
+    }
+  }
+
+  /**
+   * Salva as permissões alteradas
+   */
+  salvarPermissoes(): void {
+    if (this.usuarioSelecionado) {
+      // Encontrar e atualizar o usuário na lista
+      const index = this.users.findIndex(u => u.email === this.usuarioSelecionado!.email);
+      if (index !== -1) {
+        // Atualizar usuário com novas permissões
+        this.users[index] = { 
+          ...this.usuarioSelecionado,
+          permissions: this.getPermissionsDescription(this.usuarioSelecionado.role)
+        };
+        
+        // Atualizar contadores
+        this.atualizarContadores();
+        
+        console.log('Permissões atualizadas:', this.usuarioSelecionado);
+      }
+      
+      this.fecharModalEditarPermissoes();
+    }
+  }
+
+  /**
+   * Atualiza os contadores de usuários por role
+   */
+  private atualizarContadores(): void {
+    this.administradoresCount = this.users.filter(user => user.role === 'admin').length;
+    this.gerentesCount = this.users.filter(user => user.role === 'gerente').length;
+    this.operadoresCount = this.users.filter(user => user.role === 'operador').length;
     
-    // Exemplo de implementação:
-    // this.usuarioService.filtrarPorTipo(tipo).subscribe(usuarios => {
-    //   console.log(`Usuários ${tipo}:`, usuarios);
-    // });
+    // Atualizar total
+    this.totalUsers = this.users.length;
+
+    // Atualizar os valores nos cards
+    this.metricCards[0].value = this.totalUsers;
+    this.metricCards[1].value = this.administradoresCount;
+    this.metricCards[2].value = this.gerentesCount;
+    this.metricCards[3].value = this.operadoresCount;
   }
 }

@@ -1,5 +1,4 @@
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
-
+/* ===== CORREÇÃO DEFINITIVA - SUBSTITUIR TODO O ARQUIVO ===== */
 * {
     margin: 0;
     padding: 0;
@@ -49,6 +48,7 @@ main {
 
 /* GARANTIR QUE CONTAINERS PRINCIPAIS SEJAM TRANSPARENTES */
 .conteudo-principal,
+.usuarios-container,
 .topo {
     background-color: transparent !important;
     width: 100%;
@@ -92,7 +92,7 @@ main {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 20px;
+    padding: 5px 20px;
     color: white;
     cursor: pointer;
     border: none;
@@ -108,7 +108,6 @@ main {
 .adicionar-usuario-text {
     font-size: 14px;
     font-weight: 500;
-    //white-space: nowrap;
 }
 
 /* ===== CONTEÚDO PRINCIPAL ===== */
@@ -191,6 +190,161 @@ main {
 
 .card-variation.negative::before {
     content: "▼";
+}
+
+/* ===== CARD DE USUÁRIOS ===== */
+.usuarios-container {
+    margin-top: 20px;
+    background: transparent !important;
+    width: 100%;
+}
+
+.usuarios-card {
+    width: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #D0DCEB;
+}
+
+.usuarios-card .card-title {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-weight: 600;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 10px;
+}
+
+/* ===== LISTA DE USUÁRIOS ===== */
+.user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.user-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    border-left: 4px solid #3498db;
+}
+
+.user-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateX(5px);
+}
+
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.user-name-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.user-role-badge {
+    background: #0B1D5A;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #0B1D5A;
+    font-size: 16px;
+}
+
+.user-department {
+    background: #e9ecef;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.user-email {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.user-since {
+    color: #999;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.user-permissions {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Botão de Editar Permissões */
+.user-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-editar-permissoes {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background: #45a049;
+        transform: translateY(-1px);
+    }
+
+    i {
+        font-size: 11px;
+    }
+}
+
+.no-users {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+
+    i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: #ced4da;
+    }
+
+    p {
+        margin-bottom: 8px;
+        font-size: 16px;
+    }
+
+    small {
+        font-size: 14px;
+    }
 }
 
 /* ===== MODAL DE CADASTRO DE USUÁRIO ===== */
@@ -365,6 +519,84 @@ main {
     }
 }
 
+/* ===== MODAL DE EDITAR PERMISSÕES ===== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-editar-permissoes {
+    background: white;
+    border-radius: 8px;
+    width: 500px;
+    max-width: calc(100% - 40px);
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+
+    h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #0B1D5A;
+    }
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.permissoes-descricao {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #0B1D5A;
+
+    h4 {
+        margin: 0 0 10px 0;
+        color: #0B1D5A;
+        font-size: 1rem;
+    }
+
+    .permissao-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        color: #2c3e50;
+
+        i {
+            color: #4CAF50;
+            font-size: 14px;
+        }
+
+        span {
+            font-size: 0.9rem;
+        }
+    }
+}
+
 /* ===== CLASSES UTILITÁRIAS ===== */
 .flex { 
     display: flex; 
@@ -407,7 +639,32 @@ main {
         min-width: 100%;
     }
 
-    .card-cadastro {
+    .usuarios-card {
+        padding: 20px;
+    }
+
+    .user-header {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .user-department {
+        align-self: flex-start;
+    }
+
+    .user-actions {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .btn-editar-permissoes {
+        padding: 8px 12px;
+        font-size: 11px;
+        justify-content: center;
+    }
+
+    .card-cadastro,
+    .modal-editar-permissoes {
         width: 90%;
         margin: 20px;
     }
@@ -441,11 +698,17 @@ main {
         font-size: 20px;
     }
 
-    .card-header {
+    .card-header,
+    .modal-header {
         padding: 15px 20px;
     }
 
-    .card-body {
+    .card-body,
+    .modal-body {
         padding: 20px;
+    }
+
+    .user-item {
+        padding: 15px;
     }
 }
