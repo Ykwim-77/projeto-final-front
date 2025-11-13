@@ -97,9 +97,20 @@ export class AuthService {
 
   // ✅ LOGOUT
   logout(): void {
-    localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.TOKEN_KEY);
-    console.log('Logout realizado (dados locais limpos)');
+    // Chama o endpoint de logout no backend para limpar o cookie httpOnly
+    this.http.post<any>(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
+      next: () => {
+        localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.TOKEN_KEY);
+        console.log('Logout realizado (cookie e dados locais limpos)');
+      },
+      error: (err) => {
+        // Mesmo se a requisição falhar, limpamos dados locais para evitar estado inconsistente
+        console.error('Erro ao chamar logout no servidor:', err);
+        localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.TOKEN_KEY);
+      }
+    });
   }
 
   // ✅ AUTENTICAÇÃO
