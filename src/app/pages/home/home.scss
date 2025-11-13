@@ -151,8 +151,8 @@ main {
 
 /* ÍCONES DOS CARDS */
 .imgCard, .imgCard2, .imgCard3, .imgCard4 {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -176,7 +176,7 @@ main {
 }
 
 .card-value {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 700;
     color: #2c3e50;
     margin-bottom: 5px;

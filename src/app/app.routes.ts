@@ -6,18 +6,20 @@ import { RedefinirSenha } from './pages/redefinir-senha/redefinir-senha';
 import { HomeComponent } from './pages/home/home';
 import { ProdutosComponent } from './pages/produtos/produtos';
 import { UsuariosComponent } from './pages/usuarios/usuarios';
-//import { Cadastro Component } from './pages/cadastro/cadastro'; // ← CORRIGIDO!
+import { PrevisaoIaComponent } from './pages/previsao-ia/previsao-ia';
+// import { CadastroComponent } from './pages/cadastro/cadastro'; // ← Mantenha comentado se não existe
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'esqueceu-senha', component: EsqueceuSenhaComponent },
-  { path: 'codigo-verificacao', component: CodigoVerificacao},
+  { path: 'codigo-verificacao', component: CodigoVerificacao },
   { path: 'redefinir-senha', component: RedefinirSenha },
- // { path: 'cadastro', component: CadastroComponent }, // ← AGORA VAI FUNCIONAR!
+  // { path: 'cadastro', component: CadastroComponent }, // ← Mantenha comentado se não existe
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'produtos', component: ProdutosComponent, canActivate: [AuthGuard] },
   { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
+  { path: 'previsao-ia', component: PrevisaoIaComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '/login' }
 ];

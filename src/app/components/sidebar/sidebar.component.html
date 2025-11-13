@@ -2,11 +2,11 @@
     <div class="logo-container">
         <div class="logo">
             <img src="assets/imagens/logoprogestao.png  " alt="Logo StockSmart" class="logoTopo">
-            <span>ProGest</span>
+            <span id="titulo-topo">ProGest</span>
             <div id="tagline">Gestão Inteligente</div>
         </div>
     </div>
-    <hr />
+    <hr/>
     <div class="menu-container">
         <!-- Use routerLink para navegação no Angular -->
         <a routerLink="/home" class="menu-item active" routerLinkActive="active">
@@ -30,17 +30,13 @@
             <i class="fas fa-robot"></i>
             <span class="menu-text">Previsão IA</span>
         </a>
-        <a routerLink="/planos" class="menu-item" routerLinkActive="active">
-            <i class="fas fa-file-invoice-dollar"></i>
-            <span class="menu-text">Planos</span>
+        <a routerLink="/usuarios" class="menu-item" routerLinkActive="active">
+            <i class="fas fa-users"></i>
+            <span class="menu-text">Usuários</span>
         </a>
         <a routerLink="/configuracoes" class="menu-item" routerLinkActive="active">
             <i class="fas fa-cog"></i>
             <span class="menu-text">Configurações</span>
-        </a>
-        <a routerLink="/usuarios" class="menu-item" routerLinkActive="active">
-            <i class="fas fa-users"></i>
-            <span class="menu-text">Usuários</span>
         </a>
     </div>
     <hr>
@@ -50,7 +46,6 @@
             <div class="user-avatar">{{ usuarioIniciais || 'U' }}</div>
             <div class="user-details">
                 <div class="user-name">{{ usuarioNome || 'Usuário' }}</div>
-                <div class="user-email">{{ usuarioEmail || 'email@exemplo.com' }}</div>
             </div>
         </div>
         <br>
