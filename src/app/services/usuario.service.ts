@@ -66,5 +66,19 @@ export class UsuarioService {
   desativarUsuario(id: number): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/desativar/${id}`, {}, { withCredentials: true });
   }
+
+  /**
+   * Cria um novo usuário
+   */
+  criarUsuario(dados: Partial<Usuario>): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}`, dados, { withCredentials: true });
+  }
+
+  /**
+   * Deleta um usuário por ID
+   */
+  deletarUsuario(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
+  }
 }
 

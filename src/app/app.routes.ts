@@ -6,7 +6,7 @@ import { RedefinirSenha } from './pages/redefinir-senha/redefinir-senha';
 import { HomeComponent } from './pages/home/home';
 import { ProdutosComponent } from './pages/produtos/produtos';
 import { UsuariosComponent } from './pages/usuarios/usuarios';
-import { PrevisaoIaComponent } from './pages/previsao-ia/previsao-ia';
+// import { PrevisaoIaComponent } from './pages/previsao-ia/previsao-ia';
 import { MovimentacoesComponent } from './pages/movimentacoes/movimentacoes'
 // import { CadastroComponent } from './pages/cadastro/cadastro'; // ← Mantenha comentado se não existe
 import { AuthGuard } from './guards/auth.guard';
@@ -22,6 +22,5 @@ export const routes: Routes = [
   { path: 'movimentacoes', component: MovimentacoesComponent},
   { path: 'produtos', component: ProdutosComponent, canActivate: [AuthGuard] },
   { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
-  { path: 'previsao-ia', component: PrevisaoIaComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '/login' }
 ];
