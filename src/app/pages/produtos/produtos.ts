@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Produto } from '../../services/produto.service';
+import { Produto, ProdutoService } from '../../services/produto.service';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { SidebarComponent } from "../../components/sidebar/sidebar.component";
@@ -30,6 +30,9 @@ interface LowStockProduct {
   name: string;
   category: string;
 }
+
+
+
 
 @Component({
   selector: 'app-produtos',
@@ -92,9 +95,14 @@ export class ProdutosComponent implements OnInit {
   usuarioEmail: string = '';
   usuarioIniciais: string = '';
 
+
+
+
+
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private produtoService:ProdutoService
   ) {}
 
   ngOnInit() {
@@ -329,13 +337,7 @@ export class ProdutosComponent implements OnInit {
   }
 
   private carregarDadosUsuario(): void {
-    const usuario = this.authService.getUsuarioLogado() as unknown as { nome?: string; email?: string } | null;
-
-    if (usuario && typeof usuario === 'object') {
-      this.usuarioNome = usuario?.nome ?? '';
-      this.usuarioEmail = usuario?.email ?? '';
-      this.usuarioIniciais = this.gerarIniciais(this.usuarioNome);
-    }
+    
   }
 
   private async carregarProdutos(): Promise<void> {

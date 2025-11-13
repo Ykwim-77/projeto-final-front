@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { UsuarioService } from '../../services/usuario.service';
 
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -11,7 +12,7 @@ import { UsuarioService } from '../../services/usuario.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   usuarioNome = '';
   usuarioEmail = '';
   usuarioIniciais = '';
@@ -25,8 +26,8 @@ export class SidebarComponent {
 
   ngOnInit(): void {
      const usuario = this.authService.getUsuarioLogado();
-      // this.usuarioNome = usuario?.nome ?? '';
-      // this.usuarioEmail = usuario?.email ?? '';
+      this.usuarioNome = usuario?.nome ?? '';
+      this.usuarioEmail = usuario?.email ?? '';
   
   }
 

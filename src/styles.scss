@@ -1,3 +1,11 @@
+// Importar as fontes - PRIMEIRA LINHA CORRIGIDA
+@use './styles/fonts';
+
+// Aplicar Inter globalmente
+* {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400; // Peso padrão
+}
 
 // Aplicar a fonte Inter globalmente
 body {
