@@ -1,66 +1,7 @@
 <head>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head><body>
-    <nav class="sidebar">
-        <div class="logo-container">
-            <div class="logo">
-                <!-- Substitua pelo caminho correto da sua imagem -->
-                <img src="assets/imagens/logoprogestao.png"alt="Logo StockSmart" class="logoTopo">
-                <span>ProGest</span>
-                <div id="tagline">Gestão Inteligente</div>
-            </div>
-        </div>
-        <hr>
-        <div class="menu-container">
-            <a routerLink="/home" class="menu-item" >
-                <i class="fas fa-chart-line"></i>
-                <span class="menu-text">Dashboard</span>
-            </a>
-            <a routerLink="/produtos" class="menu-item active">
-                <i class="fas fa-box-open"></i>
-                <span class="menu-text">Produtos</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-exchange-alt"></i>
-                <span class="menu-text">Movimentações</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-chart-bar"></i>
-                <span class="menu-text">Relatórios</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-robot"></i>
-                <span class="menu-text">Previsão IA</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span class="menu-text">Planos</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-cog"></i>
-                <span class="menu-text">Configurações</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-users"></i>
-                <span class="menu-text">Usuários</span>
-            </a>
-        </div>
-        <hr>    
-        <div class="user-section">
-            <div class="user-info">
-
-                <div class="user-avatar">{{ usuarioIniciais || 'U' }}</div>
-                <div class="user-details">
-                    <div class="user-name">{{ usuarioNome || 'Usuário' }}</div>
-                    <div class="user-email">{{ usuarioEmail || 'email@exemplo.com' }}</div>
-                </div>
-            </div>
-            <button class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Sair</span>
-            </button>
-        </div>
-    </nav>
+    <app-sidebar></app-sidebar>
 
     <main>
         <header class="topo">

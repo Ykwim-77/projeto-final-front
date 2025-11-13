@@ -8,6 +8,7 @@ import { AuthService } from '../../services/auth.service';
 import { DecimalPipe } from '@angular/common';
 import { Produto, ProdutoService } from '../../services/produto.service';
 import { environment } from '../../environments/environment';
+import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 
 
 
@@ -38,7 +39,7 @@ interface LowStockProduct {
   templateUrl: './produtos.html',
   styleUrls: ['./produtos.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, DecimalPipe]
+  imports: [CommonModule, FormsModule, DecimalPipe, SidebarComponent]
 })
 export class ProdutosComponent implements OnInit {
   

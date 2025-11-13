@@ -29,7 +29,7 @@ interface BarChartData {
   templateUrl: './home.html',
   styleUrls: ['./home.scss'],
   standalone: true,
-  imports: [CommonModule, SidebarComponent]
+  imports: [ CommonModule, SidebarComponent ]
 })
 export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChild('pieChart') pieChart!: ElementRef<HTMLCanvasElement>;
