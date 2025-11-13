@@ -29,7 +29,6 @@
   height: 100vh !important;
   display: flex !important;
   flex-direction: row !important;
-  font-family: sans-serif !important;
   background: url('/assets/imagens/bg.jpg') center/cover no-repeat !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -137,10 +136,11 @@ i {
   border: none !important;
   border-radius: 5px !important;
 }
-.voltar-login{
+
+.voltar-login {
   align-items: center !important;
   text-align: center !important;
-  width: 44% !important;
+  width: 300px !important;
   height: 50px !important;
   margin-top: 20px !important;
   background-color: #002793 !important;
@@ -163,7 +163,8 @@ i {
   font-size: 15px !important;
 }
 
-.links-row span, .links-row a {
+.links-row span,
+.links-row a {
   cursor: pointer !important;
 }
 
@@ -179,6 +180,7 @@ i {
 .links-row a:hover {
   color: red !important;
 }
+
 /* Loading Overlay Styles */
 .loading-overlay {
   position: fixed;
@@ -207,11 +209,14 @@ i {
 }
 
 @keyframes gentlePulse {
-  0%, 100% { 
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
-  50% { 
+
+  50% {
     transform: scale(1.05);
     opacity: 0.9;
   }
@@ -222,6 +227,7 @@ i {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -242,7 +248,8 @@ i {
 .progress-track {
   position: absolute;
   height: 100%;
-  width: 40%; /* Largura do elemento que se move */
+  width: 40%;
+  /* Largura do elemento que se move */
   background: linear-gradient(90deg, #002793, #3498db);
   border-radius: 2px;
   animation: indeterminate 1.5s infinite ease-in-out;
@@ -252,9 +259,11 @@ i {
   0% {
     left: -40%;
   }
+
   50% {
     left: 100%;
   }
+
   100% {
     left: -40%;
   }
@@ -269,7 +278,7 @@ i {
   overflow: hidden;
   position: relative;
   margin: 0 auto 15px;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -292,6 +301,7 @@ i {
   color: #002793 !important;
   text-decoration: none !important;
 }
+
 .forgot-password a:hover {
   text-decoration: underline !important;
 }
@@ -304,7 +314,8 @@ i {
   align-items: center !important;
 }
 
-.links-row span, .links-row a {
+.links-row span,
+.links-row a {
   font-size: 15px !important;
   cursor: pointer !important;
 }
@@ -335,9 +346,11 @@ i {
   0% {
     transform: translateX(-100%);
   }
+
   50% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-100%);
   }
@@ -348,7 +361,6 @@ i {
   font-size: 14px;
   font-weight: 500;
   margin: 0;
-  font-family: sans-serif;
 }
 
 /* Efeito no conteúdo principal durante loading */
@@ -366,12 +378,13 @@ i {
 }
 
 /*------------Responsividade-------------*/
-@media screen and (max-width: 768px){
+@media screen and (max-width: 768px) {
   .form {
     flex-direction: column !important;
   }
 
-  .leftside, .rightside {
+  .leftside,
+  .rightside {
     width: 100% !important;
     height: 50vh !important;
   }
@@ -389,14 +402,43 @@ i {
     gap: 10px !important;
     text-align: center !important;
   }
-  
+
   .login-title {
     margin-right: 0 !important;
     flex-direction: column !important;
   }
-  
+
   .login-title h2 {
     margin-right: 0 !important;
     margin-top: 10px !important;
   }
+}
+
+.indicators {
+  margin-top: 35px !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.indicators ul {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* tira os pontinhos */
+}
+
+.indicators ul li {
+  width: 60px;
+  height: 7px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  transition: 0.4s;
+}
+
+.indicators ul li.active {
+  background-color: #002793;
 }

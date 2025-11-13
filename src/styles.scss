@@ -1,78 +1,9 @@
-// Importar as fontes - PRIMEIRA LINHA CORRIGIDA
-@use './styles/fonts';
 
-// Aplicar Inter globalmente
-* {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 400; // Peso padrão
-}
-
+// Aplicar a fonte Inter globalmente
 body {
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Inter', sans-serif;
 }
 
-// Tipografia com Inter
-h1, .h1 {
-  font-weight: 700;
-  font-size: 2.5rem;
-  line-height: 1.2;
-}
-
-h2, .h2 {
-  font-weight: 600;
-  font-size: 2rem;
-  line-height: 1.3;
-}
-
-h3, .h3 {
-  font-weight: 600;
-  font-size: 1.75rem;
-}
-
-h4, .h4 {
-  font-weight: 500;
-  font-size: 1.5rem;
-}
-
-h5, .h5 {
-  font-weight: 500;
-  font-size: 1.25rem;
-}
-
-h6, .h6 {
-  font-weight: 500;
-  font-size: 1rem;
-}
-
-p, .text {
-  line-height: 1.6;
-}
-
-.text-sm {
-  font-size: 0.875rem;
-}
-
-.text-lg {
-  font-size: 1.125rem;
-}
-
-// Classes de peso de fonte
-.font-thin { font-weight: 100; }
-.font-extralight { font-weight: 200; }
-.font-light { font-weight: 300; }
-.font-normal { font-weight: 400; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
-.font-extrabold { font-weight: 800; }
-.font-black { font-weight: 900; }
-
-// Classes de estilo
-.font-italic { font-style: italic; }
-
-/* You can add global styles to this file, and also import other style files */
 html, body {
   margin: 0;
   padding: 0;

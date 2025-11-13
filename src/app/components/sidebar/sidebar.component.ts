@@ -11,7 +11,7 @@ import { UsuarioService } from '../../services/usuario.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   usuarioNome = '';
   usuarioEmail = '';
   usuarioIniciais = '';
@@ -25,8 +25,8 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit(): void {
      const usuario = this.authService.getUsuarioLogado();
-      this.usuarioNome = usuario?.nome ?? '';
-      this.usuarioEmail = usuario?.email ?? '';
+      // this.usuarioNome = usuario?.nome ?? '';
+      // this.usuarioEmail = usuario?.email ?? '';
   
   }
 

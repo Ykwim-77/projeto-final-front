@@ -1,0 +1,422 @@
+
+
+/* RESET RADICAL - Garante que nada interfira */
+:host {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  overflow: hidden !important;
+}
+
+/* Reset agressivo para todos os elementos */
+:host * {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.form {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: row !important;
+  background: url('/assets/imagens/bg.jpg') center/cover no-repeat !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.leftside {
+  width: 50% !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.leftside img {
+  width: 60% !important;
+  height: auto !important;
+  max-height: 70% !important;
+  object-fit: contain !important;
+}
+
+.leftside h1 {
+  font-size: 50px !important;
+  color: white !important;
+  padding: 10px 0px !important;
+  margin-top: 20px !important;
+}
+
+.rightside {
+  width: 50% !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
+.login-title {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.login-logo {
+  width: 150px !important;
+  height: auto !important;
+  margin-left: -20px !important;
+}
+
+.login-title h2 {
+  font-size: 45px !important;
+  color: #222222 !important;
+  margin-right: 30px !important;
+  margin-bottom: 0 !important;
+}
+
+.input-container {
+  width: 300px !important;
+  height: auto !important;
+}
+
+.input {
+  width: 100% !important;
+  margin-top: 25px !important;
+  height: 50px !important;
+  padding: 10px 20px !important;
+  background-color: #dedde4 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border-radius: 5px !important;
+}
+
+input {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  width: 70% !important;
+  line-height: 30px !important;
+  font-size: 15px !important;
+}
+
+i {
+  opacity: 50% !important;
+}
+
+.login {
+  align-items: center !important;
+  text-align: center !important;
+  width: 100% !important;
+  height: 50px !important;
+  margin-top: 20px !important;
+  background-color: #002793 !important;
+  color: white !important;
+  font-size: 18px !important;
+  cursor: pointer !important;
+  border: none !important;
+  border-radius: 5px !important;
+}
+
+.links-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  width: 300px !important;
+  margin: 20px auto !important;
+}
+
+.links-row h6 {
+  margin: 0 !important;
+  font-size: 15px !important;
+}
+
+.links-row span,
+.links-row a {
+  cursor: pointer !important;
+}
+
+.links-row span {
+  text-decoration: underline !important;
+}
+
+.links-row a {
+  text-decoration: none !important;
+  color: #002793 !important;
+}
+
+.links-row a:hover {
+  color: red !important;
+}
+
+/* Loading Overlay Styles */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.98);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.loading-content {
+  text-align: center;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.loading-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 30px;
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Barra de Progresso Indeterminada (vai e volta) */
+.progress-bar-indeterminate {
+  width: 200px;
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto 15px;
+}
+
+.progress-track {
+  position: absolute;
+  height: 100%;
+  width: 40%;
+  /* Largura do elemento que se move */
+  background: linear-gradient(90deg, #002793, #3498db);
+  border-radius: 2px;
+  animation: indeterminate 1.5s infinite ease-in-out;
+}
+
+@keyframes indeterminate {
+  0% {
+    left: -40%;
+  }
+
+  50% {
+    left: 100%;
+  }
+
+  100% {
+    left: -40%;
+  }
+}
+
+/* Alternativa: Barra que preenche e reinicia */
+.progress-bar-fill-restart {
+  width: 200px;
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  margin: 0 auto 15px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #002793, #3498db);
+    border-radius: 2px;
+    animation: fillRestart 2s infinite ease-in-out;
+  }
+}
+
+.forgot-password {
+  width: 300px !important;
+  text-align: left !important;
+  margin-top: 10px !important;
+}
+
+.forgot-password a {
+  font-size: 14px !important;
+  color: #002793 !important;
+  text-decoration: none !important;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline !important;
+}
+
+.links-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  width: 300px !important;
+  margin: 20px auto !important;
+  align-items: center !important;
+}
+
+.links-row span,
+.links-row a {
+  font-size: 15px !important;
+  cursor: pointer !important;
+}
+
+.links-row a {
+  color: #002793 !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+}
+
+.links-row a:hover {
+  text-decoration: underline !important;
+}
+
+.error-message {
+  width: 300px !important;
+  margin-top: 10px !important;
+  padding: 10px !important;
+  background-color: #ffebee !important;
+  color: #c62828 !important;
+  border: 1px solid #ef5350 !important;
+  border-radius: 5px !important;
+  font-size: 14px !important;
+  text-align: center !important;
+}
+
+@keyframes fillRestart {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.loading-text {
+  color: #002793;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Efeito no conteúdo principal durante loading */
+.form.blur {
+  filter: blur(3px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Botão desabilitado durante loading */
+.login:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/*------------Responsividade-------------*/
+@media screen and (max-width: 768px) {
+  .form {
+    flex-direction: column !important;
+  }
+
+  .leftside,
+  .rightside {
+    width: 100% !important;
+    height: 50vh !important;
+  }
+
+  .leftside {
+    display: flex !important;
+  }
+
+  .leftside img {
+    max-height: 80% !important;
+  }
+
+  .links-row {
+    flex-direction: column !important;
+    gap: 10px !important;
+    text-align: center !important;
+  }
+
+  .login-title {
+    margin-right: 0 !important;
+    flex-direction: column !important;
+  }
+
+  .login-title h2 {
+    margin-right: 0 !important;
+    margin-top: 10px !important;
+  }
+}
+.indicators {
+  margin-top: 35px !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.indicators ul {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none; /* tira os pontinhos */
+}
+
+.indicators ul li {
+  width: 60px;
+  height: 7px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  transition: 0.4s;
+}
+
+.indicators ul li.active {
+  background-color: #002793;
+}
