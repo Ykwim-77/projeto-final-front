@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { EmprestimoService } from '../../services/emprestimo.service';
+import { EmprestimoService, Emprestimo } from '../../services/emprestimo.service';
 import { AuthService } from '../../services/auth.service';
 
 // Interface para os cards de métricas
@@ -13,23 +13,7 @@ interface MetricCard {
   trend?: 'positive' | 'negative' | 'neutral';
 }
 
-// Interface para empréstimos
-interface Emprestimo {
-  id_movimentacao?: number;
-  id_patrimonio: number;
-  id_usuario: number;
-  tipo_movimentacao: string;
-  origem?: string;
-  data_movimento: string;
-  status?: string;
-  observacao?: string;
-  produto?: string;
-  usuario?: string;
-  dataEmprestimo?: string;
-  dataDevolucao?: string;
-  departamento?: string;
-  contato?: string;
-}
+// Tipo `Emprestimo` importado de `emprestimo.service.ts` para evitar conflitos de tipos entre arquivos.
 
 @Component({
   selector: 'app-emprestimos',
@@ -42,20 +26,24 @@ export class EmprestimosComponent implements OnInit {
 
   // Dados dos cards de métricas
   metricCards: MetricCard[] = [
-    { title: 'Empréstimos Ativos', variation: '+5%', trend: 'positive' },
-    { title: 'Empréstimos Atrasados', variation: '+2%', trend: 'negative' },
-    { title: 'Devolvidos Este Mês', variation: '+15%', trend: 'positive' },
+    { title: 'Empréstimos Pendentes', variation: '+5%', trend: 'positive' },
+    { title: 'Empréstimos Ativos', variation: '+2%', trend: 'neutral' },
+    { title: 'Empréstimos Recebidos', variation: '+15%', trend: 'positive' },
     { title: 'Total de Empréstimos', variation: '+8%', trend: 'positive' }
   ];
 
   // Valores reais para empréstimos
+  emprestimosPendentes: number = 0;
   emprestimosAtivos: number = 0;
-  emprestimosAtrasados: number = 0;
-  devolvidosMes: number = 0;
+  emprestimosRecebidos: number = 0;
   totalEmprestimos: number = 0;
 
   // Listas
   emprestimos: Emprestimo[] = [];
+  emprestimosPendentesLista: Emprestimo[] = [];
+  // Backwards-compatible aliases used by template
+  emprestimosAtrasados: number = 0;
+  devolvidosMes: number = 0;
   emprestimosAtrasadosLista: Emprestimo[] = [];
 
   // Filtros
@@ -72,13 +60,13 @@ export class EmprestimosComponent implements OnInit {
   // Usuário logado
   userLogado: any = null;
 
-  // Dados para novo empréstimo
-  novoEmprestimo: any = {
-    produto: '',
-    usuario: '',
-    dataDevolucao: '',
-    departamento: '',
-    contato: ''
+  // Dados para novo empréstimo (usar modelo correto do backend)
+  novoEmprestimo: Partial<Emprestimo> = {
+    data_pedido: new Date().toISOString(),
+    valor_total: 0,
+    status: 'ativo',
+    observacoes: '',
+    id_usuario: 1
   };
 
   constructor(
@@ -108,14 +96,19 @@ export class EmprestimosComponent implements OnInit {
     
     this.emprestimoService.listarEmprestimos().subscribe({
       next: (emprestimos: Emprestimo[]) => {
-        this.emprestimos = emprestimos.map((e) => ({
+        // Map backend fields to UI-compatible fields for the template
+        this.emprestimos = emprestimos.map(e => ({
           ...e,
-          dataEmprestimo: this.formatarData(e.data_movimento),
-          dataDevolucao: e.observacao || '',
-          produto: e.origem || 'Sem descrição',
-          usuario: e.id_usuario?.toString() || '',
-          status: e.status || 'ativo'
-        }));
+          // Compatibility aliases used by existing template
+          id_movimentacao: e.id_emprestimo,
+          produto: e.usuario?.nome || 'Sem descrição',
+          usuario: e.usuario?.nome || '',
+          dataEmprestimo: this.formatarData(e.data_pedido),
+          dataDevolucao: e.data_recebimento ? this.formatarData(e.data_recebimento) : null,
+          observacao: e.observacoes || null,
+          departamento: 'Geral',  // Placeholder se não houver no backend
+          contato: e.usuario?.email || ''  // Usar email do usuário como contato
+        } as Emprestimo));
         this.atualizarContadores();
         this.isCarregando = false;
       },
@@ -197,11 +190,11 @@ export class EmprestimosComponent implements OnInit {
    */
   abrirModalNovoEmprestimo(): void {
     this.novoEmprestimo = {
-      produto: '',
-      usuario: '',
-      dataDevolucao: '',
-      departamento: '',
-      contato: ''
+      data_pedido: new Date().toISOString(),
+      valor_total: 0,
+      status: 'ativo',
+      observacoes: '',
+      id_usuario: this.userLogado?.id_usuario || 1
     };
     this.isModalNovoEmprestimoAberto = true;
   }
@@ -216,33 +209,33 @@ export class EmprestimosComponent implements OnInit {
   /**
    * Processa o cadastro de novo empréstimo
    */
-  cadastrarEmprestimo(form: NgForm): void {
-    if (!form.valid) {
+  cadastrarEmprestimo(novoEmprestimoForm: any): void {
+    // Usar form como referência para validação, mas usar dados do this.novoEmprestimo
+    if (!novoEmprestimoForm.value.valor_total) {
       this.mensagemErro = 'Preencha todos os campos obrigatórios';
       return;
     }
 
-    const novoEmprestimo: Partial<Emprestimo> = {
-      id_patrimonio: form.value.id_patrimonio || 1,
-      id_usuario: this.userLogado?.id_usuario || 1,
-      tipo_movimentacao: 'emprestimo',
-      origem: form.value.produto,
-      data_movimento: new Date().toISOString(),
-      status: 'ativo',
-      observacao: form.value.dataDevolucao
+    // Construir payload compatível com o backend (modelo `emprestimo`)
+    const payload: Partial<Emprestimo> = {
+      data_pedido: new Date().toISOString(),
+      valor_total: novoEmprestimoForm.value.valor_total || 0,
+      status: novoEmprestimoForm.value.status || 'ativo',
+      observacoes: novoEmprestimoForm.value.observacoes || '',
+      id_usuario: this.userLogado?.id_usuario || 1
     };
 
     this.mensagemErro = '';
-    this.emprestimoService.criarEmprestimo(novoEmprestimo).subscribe({
+    this.emprestimoService.criarEmprestimo(payload).subscribe({
       next: () => {
         this.carregarListaEmprestimos();
         this.fecharModalNovoEmprestimo();
-        form.reset();
+        novoEmprestimoForm.resetForm();
         console.log('Empréstimo criado com sucesso');
       },
       error: (err) => {
         console.error('Erro ao criar empréstimo:', err);
-        this.mensagemErro = 'Erro ao criar empréstimo';
+        this.mensagemErro = 'Erro ao criar empréstimo: ' + (err?.message || 'Verifique os dados');
       }
     });
   }
@@ -267,16 +260,21 @@ export class EmprestimosComponent implements OnInit {
    * Marca empréstimo como devolvido
    */
   marcarComoDevolvido(emprestimo: Emprestimo): void {
-    if (!emprestimo.id_movimentacao) return;
-    
-    this.emprestimoService.marcarComoDevolvido(emprestimo.id_movimentacao).subscribe({
+    const id = emprestimo.id_movimentacao || emprestimo.id_emprestimo;
+    if (!id) return;
+
+    // Marcar como recebido no novo modelo
+    this.emprestimoService.atualizarEmprestimo(id, {
+      status: 'recebido',
+      data_recebimento: new Date().toISOString()
+    }).subscribe({
       next: () => {
         this.carregarListaEmprestimos();
-        console.log('Empréstimo marcado como devolvido');
+        console.log('Empréstimo marcado como recebido');
       },
       error: (err) => {
-        console.error('Erro ao marcar como devolvido:', err);
-        this.mensagemErro = 'Erro ao marcar como devolvido';
+        console.error('Erro ao marcar como recebido:', err);
+        this.mensagemErro = 'Erro ao marcar como recebido';
       }
     });
   }
@@ -285,15 +283,17 @@ export class EmprestimosComponent implements OnInit {
    * Renova um empréstimo
    */
   renovarEmprestimo(emprestimo: Emprestimo): void {
-    if (!emprestimo.id_movimentacao) return;
-    
+    const id = emprestimo.id_movimentacao || emprestimo.id_emprestimo;
+    if (!id) return;
+
     const novaData = new Date();
     novaData.setDate(novaData.getDate() + 7);
-    
-    this.emprestimoService.renovarEmprestimo(emprestimo.id_movimentacao, novaData.toISOString()).subscribe({
+
+    // Usar campo data_recebimento como aproximação para renovação/atualização
+    this.emprestimoService.atualizarEmprestimo(id, { data_recebimento: novaData.toISOString() }).subscribe({
       next: () => {
         this.carregarListaEmprestimos();
-        console.log('Empréstimo renovado');
+        console.log('Empréstimo renovado (data_recebimento atualizada)');
       },
       error: (err) => {
         console.error('Erro ao renovar:', err);
@@ -306,15 +306,16 @@ export class EmprestimosComponent implements OnInit {
    * Salva as alterações do empréstimo
    */
   salvarAlteracoesEmprestimo(): void {
-    if (!this.emprestimoSelecionado || !this.emprestimoSelecionado.id_movimentacao) {
-      return;
-    }
+    if (!this.emprestimoSelecionado) return;
+
+    const id = this.emprestimoSelecionado.id_movimentacao || this.emprestimoSelecionado.id_emprestimo;
+    if (!id) return;
 
     this.emprestimoService.atualizarEmprestimo(
-      this.emprestimoSelecionado.id_movimentacao,
+      id,
       {
         status: this.emprestimoSelecionado.status,
-        observacao: this.emprestimoSelecionado.observacao
+        observacoes: (this.emprestimoSelecionado as any).observacoes ?? (this.emprestimoSelecionado as any).observacao
       }
     ).subscribe({
       next: () => {
@@ -342,13 +343,14 @@ export class EmprestimosComponent implements OnInit {
    * Deleta um empréstimo
    */
   deletarEmprestimo(emprestimo: Emprestimo): void {
-    if (!emprestimo.id_movimentacao) return;
-    
+    const id = emprestimo.id_movimentacao || emprestimo.id_emprestimo;
+    if (!id) return;
+
     if (!confirm('Tem certeza que deseja deletar este empréstimo?')) {
       return;
     }
 
-    this.emprestimoService.deletarEmprestimo(emprestimo.id_movimentacao).subscribe({
+    this.emprestimoService.deletarEmprestimo(id).subscribe({
       next: () => {
         this.carregarListaEmprestimos();
         console.log('Empréstimo deletado');
@@ -372,18 +374,23 @@ export class EmprestimosComponent implements OnInit {
    * Atualiza os contadores de empréstimos
    */
   private atualizarContadores(): void {
+    this.emprestimosPendentes = this.emprestimos.filter(emp => emp.status === 'pendente').length;
     this.emprestimosAtivos = this.emprestimos.filter(emp => emp.status === 'ativo').length;
-    this.emprestimosAtrasados = this.emprestimos.filter(emp => emp.status === 'atrasado').length;
-    this.devolvidosMes = this.emprestimos.filter(emp => emp.status === 'devolvido').length;
+    this.emprestimosRecebidos = this.emprestimos.filter(emp => emp.status === 'recebido').length;
     this.totalEmprestimos = this.emprestimos.length;
 
-    // Atualizar lista de atrasados
-    this.emprestimosAtrasadosLista = this.emprestimos.filter(emp => emp.status === 'atrasado');
+    // Atualizar lista de pendentes
+    this.emprestimosPendentesLista = this.emprestimos.filter(emp => emp.status === 'pendente');
+
+    // Back-compat aliases
+    this.emprestimosAtrasados = this.emprestimosPendentes;
+    this.devolvidosMes = this.emprestimosRecebidos;
+    this.emprestimosAtrasadosLista = this.emprestimosPendentesLista;
 
     // Atualizar os valores nos cards
-    this.metricCards[0].value = this.emprestimosAtivos;
-    this.metricCards[1].value = this.emprestimosAtrasados;
-    this.metricCards[2].value = this.devolvidosMes;
+    this.metricCards[0].value = this.emprestimosPendentes;
+    this.metricCards[1].value = this.emprestimosAtivos;
+    this.metricCards[2].value = this.emprestimosRecebidos;
     this.metricCards[3].value = this.totalEmprestimos;
   }
 }

@@ -201,35 +201,27 @@
                 </div>
                 
                 <div class="modal-body">
-                    <form (ngSubmit)="cadastrarEmprestimo(novoEmprestimo)" #emprestimoForm="ngForm">
+                    <form (ngSubmit)="cadastrarEmprestimo(emprestimoForm)" #emprestimoForm="ngForm">
                         <div class="form-group">
-                            <label for="produto">Produto:</label>
-                            <input type="text" id="produto" name="produto" 
-                                   [(ngModel)]="novoEmprestimo.produto" required>
+                            <label for="valor_total">Valor Total:</label>
+                            <input type="number" id="valor_total" name="valor_total" 
+                                   [(ngModel)]="novoEmprestimo.valor_total" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="usuario">Usuário:</label>
-                            <input type="text" id="usuario" name="usuario" 
-                                   [(ngModel)]="novoEmprestimo.usuario" required>
+                            <label for="status">Status:</label>
+                            <select id="status" name="status"
+                                    [(ngModel)]="novoEmprestimo.status" required>
+                                <option value="ativo">Ativo</option>
+                                <option value="atrasado">Atrasado</option>
+                                <option value="devolvido">Devolvido</option>
+                            </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="dataDevolucao">Data de Devolução:</label>
-                            <input type="date" id="dataDevolucao" name="dataDevolucao" 
-                                   [(ngModel)]="novoEmprestimo.dataDevolucao" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="departamento">Departamento:</label>
-                            <input type="text" id="departamento" name="departamento" 
-                                   [(ngModel)]="novoEmprestimo.departamento">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="contato">Contato:</label>
-                            <input type="text" id="contato" name="contato" 
-                                   [(ngModel)]="novoEmprestimo.contato">
+                            <label for="observacoes">Observações:</label>
+                            <textarea id="observacoes" name="observacoes" 
+                                   [(ngModel)]="novoEmprestimo.observacoes" rows="3"></textarea>
                         </div>
                         
                         <div class="form-actions">
@@ -258,21 +250,9 @@
                 <div class="modal-body">
                     <form (ngSubmit)="salvarAlteracoesEmprestimo()" #editarEmprestimoForm="ngForm">
                         <div class="form-group">
-                            <label for="editProduto">Produto:</label>
-                            <input type="text" id="editProduto" name="editProduto" 
-                                   [(ngModel)]="emprestimoSelecionado.produto" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="editUsuario">Usuário:</label>
-                            <input type="text" id="editUsuario" name="editUsuario" 
-                                   [(ngModel)]="emprestimoSelecionado.usuario" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editDataDevolucao">Data de Devolução:</label>
-                            <input type="date" id="editDataDevolucao" name="editDataDevolucao" 
-                                   [(ngModel)]="emprestimoSelecionado.dataDevolucao" required>
+                            <label for="editValor">Valor Total:</label>
+                            <input type="number" id="editValor" name="editValor" 
+                                   [(ngModel)]="emprestimoSelecionado.valor_total" required>
                         </div>
 
                         <div class="form-group">
@@ -288,15 +268,9 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="editDepartamento">Departamento:</label>
-                            <input type="text" id="editDepartamento" name="editDepartamento" 
-                                   [(ngModel)]="emprestimoSelecionado.departamento">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editContato">Contato:</label>
-                            <input type="text" id="editContato" name="editContato" 
-                                   [(ngModel)]="emprestimoSelecionado.contato">
+                            <label for="editObservacoes">Observações:</label>
+                            <textarea id="editObservacoes" name="editObservacoes" 
+                                   [(ngModel)]="emprestimoSelecionado.observacoes" rows="3"></textarea>
                         </div>
                         
                         <div class="form-actions">

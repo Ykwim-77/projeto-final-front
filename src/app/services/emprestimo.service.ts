@@ -4,25 +4,37 @@ import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
 export interface Emprestimo {
-  id_movimentacao?: number;
-  id_patrimonio: number;
-  id_usuario: number;
-  tipo_movimentacao: string;
-  origem?: string;
-  data_movimento: string;
-  status?: string;
-  observacao?: string;
+  id_emprestimo?: number;
+  data_pedido: string;
+  data_recebimento?: string | null;
+  valor_total: number;
+  status: string;
+  observacoes?: string | null;
+  id_usuario?: number;
+  usuario?: any;
+
+  // compatibility fields (optional)
   produto?: string;
-  usuario?: string;
   dataEmprestimo?: string;
-  dataDevolucao?: string;
+  dataDevolucao?: string | null;
+
+  // UI/backwards-compatibility aliases
+  id_movimentacao?: number;
+  id_patrimonio?: number;
+  tipo_movimentacao?: string;
+  origem?: string;
+  data_movimento?: string;
+  observacao?: string | null;
+  usuarioNome?: string;
+  departamento?: string;
+  contato?: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmprestimoService {
-  private apiUrl = `${environment.apiUrl}/movimentacao`;
+  private apiUrl = `${environment.apiUrl}/emprestimo`;
 
   constructor(private http: HttpClient) {}
 
@@ -78,7 +90,7 @@ export class EmprestimoService {
   renovarEmprestimo(id: number, novaDataDevolucao: string): Observable<any> {
     return this.http.put<any>(
       `${this.apiUrl}/${id}`,
-      { data_movimento: novaDataDevolucao },
+      { data_recebimento: novaDataDevolucao },
       { withCredentials: true }
     );
   }
