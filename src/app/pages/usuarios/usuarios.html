@@ -1,11 +1,5 @@
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
 <body>
-    <!-- Menu Lateral -->
     <app-sidebar></app-sidebar>
-    
-    <!-- Conteúdo Principal -->
     <main>
         <header class="topo">
             <div class="topo-texto">
@@ -16,12 +10,11 @@
                 <div class="adicionar-usuario-container" (click)="abrirCardCadastro()">
                     <i class="fas fa-plus"></i>
                     <div class="adicionar-usuario-text">Adicionar Usuário</div>
-                </div>
+                </div>  
             </div>
         </header>
-        
-        <br>
-        
+
+        <!-- Cards de Métricas -->
         <section class="conteudo-principal flex gap-xl">
             <!-- Card 1: Total de Usuários -->
             <div class="card">
@@ -80,7 +73,77 @@
             </div>
         </section>
 
-        <!-- Card de Cadastro de Usuário (mantido do anterior) -->
+        <!-- Lista de Usuários -->
+        <section class="usuarios-container">
+            <div class="usuarios-card">
+                <div class="card-title">Usuários e Permissões</div>
+
+                <!-- Mensagem de erro -->
+                <div *ngIf="mensagemErro" class="alerta-erro">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ mensagemErro }}
+                </div>
+
+                <!-- Carregando -->
+                <div *ngIf="isCarregando" class="carregando">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando usuários...
+                </div>
+
+                <div class="user-list" *ngIf="!isCarregando && users.length > 0">
+                    <div class="user-item" *ngFor="let user of users">
+                        <div class="user-header">
+                            <div class="user-name-container">
+                                <span class="user-role-badge" *ngIf="user.role">{{ getRoleBadge(user.role) }}</span>
+                                <span class="user-name">{{ user.name }}</span>
+                            </div>
+                            <div class="user-actions">
+                                <!-- Botão de editar permissões (visível apenas para ADM e Gerente) -->
+                                <button 
+                                    *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'"
+                                    class="btn-editar-permissoes"
+                                    (click)="abrirModalEditarPermissoes(user)">
+                                    <i class="fas fa-edit"></i>
+                                    Editar
+                                </button>
+                                <!-- Botão editar permissões (substitui deletar) -->
+                                <button 
+                                    *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
+                                    class="btn-editar-permissoes"
+                                    (click)="abrirModalEditarPermissoes(user)">
+                                    <i class="fas fa-user-cog"></i>
+                                    Editar Permissões
+                                </button>
+                                </div>
+                                <!-- Botão único: Editar Permissões (aparece para ADM/Gerente e não permite editar a si mesmo) -->
+                                <button
+                                    *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
+                                    class="btn-editar-permissoes"
+                                    (click)="abrirModalEditarPermissoes(user)">
+                                    <i class="fas fa-user-cog"></i>
+                                    Editar Permissões
+                                </button>
+                        </div>
+
+                        <div class="user-email">
+                            {{ user.email }}
+                            <span class="user-since">Desde {{ user.since }}</span>
+                        </div>
+
+                        <div class="user-permissions">
+                            {{ getPermissionsDescription(user.role) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="no-users" *ngIf="!isCarregando && users.length === 0">
+                    <i class="fas fa-users"></i>
+                    <p>Nenhum usuário cadastrado</p>
+                    <small>Adicione usuários para gerenciar permissões</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de Cadastro de Usuário -->
         <div *ngIf="isCardCadastroAberto" class="card-cadastro-overlay">
             <div class="card-cadastro">
                 <div class="card-header">
@@ -91,7 +154,7 @@
                 </div>
                 
                 <div class="card-body">
-                    <form (ngSubmit)="cadastrarUsuario(usuarioForm.value)" #usuarioForm="ngForm">
+                    <form (ngSubmit)="cadastrarUsuario(usuarioForm)" #usuarioForm="ngForm">
                         <div class="form-group">
                             <label for="nome">Nome Completo:</label>
                             <input type="text" id="nome" name="nome" ngModel required>
@@ -101,20 +164,19 @@
                             <label for="email">Email:</label>
                             <input type="email" id="email" name="email" ngModel required>
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="perfil">Perfil:</label>
-                            <select id="perfil" name="perfil" ngModel required>
-                                <option value="">Selecione um perfil</option>
-                                <option value="admin">Administrador</option>
-                                <option value="gerente">Gerente</option>
-                                <option value="operador">Operador</option>
-                            </select>
+                            <label for="senha">Senha:</label>
+                            <input type="password" id="senha" name="senha" ngModel>
                         </div>
 
                         <div class="form-group">
-                            <label for="departamento">Departamento:</label>
-                            <input type="text" id="departamento" name="departamento" ngModel>
+                            <label for="perfil">Perfil:</label>
+                            <select id="perfil" name="perfil" ngModel>
+                                <option value="O">Operador</option>
+                                <option value="G">Gerente</option>
+                                <option value="A">Administrador</option>
+                            </select>
                         </div>
                         
                         <div class="form-actions">
@@ -129,5 +191,67 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal de Edição de Permissões -->
+        <div *ngIf="isModalEditarPermissoesAberto && usuarioSelecionado" class="modal-overlay">
+            <div class="modal-editar-permissoes">
+                <div class="modal-header">
+                    <h3>Editar Permissões - {{ usuarioSelecionado.name }}</h3>
+                    <button class="fechar-btn" (click)="fecharModalEditarPermissoes()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <form (ngSubmit)="salvarPermissoes()" #permissoesForm="ngForm">
+                        <div class="form-group">
+                            <label for="nivelPermissao">Nível de Permissão:</label>
+                            <select 
+                                id="nivelPermissao"
+                                name="nivelPermissao"
+                                [ngModel]="usuarioSelecionado.role"
+                                (ngModelChange)="onRoleChange($event)"
+                                required
+                                #nivelPermissao="ngModel">
+                                <option value="admin">Administrador</option>
+                                <option value="gerente">Gerente</option>
+                                <option value="operador">Operador</option>
+                            </select>
+                        </div>
+
+                        <div class="permissoes-descricao">
+                            <h4>Permissões Atribuídas:</h4>
+                            <div *ngIf="usuarioSelecionado.role === 'admin'" class="permissao-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Acesso total ao sistema</span>
+                            </div>
+                            <div *ngIf="usuarioSelecionado.role === 'gerente'" class="permissao-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Todas as funcionalidades e gerenciar (editar/remover/adicionar) usuários</span>
+                            </div>
+                            <div *ngIf="usuarioSelecionado.role === 'operador'" class="permissao-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Gerenciar (editar/remover/adicionar) produtos e dar baixa quando o produto voltar do empréstimo</span>
+                            </div>
+                            <div *ngIf="usuarioSelecionado.role === 'cliente'" class="permissao-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Apenas realizar empréstimos</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancelar" (click)="fecharModalEditarPermissoes()">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-salvar" [disabled]="!permissoesForm.valid">
+                                Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </main>
+    <br>
+    <br>
 </body>
