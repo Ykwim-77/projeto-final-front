@@ -39,6 +39,7 @@
             <!-- Card 2: Valor do Estoque -->
             <div class="card">
                 <div class="card-title">{{ metricCards[1]?.title || 'Valor do Estoque' }}</div>
+                <br>
                 <div class="card-value">{{ stockValue || 'R$ 0,00' }}</div>
                 <div class="card-variation" [class]="'card-variation ' + (metricCards[1]?.trend || 'neutral')">
                     {{ metricCards[1]?.variation || '-' }}

@@ -58,7 +58,7 @@ main {
 .card {
     flex: 1;
     min-width: 220px;
-    max-width: 280px;
+    max-width: 32%;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -87,3 +87,35 @@ main {
 
 .imgCard { background-color: #4fa877; }
 .imgCard2 { background-color: #d63647; }
+
+.valoresContainer {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    background: transparent !important;
+    width: 100%;
+}
+
+/* LISTA DE ESTOQUE BAIXO */
+.low-stock-list {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 10px;
+}
+  
+.low-stock-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+  
+.low-stock-item:hover {
+    background-color: #fee2e2;
+    transform: translateX(5px);
+}
