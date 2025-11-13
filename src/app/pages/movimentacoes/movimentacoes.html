@@ -1,90 +1,120 @@
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
 
 <body>
     <!-- Menu Lateral -->
     <app-sidebar></app-sidebar>
+    
     <!-- Conteúdo Principal -->
     <main>
         <header class="topo">
-            <h1 class="titulo-Topo">Movimentações</h1>
+            <h1 class="titulo-Topo"><strong>Movimentações</strong></h1>
             <div class="subtitulo">Controle entradas e saídas do estoque</div>
         </header>
-        <br>
-        <br>
-        <section class="conteudo-principal flex gap-xl">
-            <!-- Card 1: Total de Produtos -->
-            <div class="card">
-                <div class="card-title">{{ metricCards[0]?.title || 'Total' }}</div>
-                <div class="card-value">{{ totalProducts || 0 }}</div>
-                <div class="card-variation">
-                    <p>Movimentações</p>
+        
+        <br><br>
+        
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Carregando movimentações...</p>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div *ngIf="!loading">
+            <section class="conteudo-principal flex gap-xl">
+                <!-- Card 1: Total de Movimentações -->
+                <div class="card">
+                    <div class="card-title">{{ metricCards[0]?.title || 'Total' }}</div>
+                    <div class="card-value">{{ totalProducts || 0 }}</div>
+                    <div class="card-variation">
+                        <p>Movimentações</p>
+                    </div>
+                    <div class="imgCard">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
+                            <path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="imgCard"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                        width="24px" fill="#F3F3F3">
-                        <path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z" />
-                    </svg> </div>
-            </div>
 
-            <!-- Card 2: Produtos de Entrada -->
-            <div class="card">
-                <div class="card-title">{{ metricCards[1]?.title || 'Entradas' }}</div>
-                <div class="card-value">{{ produtosEntrada || 0 }}</div>
-                <div class="card-variation">
-                    <p>Unidades</p>
+                <!-- Card 2: Produtos de Entrada -->
+                <div class="card">
+                    <div class="card-title">{{ metricCards[1]?.title || 'Entradas' }}</div>
+                    <div class="card-value">{{ produtosEntrada || 0 }}</div>
+                    <div class="card-variation">
+                        <p>Unidades</p>
+                    </div>
+                    <div class="imgCard">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
+                            <path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="imgCard"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                        width="24px" fill="#F3F3F3">
-                        <path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z" />
-                    </svg> </div>
-            </div>
 
-            <!-- Card 3: Produtos de Saida -->
-            <div class="card">
-                <div class="card-title">{{ metricCards[2]?.title || 'Saídas' }}</div>
-                <div class="card-value">{{ produtosSaida || 0 }}</div>
-                <div class="card-variation">
-                    <p>Unidades</p>
+                <!-- Card 3: Produtos de Saída -->
+                <div class="card">
+                    <div class="card-title">{{ metricCards[2]?.title || 'Saídas' }}</div>
+                    <div class="card-value">{{ produtosSaida || 0 }}</div>
+                    <div class="card-variation">
+                        <p>Unidades</p>
+                    </div>
+                    <div class="imgCard2">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
+                            <path d="M360-200v-80h264L160-744l56-56 464 464v-264h80v400H360Z"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="imgCard2"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                        width="24px" fill="#F3F3F3">
-                        <path d="M360-200v-80h264L160-744l56-56 464 464v-264h80v400H360Z" />
-                    </svg> </div>
-            </div>
-
-        </section>
-        <section class="escolha">
-            <div
-                class="opcao1"
-                [class.active]="selectedOption === 'opcao1'"
-                (click)="selectOption('opcao1')"
-            >
-                Total
-            </div>
-
-            <div
-                class="opcao2"
-                [class.active]="selectedOption === 'opcao2'"
-                (click)="selectOption('opcao2')"
-            >
-                Entradas
-            </div>
-
-            <div
-                class="opcao3"
-                [class.active]="selectedOption === 'opcao3'"
-                (click)="selectOption('opcao3')"
-            >
-                Saídas
-            </div>
             </section>
 
-        <section class="valoresContainer">
-            <div class="produtos">
-                <p>bhbhv</p>
-            </div>
-        </section>
+            <section class="escolha">
+                <div class="opcao1" [class.active]="selectedOption === 'opcao1'" (click)="selectOption('opcao1')">
+                    Total
+                </div>
+                <div class="opcao2" [class.active]="selectedOption === 'opcao2'" (click)="selectOption('opcao2')">
+                    Entradas
+                </div>
+                <div class="opcao3" [class.active]="selectedOption === 'opcao3'" (click)="selectOption('opcao3')">
+                    Saídas
+                </div>
+            </section>
+
+            <section class="valoresContainer">
+                <!-- Lista de Movimentações -->
+                <div *ngFor="let mov of filteredMovimentacoes" class="produto-card">
+                    <div class="produto-icone">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" 
+                             [attr.fill]="mov.tipo === 'entrada' ? '#28a745' : '#d63647'">
+                            <path *ngIf="mov.tipo === 'entrada'" d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z"/>
+                            <path *ngIf="mov.tipo === 'saida'" d="M360-200v-80h264L160-744l56-56 464 464v-264h80v400H360Z"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="produto-info">
+                        <div class="produto-header">
+                            <span class="produto-nome">{{ mov.produtoNome }}</span>
+                            <span class="produto-tipo" [class]="getTipoClass(mov.tipo)">
+                                {{ mov.tipo === 'entrada' ? 'Entrada' : 'Saída' }}
+                            </span>
+                        </div>
+                        <div class="produto-data">
+                            <i class="fa-regular fa-clock"></i>
+                            <span>{{ formatarData(mov.data) }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="produto-valor">
+                        <span class="valor" [class.entrada]="mov.tipo === 'entrada'" [class.saida]="mov.tipo === 'saida'">
+                            {{ mov.tipo === 'entrada' ? '+' : '-' }}{{ mov.quantidade }}
+                        </span>
+                        <span class="unidades">unidades</span>
+                    </div>
+                </div>
+
+                <!-- Mensagem quando não há dados -->
+                <div *ngIf="filteredMovimentacoes.length === 0" class="sem-dados">
+                    <i class="fas fa-inbox"></i>
+                    <p>Nenhuma movimentação encontrada</p>
+                </div>
+            </section>
+        </div>
         <br>
     </main>
 </body>
