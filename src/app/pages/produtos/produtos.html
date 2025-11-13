@@ -1,66 +1,7 @@
 <head>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head><body>
-    <nav class="sidebar">
-        <div class="logo-container">
-            <div class="logo">
-                <!-- Substitua pelo caminho correto da sua imagem -->
-                <img src="assets/imagens/logoprogestao.png"alt="Logo StockSmart" class="logoTopo">
-                <span>ProGest</span>
-                <div id="tagline">Gestão Inteligente</div>
-            </div>
-        </div>
-        <hr>
-        <div class="menu-container">
-            <a routerLink="/home" class="menu-item" >
-                <i class="fas fa-chart-line"></i>
-                <span class="menu-text">Dashboard</span>
-            </a>
-            <a routerLink="/produtos" class="menu-item active">
-                <i class="fas fa-box-open"></i>
-                <span class="menu-text">Produtos</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-exchange-alt"></i>
-                <span class="menu-text">Movimentações</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-chart-bar"></i>
-                <span class="menu-text">Relatórios</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-robot"></i>
-                <span class="menu-text">Previsão IA</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span class="menu-text">Planos</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-cog"></i>
-                <span class="menu-text">Configurações</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-users"></i>
-                <span class="menu-text">Usuários</span>
-            </a>
-        </div>
-        <hr>    
-        <div class="user-section">
-            <div class="user-info">
-
-                <div class="user-avatar">{{ usuarioIniciais || 'U' }}</div>
-                <div class="user-details">
-                    <div class="user-name">{{ usuarioNome || 'Usuário' }}</div>
-                    <div class="user-email">{{ usuarioEmail || 'email@exemplo.com' }}</div>
-                </div>
-            </div>
-            <button class="logout-btn">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Sair</span>
-            </button>
-        </div>
-    </nav>
+    <app-sidebar></app-sidebar>
 
     <main>
         <header class="topo">
@@ -106,15 +47,14 @@
                             <label><i class="fas fa-ruler"></i> Categorias</label>
                             <select [(ngModel)]="novoProduto.unidade_medida" name="unidade_medida" class="input">
                                 <option value="">Selecione...</option>
-                                <option value="UN">Maquinas e Equipamentos</option>
-                                <option value="KG">Quilograma (KG)</option>
-                                <option value="G">Grama (G)</option>
-                                <option value="L">Litro (L)</option>
-                                <option value="ML">Mililitro (ML)</option>
-                                <option value="M">Metro (M)</option>
-                                <option value="CM">Centímetro (CM)</option>
-                                <option value="CX">Caixa (CX)</option>
-                                <option value="PC">Peça (PC)</option>
+                                <option value="ME">Maquinas e Equipamentos</option>
+                                <option value="A">Acessórios</option>
+                                <option value="MU">Moveis e Utensílios</option>
+                                <option value="P">Patrimônio</option>
+                                <option value="EL">Eletrodomésticos</option>
+                                <option value="CO">Componentes</option>
+                                <option value="SU">Suportes</option>
+                                <option value="CX">Caixas</option>
                             </select>
                         </div>
                     </div>
@@ -169,7 +109,7 @@
                 </div>
             </div>
         </section> 
-
+        <br>
                 <!-- Lista de Produtos em Grade -->
         <!-- CORREÇÃO NA VISUALIZAÇÃO GRADE -->
         <section *ngIf="visualizacao === 'grade'" class="produtos-grade">
@@ -330,23 +270,27 @@
                       </div>
                     </div>
                   </th>
-                  
-                  <th>Valor Total</th>
                   <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="linha-vertical" *ngFor="let produto of produtosFiltrados" 
                     [class.estoque-baixo]="(produto.quantidade || 0) < 5">
+
                   <td class="nome-produto">
                     <strong>{{ produto.nome || 'Produto sem nome' }}</strong>
                     <small *ngIf="produto.descricao">{{ produto.descricao }}</small>
                   </td>
                   <td class="sku">{{ produto.sku || 'N/A' }}</td>
+
                   <td class="categoria">
                     <span class="categoria-badge">{{ produto.categoria || 'Sem categoria' }}</span>
                   </td>
-                  <td class="preco">R$ {{ (produto.preco_unitario || 0) | number:'1.2-2' }}</td>
+
+                  <td class="valor-total">
+                    R$ {{ ((produto.preco_unitario || 0) * (produto.quantidade || 0)) | number:'1.2-2' }}
+                  </td>
+                  
                   <td class="estoque">
                     <span [class.estoque-critico]="(produto.quantidade || 0) < 5">
                       {{ produto.quantidade || 0 }} unidades
@@ -356,9 +300,7 @@
                       Estoque baixo
                     </div>
                   </td>
-                  <td class="valor-total">
-                    R$ {{ ((produto.preco_unitario || 0) * (produto.quantidade || 0)) | number:'1.2-2' }}
-                  </td>
+
                   <td class="acoes">
                     <button class="btn-acao btn-editar-tabela" 
                             (click)="editarProduto(produto)"
