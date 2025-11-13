@@ -1,111 +1,141 @@
 .sidebar {
-    width: 240px;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: #F0F4FF;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-}
-.menu-container {
+  width: 240px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #F0F4FF;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+
+  .logo-container {
+    margin-top: 10px;
+    padding: 20px;
+    text-align: center;
+
+    .logo {
+      display: flex;
+      align-items: center; /* centraliza verticalmente */
+      justify-content: center; /* centraliza horizontalmente */
+      gap: 10px;
+
+      .logoTopo {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+      }
+
+      .logo-text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        line-height: 1.2;
+
+        #titulo-topo {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #0B1D5A;
+          margin: 0;
+        }
+
+        #tagline {
+          font-size: 0.9rem;
+          color: #4A4A4A;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 0.5rem 0;
+  }
+
+  .menu-container {
     flex: 1;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     padding: 0 1rem;
-}
 
-.logo img.logoTopo {
-    width: 120px;
-    height: auto;
-}
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      color: #1C1C1C;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background 0.2s, font-weight 0.2s;
 
-.menu-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    color: #1C1C1C;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: background 0.2s;
-}
+      &:hover,
+      &.active {
+        background: #DDE5FF;
+        font-weight: bold;
+      }
 
-.menu-item:hover,
-.menu-item.active {
-    background: #DDE5FF;
-    font-weight: bold;
-}
-.user-section {
-  padding: 1rem;
-  border-top: 1px solid #ccc;
-}
+      i {
+        font-size: 1.1rem;
+      }
+    }
+  }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.user-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #1C1C1C;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-}
-
-.logout-btn {
-    margin-top: 0.5rem;
-    width: 100%;
-    background: #FF4D4F;
-    color: #fff;
-    border: none;
-    padding: 0.5rem;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.logout-btn:hover {
-    background: #E53935;
-}
-
-.logo-container {
+  .user-section {
     padding: 1rem;
-    text-align: center;
-}
+    border-top: 1px solid #ccc;
 
-.logo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-}
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
 
-.logoTopo {
-    width: 100px;
-    height: 100px;
-    border-radius: 8px;
-    display: block;
-    margin-left: -180px;
-    margin-top: -25px;
-}
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        background: #1C1C1C;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
 
-.logo span {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #0B1D5A;
-    margin-top: -85px;
-    margin-right: -35px;
+      .user-details {
+        .user-name {
+          font-weight: 600;
+          color: #1C1C1C;
+        }
+      }
+    }
+
+    .logout-btn {
+      margin-top: 0.5rem;
+      width: 100%;
+      background: #FF4D4F;
+      color: #fff;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #E53935;
+      }
+
+      i {
+        font-size: 1rem;
+      }
+    }
+  }
 }
