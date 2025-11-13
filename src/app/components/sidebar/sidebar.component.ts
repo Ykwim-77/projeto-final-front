@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { UsuarioService } from '../../services/usuario.service';
-
 
 @Component({
   selector: 'app-sidebar',
@@ -25,10 +23,13 @@ export class SidebarComponent implements OnInit {
 
 
   ngOnInit(): void {
-     const usuario = this.authService.getUsuarioLogado();
+    // Tentar validar o token e atualizar os dados do usuário a partir do backend.
+    this.authService.validateToken().subscribe((valid) => {
+      const usuario = this.authService.getUsuarioLogado();
       this.usuarioNome = usuario?.nome ?? '';
       this.usuarioEmail = usuario?.email ?? '';
-  
+      this.usuarioIniciais = this.pegarIniciais(this.usuarioNome);
+    });
   }
 
   pegarIniciais(nome: string): string {
@@ -42,10 +43,12 @@ export class SidebarComponent implements OnInit {
 
   logout() {
     this.isLoading = true;
+    // Limpa dados locais e navega para o login
+    this.authService.logout();
 
     setTimeout(() => {
       this.isLoading = false;
       this.router.navigate(['/login']);
-    }, 1000);
+    }, 500);
   }
 }
