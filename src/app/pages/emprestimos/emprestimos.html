@@ -1,1 +1,317 @@
-<p>emprestimos works!</p>
+<body>
+    <app-sidebar></app-sidebar>
+    <main>
+        <header class="topo">
+            <div class="topo-texto">
+                <h1 class="titulo-Topo">Empréstimos</h1>
+                <div class="subtitulo">Gerencie os empréstimos de produtos do sistema</div>
+            </div>
+            <div class="adicionar-emprestimo-container">
+                <div class="adicionar-emprestimo-container" (click)="abrirModalNovoEmprestimo()">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <div class="adicionar-emprestimo-text">Novo Empréstimo</div>
+                </div>  
+            </div>
+        </header>
+
+        <!-- Cards de Métricas -->
+        <section class="conteudo-principal flex gap-xl">
+            <!-- Card 1: Empréstimos Ativos -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[0]?.title || 'Empréstimos Ativos' }}</div>
+                <div class="card-value">{{ emprestimosAtivos || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[0]?.trend || 'neutral')">
+                    {{ metricCards[0]?.variation || '-' }}
+                </div>
+                <div class="imgCard">
+                    <i class="fas fa-box-open"></i>
+                </div>
+            </div>
+
+            <!-- Card 2: Empréstimos Atrasados -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[1]?.title || 'Empréstimos Atrasados' }}</div>
+                <div class="card-value">{{ emprestimosAtrasados || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[1]?.trend || 'neutral')">
+                    {{ metricCards[1]?.variation || '-' }}
+                </div>
+                <div class="imgCard2">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+            </div>
+
+            <!-- Card 3: Devolvidos Este Mês -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[2]?.title || 'Devolvidos Este Mês' }}</div>
+                <div class="card-value">{{ devolvidosMes || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[2]?.trend || 'neutral')">
+                    {{ metricCards[2]?.variation || '-' }}
+                </div>
+                <div class="imgCard3">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+            </div>
+
+            <!-- Card 4: Total de Empréstimos -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[3]?.title || 'Total de Empréstimos' }}</div>
+                <div class="card-value">{{ totalEmprestimos || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[3]?.trend || 'neutral')">
+                    {{ metricCards[3]?.variation || '-' }}
+                </div>
+                <div class="imgCard4">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Segunda Linha de Gráficos -->
+        <section class="graficos-container">
+            <!-- Lista de Empréstimos Atrasados -->
+            <div class="grafico-card">
+                <div class="card-title">Empréstimos Atrasados</div>
+                <div class="low-stock-list" *ngIf="emprestimosAtrasadosLista.length > 0">
+                    <div class="low-stock-item" *ngFor="let emprestimo of emprestimosAtrasadosLista; let i = index">
+                        <div class="item-index">{{ i + 1 }}</div>
+                        <div class="product-info">
+                            <span class="product-name">{{ emprestimo.produto }}</span>
+                            <span class="product-category">{{ emprestimo.usuario }}</span>
+                            <span class="product-quantity" style="color: red; font-weight: bold;">
+                                (Devolução: {{ emprestimo.dataDevolucao }})
+                            </span>
+                        </div>
+                        <div class="stock-alert">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>Em Atraso</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="no-low-stock" *ngIf="emprestimosAtrasadosLista.length === 0">
+                    <i class="fas fa-check-circle"></i>
+                    <p>Nenhum empréstimo em atraso</p>
+                    <small>Todos os empréstimos estão em dia</small>
+                </div>
+            </div>
+
+            <!-- Card de Ações Rápidas -->
+            <div class="grafico-card">
+                <div class="card-title">Ações Rápidas</div>
+                <div class="quick-actions">
+                    <button class="btn-novo-emprestimo" (click)="abrirModalNovoEmprestimo()">
+                        <i class="fas fa-hand-holding-usd"></i>
+                        Novo Empréstimo
+                    </button>
+                    <button class="btn-relatorios" (click)="gerarRelatorio()">
+                        <i class="fas fa-chart-bar"></i>
+                        Gerar Relatório
+                    </button>
+                </div>
+                
+                <!-- Filtros Rápidos -->
+                <div class="filtros-rapidos">
+                    <h4>Filtrar por Status:</h4>
+                    <div class="filtro-buttons">
+                        <button [class.active]="filtroStatus === 'todos'" (click)="filtroStatus = 'todos'">
+                            Todos ({{ totalEmprestimos }})
+                        </button>
+                        <button [class.active]="filtroStatus === 'ativo'" (click)="filtroStatus = 'ativo'">
+                            Ativos ({{ emprestimosAtivos }})
+                        </button>
+                        <button [class.active]="filtroStatus === 'atrasado'" (click)="filtroStatus = 'atrasado'">
+                            Atrasados ({{ emprestimosAtrasados }})
+                        </button>
+                        <button [class.active]="filtroStatus === 'devolvido'" (click)="filtroStatus = 'devolvido'">
+                            Devolvidos ({{ devolvidosMes }})
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Empréstimos -->
+        <section class="graficos-container">
+            <div class="cardMovimentacoes">
+                <div class="card-header-filtros">
+                    <div class="card-title">Lista de Empréstimos</div>
+                    <div class="filtros-container">
+                        <div class="filtro-group">
+                            <input type="text" [(ngModel)]="filtroPesquisa" 
+                                   placeholder="Pesquisar produto ou usuário...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="movimentacoes-list" *ngIf="emprestimosFiltrados.length > 0">
+                    <div class="movimentacao-item emprestimo-item" *ngFor="let emprestimo of emprestimosFiltrados" 
+                         [class]="getStatusClass(emprestimo.status)">
+                        <div class="mov-icon" [class]="'mov-' + emprestimo.status">
+                            <i [class]="getStatusIcon(emprestimo.status)"></i>
+                        </div>
+                        <div class="mov-details">
+                            <span class="mov-produto">{{ emprestimo.produto }}</span>
+                            <span class="mov-info">
+                                <strong>Usuário:</strong> {{ emprestimo.usuario }}
+                                <span *ngIf="emprestimo.departamento"> • {{ emprestimo.departamento }}</span>
+                            </span>
+                            <span class="mov-dates">
+                                <strong>Empréstimo:</strong> {{ emprestimo.dataEmprestimo }} | 
+                                <strong>Devolução:</strong> {{ emprestimo.dataDevolucao }}
+                            </span>
+                            <span class="mov-contato" *ngIf="emprestimo.contato">
+                                <strong>Contato:</strong> {{ emprestimo.contato }}
+                            </span>
+                        </div>
+                        <div class="mov-actions">
+                            <button class="btn-action btn-edit" (click)="abrirModalEditarEmprestimo(emprestimo)"
+                                    *ngIf="userLogado?.role === 'admin' || userLogado?.role === 'gerente' || userLogado?.role === 'operador'">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-action btn-devolver" (click)="marcarComoDevolvido(emprestimo)"
+                                    *ngIf="emprestimo.status === 'ativo' && (userLogado?.role === 'admin' || userLogado?.role === 'gerente' || userLogado?.role === 'operador')">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn-action btn-renovar" (click)="renovarEmprestimo(emprestimo)"
+                                    *ngIf="emprestimo.status === 'ativo' && (userLogado?.role === 'admin' || userLogado?.role === 'gerente' || userLogado?.role === 'operador')">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        </div>
+                        <div class="mov-tipo-badge" [class]="'badge-' + emprestimo.status">
+                            {{ getStatusDescription(emprestimo.status) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="no-movimentacoes" *ngIf="emprestimosFiltrados.length === 0">
+                    <i class="fas fa-boxes"></i>
+                    <p>Nenhum empréstimo encontrado</p>
+                    <small>Tente alterar os filtros ou adicione um novo empréstimo</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de Novo Empréstimo -->
+        <div *ngIf="isModalNovoEmprestimoAberto" class="modal-overlay">
+            <div class="modal-novo-emprestimo">
+                <div class="modal-header">
+                    <h3>Novo Empréstimo</h3>
+                    <button class="fechar-btn" (click)="fecharModalNovoEmprestimo()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <form (ngSubmit)="cadastrarEmprestimo(novoEmprestimo)" #emprestimoForm="ngForm">
+                        <div class="form-group">
+                            <label for="produto">Produto:</label>
+                            <input type="text" id="produto" name="produto" 
+                                   [(ngModel)]="novoEmprestimo.produto" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="usuario">Usuário:</label>
+                            <input type="text" id="usuario" name="usuario" 
+                                   [(ngModel)]="novoEmprestimo.usuario" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dataDevolucao">Data de Devolução:</label>
+                            <input type="date" id="dataDevolucao" name="dataDevolucao" 
+                                   [(ngModel)]="novoEmprestimo.dataDevolucao" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="departamento">Departamento:</label>
+                            <input type="text" id="departamento" name="departamento" 
+                                   [(ngModel)]="novoEmprestimo.departamento">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contato">Contato:</label>
+                            <input type="text" id="contato" name="contato" 
+                                   [(ngModel)]="novoEmprestimo.contato">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancelar" (click)="fecharModalNovoEmprestimo()">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-salvar" [disabled]="!emprestimoForm.valid">
+                                Cadastrar Empréstimo
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Edição de Empréstimo -->
+        <div *ngIf="isModalEditarEmprestimoAberto && emprestimoSelecionado" class="modal-overlay">
+            <div class="modal-editar-emprestimo">
+                <div class="modal-header">
+                    <h3>Editar Empréstimo - {{ emprestimoSelecionado.produto }}</h3>
+                    <button class="fechar-btn" (click)="fecharModalEditarEmprestimo()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <form (ngSubmit)="salvarAlteracoesEmprestimo()" #editarEmprestimoForm="ngForm">
+                        <div class="form-group">
+                            <label for="editProduto">Produto:</label>
+                            <input type="text" id="editProduto" name="editProduto" 
+                                   [(ngModel)]="emprestimoSelecionado.produto" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editUsuario">Usuário:</label>
+                            <input type="text" id="editUsuario" name="editUsuario" 
+                                   [(ngModel)]="emprestimoSelecionado.usuario" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editDataDevolucao">Data de Devolução:</label>
+                            <input type="date" id="editDataDevolucao" name="editDataDevolucao" 
+                                   [(ngModel)]="emprestimoSelecionado.dataDevolucao" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editStatus">Status:</label>
+                            <select id="editStatus" name="editStatus"
+                                    [ngModel]="emprestimoSelecionado.status"
+                                    (ngModelChange)="onStatusChange($event)"
+                                    required>
+                                <option value="ativo">Ativo</option>
+                                <option value="atrasado">Atrasado</option>
+                                <option value="devolvido">Devolvido</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editDepartamento">Departamento:</label>
+                            <input type="text" id="editDepartamento" name="editDepartamento" 
+                                   [(ngModel)]="emprestimoSelecionado.departamento">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editContato">Contato:</label>
+                            <input type="text" id="editContato" name="editContato" 
+                                   [(ngModel)]="emprestimoSelecionado.contato">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancelar" (click)="fecharModalEditarEmprestimo()">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-salvar" [disabled]="!editarEmprestimoForm.valid">
+                                Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+    </main>
+</body>
