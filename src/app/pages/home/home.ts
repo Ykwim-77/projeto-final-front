@@ -740,13 +740,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   private carregarDadosUsuario(): void {
-    const usuario = this.authService.getUsuarioLogado() as unknown as { nome?: string; email?: string } | null;
-
-    if (usuario && typeof usuario === 'object') {
+    const usuario = this.authService.getUsuarioLogado();
       this.usuarioNome = usuario?.nome ?? '';
       this.usuarioEmail = usuario?.email ?? '';
       this.usuarioIniciais = this.gerarIniciais(this.usuarioNome);
-    }
   }
 
   private gerarIniciais(nome: string): string {

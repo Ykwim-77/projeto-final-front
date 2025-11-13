@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+
 
 @Component({
   selector: 'app-sidebar',
@@ -10,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   usuarioNome = '';
   usuarioEmail = '';
   usuarioIniciais = '';
@@ -20,6 +21,14 @@ export class SidebarComponent {
     private authService: AuthService,
     private router: Router
   ) { }
+
+
+  ngOnInit(): void {
+     const usuario = this.authService.getUsuarioLogado();
+      this.usuarioNome = usuario?.nome ?? '';
+      this.usuarioEmail = usuario?.email ?? '';
+  
+  }
 
   pegarIniciais(nome: string): string {
     if (!nome) return 'U';
