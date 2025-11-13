@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { Produto } from '../../services/produto.service';
+import { Produto, ProdutoService } from '../../services/produto.service';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { CommonModule, DecimalPipe, CurrencyPipe } from '@angular/common';
@@ -82,7 +82,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private produtoService: ProdutoService
   ) {}
 
   ngOnInit() {
@@ -748,96 +749,76 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/login']);
   }
 
-  private async carregarProdutos(): Promise<void> {
-    console.log('🔄 Iniciando carregamento de produtos da API...');
-    
-    try {
-      const res = await fetch(`${environment.apiUrl}/produto`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Accept': 'application/json' }
-      });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('❌ Erro ao carregar produtos:', res.status, errorText);
-        this.produtos = [];
+  private carregarProdutos(): void {
+    console.log('🔄 Iniciando carregamento de produtos da API (service)...');
+
+    this.produtoService.listarProdutos().subscribe({
+      next: (produtos: any[]) => {
+        console.log('✅ Produtos carregados da API (service):', produtos);
+
+        // Convertendo para ProdutoComId para incluir o ID e normalizar campos
+        this.produtos = (produtos || []).map((p: any) => ({
+          ...p,
+          id: p.id || p.id_produto,
+          nome: p.nome || p.name || '',
+          name: p.name || p.nome || '',
+          preco: p.preco || p.preco_unitario || 0,
+          quantidade: (typeof p.quantidade === 'number' ? p.quantidade : (p.quantidade ?? p.estoque ?? p.quantidade_atual ?? 0)),
+          categoria: p.categoria || 'Sem categoria'
+        })) as ProdutoComId[];
+
+        // ATUALIZAR GRÁFICO COM DADOS REAIS
         this.atualizarDadosGrafico();
+
         this.atualizarMetricas();
         this.atualizarProdutosEmBaixa();
         this.atualizarTopProdutos();
         this.atualizarMovimentacoes();
+
+        // Forçar detecção de mudanças
+        this.cdr.detectChanges();
+
+        console.log('📊 Estado após carregar produtos:', {
+          totalProducts: this.totalProducts,
+          stockValue: this.stockValue,
+          lowStockCount: this.lowStockCount,
+          topProducts: this.topProducts.length,
+          movimentacoes: this.movimentacoes.length,
+          produtos: this.produtos.length
+        });
+
+        // Redesenhar os gráficos após os dados serem atualizados
+        setTimeout(() => {
+          console.log('📊 Redesenhando gráficos...', {
+            produtos: this.produtos.length,
+            chartDataPie: this.chartData.pie.length,
+            chartDataBar: this.chartData.bar.length
+          });
+          this.drawPieChart();
+          this.drawBarChart();
+          this.cdr.detectChanges();
+        }, 500);
+      },
+      error: (error) => {
+        console.error('❌ Erro ao carregar produtos via service:', error);
+
+        this.produtos = [];
+
+        // ATUALIZAR GRÁFICO COM ESTADO VAZIO
+        this.atualizarDadosGrafico();
+
+        this.atualizarMetricas();
+        this.atualizarProdutosEmBaixa();
+        this.atualizarTopProdutos();
+        this.atualizarMovimentacoes();
+
+        // Redesenhar os gráficos
         setTimeout(() => {
           this.drawPieChart();
           this.drawBarChart();
-        }, 300);
-        return;
+        }, 500);
       }
-      
-      const produtos = await res.json();
-      console.log('✅ Produtos carregados da API:', produtos);
-      
-      // Convertendo para ProdutoComId para incluir o ID e normalizar campos
-      this.produtos = (produtos || []).map((p: any) => ({
-        ...p,
-        id: p.id || p.id_produto,
-        nome: p.nome || p.name || '',
-        name: p.name || p.nome || '',
-        preco: p.preco || p.preco_unitario || 0,
-        quantidade: (typeof p.quantidade === 'number' ? p.quantidade : (p.quantidade ?? p.estoque ?? p.quantidade_atual ?? 0)),
-        categoria: p.categoria || 'Sem categoria'
-      })) as ProdutoComId[];
-      
-      // ATUALIZAR GRÁFICO COM DADOS REAIS
-      this.atualizarDadosGrafico();
-      
-      this.atualizarMetricas();
-      this.atualizarProdutosEmBaixa();
-      this.atualizarTopProdutos();
-      this.atualizarMovimentacoes();
-      
-      // Forçar detecção de mudanças
-      this.cdr.detectChanges();
-      
-      console.log('📊 Estado após carregar produtos:', {
-        totalProducts: this.totalProducts,
-        stockValue: this.stockValue,
-        lowStockCount: this.lowStockCount,
-        topProducts: this.topProducts.length,
-        movimentacoes: this.movimentacoes.length,
-        produtos: this.produtos.length
-      });
-      
-      // Redesenhar os gráficos após os dados serem atualizados
-      setTimeout(() => {
-        console.log('📊 Redesenhando gráficos...', {
-          produtos: this.produtos.length,
-          chartDataPie: this.chartData.pie.length,
-          chartDataBar: this.chartData.bar.length
-        });
-        this.drawPieChart();
-        this.drawBarChart();
-        this.cdr.detectChanges();
-      }, 500);
-    } catch (error) {
-      console.error('❌ Erro ao carregar produtos da API:', error);
-      
-      this.produtos = [];
-      
-      // ATUALIZAR GRÁFICO COM ESTADO VAZIO
-      this.atualizarDadosGrafico();
-      
-      this.atualizarMetricas();
-      this.atualizarProdutosEmBaixa();
-      this.atualizarTopProdutos();
-      this.atualizarMovimentacoes();
-      
-      // Redesenhar os gráficos
-      setTimeout(() => {
-        this.drawPieChart();
-        this.drawBarChart();
-      }, 500);
-    }
+    });
   }
 
   // Método para forçar atualização (útil para testes)
