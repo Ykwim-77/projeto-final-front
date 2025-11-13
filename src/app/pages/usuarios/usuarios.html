@@ -1,81 +1,257 @@
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
 <body>
-    <!-- Menu Lateral -->
-    <nav class="sidebar">
-        <div class="logo-container">
-            <div class="logo">
-                <img src="assets/imagens/logoprogestao.png" alt="Logo StockSmart" class="logoTopo">
-                <span>ProGest</span>
-                <div id="tagline">Gestão Inteligente</div>
+    <app-sidebar></app-sidebar>
+    <main>
+        <header class="topo">
+            <div class="topo-texto">
+                <h1 class="titulo-Topo">Usuários</h1>
+                <div class="subtitulo">Gerencie os usuários e permissões do sistema</div>
             </div>
-        </div>
-        <hr>
-        <div class="menu-container">
-            <!-- CORRIGIR: Dashboard com routerLink e routerLinkActive -->
-            <a routerLink="/home" class="menu-item" routerLinkActive="active">
-                <i class="fas fa-chart-line"></i>
-                <span class="menu-text">Dashboard</span>
-            </a>
-            <a routerLink="/produtos" class="menu-item" routerLinkActive="active">
-                <i class="fas fa-box-open"></i>
-                <span class="menu-text">Produtos</span>
-            </a>
-            <a routerLink="/movimentacoes" class="menu-item" routerLinkActive="active">
-                <i class="fas fa-exchange-alt"></i>
-                <span class="menu-text">Movimentações</span>
-            </a>
-            <a routerLink="/relatorios" class="menu-item" routerLinkActive="active">
-                <i class="fas fa-chart-bar"></i>
-                <span class="menu-text">Relatórios</span>
-            </a>
-            <a routerLink="/previsao-ia" class="menu-item" routerLinkActive="active">
-                <i class="fas fa-robot"></i>
-                <span class="menu-text">Previsão IA</span>
-            </a>
-            <a routerLink="/planos" class="menu-item" routerLinkActive="active">
-                <i class="fas fa-file-invoice-dollar"></i>
-                <span class="menu-text">Planos</span>
-            </a>
-            <a routerLink="/configuracoes" class="menu-item" routerLinkActive="active">
-                <i class="fas fa-cog"></i>
-                <span class="menu-text">Configurações</span>
-            </a>
-            <!-- CORRIGIR: Usuários com routerLinkActive ativo -->
-            <a routerLink="/usuarios" class="menu-item" routerLinkActive="active">
-                <i class="fas fa-users"></i>
-                <span class="menu-text">Usuários</span>
-            </a>
-        </div>
-        <hr>    
-        <div class="user-section">
-            <div class="user-info">
-                <div class="user-avatar">{{ usuarioIniciais || 'U' }}</div>
-                <div class="user-details">
-                    <div class="user-name">{{ usuarioNome || 'Usuário' }}</div>
-                    <div class="user-email">{{ usuarioEmail || 'email@exemplo.com' }}</div>
+            <div class="adicionar-usuario-container">
+                <div class="adicionar-usuario-container" (click)="abrirCardCadastro()">
+                    <i class="fas fa-plus"></i>
+                    <div class="adicionar-usuario-text">Adicionar Usuário</div>
+                </div>  
+            </div>
+        </header>
+
+        <!-- Cards de Métricas -->
+        <section class="conteudo-principal flex gap-xl">
+            <!-- Card 1: Total de Usuários -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[0]?.title || 'Total de Usuários' }}</div>
+                <div class="card-value">{{ totalUsers || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[0]?.trend || 'neutral')">
+                    {{ metricCards[0]?.variation || '-' }}
+                </div>
+                <div class="imgCard">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
+                        <path d="M40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm720 0v-120q0-44-24.5-84.5T666-434q51 6 96 20.5t84 35.5q36 20 55 44.5t19 53.5v120H760ZM360-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm400-160q0 66-47 113t-113 47q-11 0-28-2.5t-28-5.5q27-32 41.5-71t14.5-81q0-42-14.5-81T544-792q14-5 28-6.5t28-1.5q66 0 113 47t47 113Z"/>
+                    </svg>
                 </div>
             </div>
-            <!-- CORRIGIR: Adicionar (click) para logout -->
-            <button class="logout-btn" (click)="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Sair</span>
-            </button>
+
+            <!-- Card 2: Administradores -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[1]?.title || 'Administradores' }}</div>
+                <div class="card-value">{{ administradoresCount || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[1]?.trend || 'neutral')">
+                    {{ metricCards[1]?.variation || '-' }}
+                </div>
+                <div class="imgCard2">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
+                        <path d="M400-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM80-160v-112q0-34 17.5-62.5T144-378q62-31 126-46.5T400-440q66 0 130 15.5T656-378q29 15 46.5 43.5T720-272v112H80Zm320-400q33 0 56.5-23.5T480-640q0-33-23.5-56.5T400-720q-33 0-56.5 23.5T320-640q0 33 23.5 56.5T400-560Zm-80 320h160v-32q0-11-5.5-20T580-306q-18-9-39-13.5t-41-4.5q-20 0-41 4.5T420-306q-9 5-14.5 14t-5.5 20v32Zm240-320h240v-80H640v80Zm160 160H640v-80h160v80ZM640-320h160v-80H640v80Zm80 160v-80h-80v-80h160v160H720Z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Card 3: Gerentes -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[2]?.title || 'Gerentes' }}</div>
+                <div class="card-value">{{ gerentesCount || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[2]?.trend || 'neutral')">
+                    {{ metricCards[2]?.variation || '-' }}
+                </div>
+                <div class="imgCard3">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
+                        <path d="M160-120q-33 0-56.5-23.5T80-200v-440q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v440q0 33-23.5 56.5T800-120H160Zm0-80h640v-440H160v440Zm240-520h160v-80H400v80ZM160-200v-440 440Z"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Card 4: Operadores -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[3]?.title || 'Operadores' }}</div>
+                <div class="card-value">{{ operadoresCount || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[3]?.trend || 'neutral')">
+                    {{ metricCards[3]?.variation || '-' }}
+                </div>
+                <div class="imgCard4">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
+                        <path d="M120-240v-80h80v-360q0-50 35-85t85-35h240q50 0 85 35t35 85v360h80v80H120Zm160-80h160v-120H280v120Zm0-200h400v-160q0-17-11.5-28.5T640-720H400q-17 0-28.5 11.5T360-680v160Zm440 200v-280h-80v200h-80v-200h-80v280h240Z"/>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de Usuários -->
+        <section class="usuarios-container">
+            <div class="usuarios-card">
+                <div class="card-title">Usuários e Permissões</div>
+
+                <!-- Mensagem de erro -->
+                <div *ngIf="mensagemErro" class="alerta-erro">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ mensagemErro }}
+                </div>
+
+                <!-- Carregando -->
+                <div *ngIf="isCarregando" class="carregando">
+                    <i class="fas fa-spinner fa-spin"></i> Carregando usuários...
+                </div>
+
+                <div class="user-list" *ngIf="!isCarregando && users.length > 0">
+                    <div class="user-item" *ngFor="let user of users">
+                        <div class="user-header">
+                            <div class="user-name-container">
+                                <span class="user-role-badge" *ngIf="user.role">{{ getRoleBadge(user.role) }}</span>
+                                <span class="user-name">{{ user.name }}</span>
+                            </div>
+                            <div class="user-actions">
+                                <!-- Botão de editar permissões (visível apenas para ADM e Gerente) -->
+                                <button 
+                                    *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'"
+                                    class="btn-editar-permissoes"
+                                    (click)="abrirModalEditarPermissoes(user)">
+                                    <i class="fas fa-edit"></i>
+                                    Editar
+                                </button>
+                                <!-- Botão editar permissões (substitui deletar) -->
+                                <button 
+                                    *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
+                                    class="btn-editar-permissoes"
+                                    (click)="abrirModalEditarPermissoes(user)">
+                                    <i class="fas fa-user-cog"></i>
+                                    Editar Permissões
+                                </button>
+                                </div>
+                                <!-- Botão único: Editar Permissões (aparece para ADM/Gerente e não permite editar a si mesmo) -->
+                                <button
+                                    *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
+                                    class="btn-editar-permissoes"
+                                    (click)="abrirModalEditarPermissoes(user)">
+                                    <i class="fas fa-user-cog"></i>
+                                    Editar Permissões
+                                </button>
+                        </div>
+
+                        <div class="user-email">
+                            {{ user.email }}
+                            <span class="user-since">Desde {{ user.since }}</span>
+                        </div>
+
+                        <div class="user-permissions">
+                            {{ getPermissionsDescription(user.role) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="no-users" *ngIf="!isCarregando && users.length === 0">
+                    <i class="fas fa-users"></i>
+                    <p>Nenhum usuário cadastrado</p>
+                    <small>Adicione usuários para gerenciar permissões</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de Cadastro de Usuário -->
+        <div *ngIf="isCardCadastroAberto" class="card-cadastro-overlay">
+            <div class="card-cadastro">
+                <div class="card-header">
+                    <h3>Cadastrar Novo Usuário</h3>
+                    <button class="fechar-btn" (click)="fecharCardCadastro()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="card-body">
+                    <form (ngSubmit)="cadastrarUsuario(usuarioForm)" #usuarioForm="ngForm">
+                        <div class="form-group">
+                            <label for="nome">Nome Completo:</label>
+                            <input type="text" id="nome" name="nome" ngModel required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" ngModel required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="senha">Senha:</label>
+                            <input type="password" id="senha" name="senha" ngModel>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="perfil">Perfil:</label>
+                            <select id="perfil" name="perfil" ngModel>
+                                <option value="O">Operador</option>
+                                <option value="G">Gerente</option>
+                                <option value="A">Administrador</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancelar" (click)="fecharCardCadastro()">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-salvar" [disabled]="!usuarioForm.valid">
+                                Cadastrar Usuário
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-    </nav>
 
-    <header class="topo">
-        <!-- CORRIGIR: Título da página -->
-        <h1 class="titulo-Topo">Usuários</h1>
-        <div class="subtitulo">Gerenciamento de Usuários do Sistema</div>
-    </header>
+        <!-- Modal de Edição de Permissões -->
+        <div *ngIf="isModalEditarPermissoesAberto && usuarioSelecionado" class="modal-overlay">
+            <div class="modal-editar-permissoes">
+                <div class="modal-header">
+                    <h3>Editar Permissões - {{ usuarioSelecionado.name }}</h3>
+                    <button class="fechar-btn" (click)="fecharModalEditarPermissoes()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <form (ngSubmit)="salvarPermissoes()" #permissoesForm="ngForm">
+                        <div class="form-group">
+                            <label for="nivelPermissao">Nível de Permissão:</label>
+                            <select 
+                                id="nivelPermissao"
+                                name="nivelPermissao"
+                                [ngModel]="usuarioSelecionado.role"
+                                (ngModelChange)="onRoleChange($event)"
+                                required
+                                #nivelPermissao="ngModel">
+                                <option value="admin">Administrador</option>
+                                <option value="gerente">Gerente</option>
+                                <option value="operador">Operador</option>
+                            </select>
+                        </div>
 
-    <!-- Adicionar conteúdo específico da página de usuários aqui -->
-    <main class="main-content">
-        <div class="content-area">
-            <!-- Conteúdo da página de usuários será inserido aqui -->
-            <p>Conteúdo da gestão de usuários...</p>
+                        <div class="permissoes-descricao">
+                            <h4>Permissões Atribuídas:</h4>
+                            <div *ngIf="usuarioSelecionado.role === 'admin'" class="permissao-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Acesso total ao sistema</span>
+                            </div>
+                            <div *ngIf="usuarioSelecionado.role === 'gerente'" class="permissao-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Todas as funcionalidades e gerenciar (editar/remover/adicionar) usuários</span>
+                            </div>
+                            <div *ngIf="usuarioSelecionado.role === 'operador'" class="permissao-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Gerenciar (editar/remover/adicionar) produtos e dar baixa quando o produto voltar do empréstimo</span>
+                            </div>
+                            <div *ngIf="usuarioSelecionado.role === 'cliente'" class="permissao-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Apenas realizar empréstimos</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="btn-cancelar" (click)="fecharModalEditarPermissoes()">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn-salvar" [disabled]="!permissoesForm.valid">
+                                Salvar Alterações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </main>
+    <br>
+    <br>
 </body>

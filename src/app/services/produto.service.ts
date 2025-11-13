@@ -49,8 +49,8 @@ export class ProdutoService {
   /**
    * Cria um novo produto
    */
-  criarProduto(produto: Produto): Observable<any> {
-    return this.http.post<any>(this.apiUrl, produto, { withCredentials: true });
+  criarProduto(produto: Partial <Produto>): Observable<any> {
+    return this.http.post<Produto>(this.apiUrl, produto, { withCredentials: true });
   }
 
   /**

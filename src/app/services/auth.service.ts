@@ -56,9 +56,7 @@ export class AuthService {
           localStorage.setItem(this.USER_KEY, JSON.stringify(response.usuario));
           console.log('✅ Usuário salvo no localStorage');
         }
-        if (response.token) {
-          localStorage.setItem(this.TOKEN_KEY, response.token);
-        }
+        // Não armazenamos o token em localStorage; confiamos no cookie httpOnly enviado pelo backend
       }),
       catchError((error: any) => {
         let mensagem = 'Erro desconhecido';
@@ -99,15 +97,26 @@ export class AuthService {
 
   // ✅ LOGOUT
   logout(): void {
-    localStorage.removeItem(this.USER_KEY);
-    localStorage.removeItem(this.TOKEN_KEY);
-    console.log('Logout realizado (dados locais limpos)');
+    // Chama o endpoint de logout no backend para limpar o cookie httpOnly
+    this.http.post<any>(`${this.apiUrl}/logout`, {}, { withCredentials: true }).subscribe({
+      next: () => {
+        localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.TOKEN_KEY);
+        console.log('Logout realizado (cookie e dados locais limpos)');
+      },
+      error: (err) => {
+        // Mesmo se a requisição falhar, limpamos dados locais para evitar estado inconsistente
+        console.error('Erro ao chamar logout no servidor:', err);
+        localStorage.removeItem(this.USER_KEY);
+        localStorage.removeItem(this.TOKEN_KEY);
+      }
+    });
   }
 
   // ✅ AUTENTICAÇÃO
   isAuthenticated(): boolean {
-    const token = this.getToken();
-    return !!token;
+    // Retorna true se houver um usuário salvo localmente.
+    return !!this.getUsuarioLogado();
   }
 
   getToken(): string | null {
@@ -116,16 +125,20 @@ export class AuthService {
 
   // ✅ VALIDA TOKEN
   validateToken(): Observable<boolean> {
-    return this.http.get<any>(`${this.apiUrl}`, { withCredentials: true }).pipe(
-      tap(() => {
-        console.log('✅ Token válido - usuário autenticado');
+    // Chamar endpoint protegido `/usuario/logado` que retorna os dados do usuário se o cookie for válido
+    return this.http.get<any>(`${this.apiUrl}/logado`, { withCredentials: true }).pipe(
+      tap((response) => {
+        if (response) {
+          // Atualiza dados do usuário localmente
+          localStorage.setItem(this.USER_KEY, JSON.stringify(response));
+          console.log('✅ Token válido - usuário autenticado');
+        }
       }),
       map(() => true),
       catchError((error) => {
         if (error.status === 401) {
           console.log('❌ Token inválido ou expirado');
           localStorage.removeItem(this.USER_KEY);
-          localStorage.removeItem(this.TOKEN_KEY);
           return of(false);
         }
         console.error('Erro ao validar token:', error);

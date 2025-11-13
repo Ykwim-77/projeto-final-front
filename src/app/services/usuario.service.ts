@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable} from '../../../node_modules/rxjs/dist/types';
+import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { tap } from 'rxjs/operators';
-import {Usuario} from '../models/user.model'
+import { Usuario } from '../models/user.model';
 
 
 
@@ -26,14 +26,14 @@ export class UsuarioService {
    * Busca todos os usuários
    */
   listarUsuarios(): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(this.apiUrl);
+    return this.http.get<Usuario[]>(this.apiUrl, { withCredentials: true });
   }
 
   /**
    * Busca um usuário por ID
    */
   buscarUsuarioPorId(id: number): Observable<Usuario> {
-    return this.http.get<Usuario>(`${this.apiUrl}/${id}`).pipe(
+    return this.http.get<Usuario>(`${this.apiUrl}/${id}`, { withCredentials: true }).pipe(
       tap((usuario: Usuario) => {
         console.log(usuario);
       })
@@ -57,14 +57,28 @@ export class UsuarioService {
    * Atualiza dados do usuário
    */
   atualizarUsuario(id: number, dados: Partial<Usuario>): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, dados);
+    return this.http.put<any>(`${this.apiUrl}/${id}`, dados, { withCredentials: true });
   }
 
   /**
    * Desativa um usuário
    */
   desativarUsuario(id: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/desativar/${id}`, {});
+    return this.http.post<any>(`${this.apiUrl}/desativar/${id}`, {}, { withCredentials: true });
+  }
+
+  /**
+   * Cria um novo usuário
+   */
+  criarUsuario(dados: Partial<Usuario>): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}`, dados, { withCredentials: true });
+  }
+
+  /**
+   * Deleta um usuário por ID
+   */
+  deletarUsuario(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }
 

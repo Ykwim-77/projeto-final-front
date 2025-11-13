@@ -161,72 +161,53 @@ export class ProdutosComponent implements OnInit {
   }
 
   async salvarProduto() {
-    try {
-      const idToUpdate = this.produtoEditando ? 
-        (this.produtoEditando.id_produto || (this.produtoEditando as any).id) : null;
-      
-      const payload = {
-        nome: this.novoProduto.nome.trim(),
-        descricao: this.novoProduto.descricao?.trim() || null,
-        categoria: this.novoProduto.categoria?.trim() || null,
-        codigo_publico: this.novoProduto.codigo_publico?.trim() || null,
-        preco_unitario: Number(this.novoProduto.preco_unitario) || null,
-        unidade_medida: this.novoProduto.unidade_medida?.trim() || null,
-        id_fornecedor: this.novoProduto.id_fornecedor || null
-      };
-      
-      const url = idToUpdate ? 
-        `${environment.apiUrl}/produto/${idToUpdate}` : 
-        `${environment.apiUrl}/produto`;
-      
-      const method = idToUpdate ? 'PUT' : 'POST';
-      
-      const res = await fetch(url, {
-        method: method,
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+    const produto = {
+      nome: this.novoProduto.nome,
+      descricao: this.novoProduto.descricao,
+      categoria: this.novoProduto.categoria,
+      codigo_publico: this.novoProduto.codigo_publico,
+      preco_unitario: this.novoProduto.preco_unitario,
+      unidade_medida: this.novoProduto.unidade_medida,
+      id_fornecedor: this.novoProduto.id_fornecedor ?? undefined, // 👈 converte null → undefined
+    };
+  
+    if (this.produtoEditando) {
+      // Atualizar
+      const idParaAtualizar = (this.produtoEditando as any).id_produto ?? (this.produtoEditando as any).id ?? (this.produtoEditando as any).id_patrimonio;
+
+      this.produtoService.atualizarProduto(idParaAtualizar, produto).subscribe({
+        next: () => {
+          console.log('Produto atualizado com sucesso!');
+          this.fecharCardCadastro();
+          this.carregarProdutos();
+        },
+        error: (err) => console.error('Erro ao atualizar produto:', err)
       });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('Erro ao salvar produto:', res.status, errorText);
-        return;
-      }
-      
-      const data = await res.json();
-      console.log('✅ Produto salvo:', data);
-      this.fecharCardCadastro();
-      await this.carregarProdutos();
-    } catch (err) {
-      console.error('Erro ao salvar produto:', err);
+    } else {
+      // Criar
+      this.produtoService.criarProduto(produto).subscribe({
+        next: () => {
+          console.log('Produto criado com sucesso!');
+          this.fecharCardCadastro();
+          this.carregarProdutos();
+        },
+        error: (err) => console.error('Erro ao criar produto:', err)
+      });
     }
   }
-
-  async excluirProduto(id: number) {
-    if (!confirm('Tem certeza que deseja excluir este produto?')) {
-      return;
-    }
-    
-    try {
-      const res = await fetch(`${environment.apiUrl}/produto/${id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('Erro ao excluir produto:', res.status, errorText);
-        return;
-      }
-      
-      console.log('✅ Produto excluído');
-      await this.carregarProdutos();
-    } catch (err) {
-      console.error('Erro ao excluir produto:', err);
-    }
+  
+  excluirProduto(id: number) {
+    if (!confirm('Tem certeza que deseja excluir este produto?')) return;
+  
+    this.produtoService.deletarProduto(id).subscribe({
+      next: () => {
+        console.log('Produto excluído com sucesso!');
+        this.carregarProdutos();
+      },
+      error: (err) => console.error('Erro ao excluir produto:', err)
+    });
   }
-
+  
   // 🔧 MÉTODOS DE VISUALIZAÇÃO E FILTROS
 
   mudarVisualizacao(tipo: 'grade' | 'tabela') {
@@ -343,62 +324,48 @@ export class ProdutosComponent implements OnInit {
   private async carregarProdutos(): Promise<void> {
     console.log('🔄 Iniciando carregamento de produtos da API...');
     
-    try {
-      const res = await fetch(`${environment.apiUrl}/produto`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Accept': 'application/json' }
-      });
-      
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error('❌ Erro ao carregar produtos:', res.status, errorText);
+    // Usar o serviço centralizado (já envia cookies com `withCredentials`)
+    this.produtoService.listarProdutos().subscribe({
+      next: (produtos: any[]) => {
+        console.log('✅ Produtos carregados da API (service):', produtos);
+
+        // Convertendo e normalizando campos
+        this.produtos = (produtos || []).map((p: any) => ({
+          ...p,
+          // padroniza IDs: API pode retornar `id_produto`, `id` ou `id_patrimonio`
+          id_produto: p.id_produto ?? p.id ?? p.id_patrimonio,
+          id: p.id ?? p.id_produto ?? p.id_patrimonio,
+          nome: p.nome || p.name || '',
+          name: p.name || p.nome || '',
+          preco: p.preco || p.preco_unitario || 0,
+          quantidade: (typeof p.quantidade === 'number' ? p.quantidade : (p.quantidade ?? p.estoque ?? p.quantidade_atual ?? 0)),
+          categoria: p.categoria || 'Sem categoria'
+        }));
+
+        // Inicializar produtos filtrados
+        this.produtosFiltrados = [...this.produtos];
+
+        // Extrair categorias únicas para os filtros
+        this.categoriasUnicas = [...new Set(this.produtos
+          .map(p => p.categoria)
+          .filter(cat => cat && cat !== 'Sem categoria')
+        )];
+
+        this.atualizarMetricas();
+        this.initializeAlerts();
+        this.initializeCategories();
+        this.initializeLowStockProducts();
+      },
+      error: (error) => {
+        console.error('❌ Erro ao carregar produtos via service:', error);
         this.produtos = [];
         this.produtosFiltrados = [];
         this.atualizarMetricas();
         this.initializeAlerts();
         this.initializeCategories();
         this.initializeLowStockProducts();
-        return;
       }
-      
-      const produtos = await res.json();
-      console.log('✅ Produtos carregados da API:', produtos);
-      
-      // Convertendo e normalizando campos
-      this.produtos = (produtos || []).map((p: any) => ({
-        ...p,
-        id: p.id || p.id_produto,
-        nome: p.nome || p.name || '',
-        name: p.name || p.nome || '',
-        preco: p.preco || p.preco_unitario || 0,
-        quantidade: (typeof p.quantidade === 'number' ? p.quantidade : (p.quantidade ?? p.estoque ?? p.quantidade_atual ?? 0)),
-        categoria: p.categoria || 'Sem categoria'
-      }));
-
-      // Inicializar produtos filtrados
-      this.produtosFiltrados = [...this.produtos];
-      
-      // Extrair categorias únicas para os filtros
-      this.categoriasUnicas = [...new Set(this.produtos
-        .map(p => p.categoria)
-        .filter(cat => cat && cat !== 'Sem categoria')
-      )];
-      
-      this.atualizarMetricas();
-      this.initializeAlerts();
-      this.initializeCategories();
-      this.initializeLowStockProducts();
-      
-    } catch (error) {
-      console.error('❌ Erro ao carregar produtos da API:', error);
-      this.produtos = [];
-      this.produtosFiltrados = [];
-      this.atualizarMetricas();
-      this.initializeAlerts();
-      this.initializeCategories();
-      this.initializeLowStockProducts();
-    }
+    });
   }
 
   private atualizarMetricas(): void {
