@@ -283,10 +283,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     
     // Configurações de layout
     const padding = {
-      top: 70,    // Aumentado para título e valores
-      right: 40,
-      bottom: 90, // Aumentado para labels com 2 linhas
-      left: 65
+      top: 30,    // Aumentado para título e valores
+      right: -99,
+      bottom: 20,
+      left: 60 // Aumentado para labels com 2 linhas
     };
     
     const chartWidth = canvas.width - (padding.left + padding.right);
@@ -294,7 +294,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     
     // Configurações para barras - MAIS ESPAÇO
     const numeroBarras = this.chartData.bar.length;
-    const barSpacing = 50; // MAIS ESPAÇO ENTRE BARRAS
+    const barSpacing = 30; // MAIS ESPAÇO ENTRE BARRAS
     const barWidth = 45;   // Largura fixa
     const maxValue = Math.max(...this.chartData.bar.map(item => item.value));
     
@@ -304,7 +304,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     
     // Desenhar eixos
     ctx.strokeStyle = '#ddd';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     // Eixo Y
     ctx.moveTo(padding.left, padding.top);
@@ -349,7 +349,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       ctx.fillRect(x, y, barWidth, barHeight);
       
       // Borda da barra
-      ctx.strokeStyle = '#fff';
+      ctx.strokeStyle = '#CCC';
       ctx.lineWidth = 1;
       ctx.strokeRect(x, y, barWidth, barHeight);
       
@@ -363,15 +363,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       const valorY = Math.max(y - 15, padding.top + 10);
       
       // Fundo para o valor (opcional, para melhor legibilidade)
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.fillStyle = 'rgba(41, 16, 151, 0)';
       const textWidth = ctx.measureText(valorFormatado).width;
       ctx.fillRect(x + barWidth/2 - textWidth/2 - 3, valorY - 10, textWidth + 6, 14);
       
-      // Texto do valor
-      ctx.fillStyle = '#2D3748';
-      ctx.font = 'bold 10px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(valorFormatado, x + barWidth / 2, valorY);
       
       // NOME DO PRODUTO - COM QUEBRA INTELIGENTE
       ctx.fillStyle = '#4A5568';
@@ -422,12 +417,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
         }
       }
     });
-    
-    // Título do gráfico (apenas um)
-    ctx.fillStyle = '#2D3748';
-    ctx.font = 'bold 14px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Top Produtos por Valor', canvas.width / 2, 25);
   }
 
   // Configurar event listeners para interação
@@ -740,13 +729,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   private carregarDadosUsuario(): void {
-    const usuario = this.authService.getUsuarioLogado() as unknown as { nome?: string; email?: string } | null;
-
-    if (usuario && typeof usuario === 'object') {
+    const usuario = this.authService.getUsuarioLogado();
       this.usuarioNome = usuario?.nome ?? '';
       this.usuarioEmail = usuario?.email ?? '';
       this.usuarioIniciais = this.gerarIniciais(this.usuarioNome);
-    }
   }
 
   private gerarIniciais(nome: string): string {

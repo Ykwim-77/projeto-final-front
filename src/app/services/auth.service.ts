@@ -29,15 +29,15 @@ export interface Usuario {
   providedIn: 'root'
 })
 export class AuthService {
-  getUsuarioLogado() {
-    // this.http.get<any>(`${this.apiUrl}/usuario/logado`, { withCredentials: true }).
-  }
+
   private apiUrl = `${environment.apiUrl}/usuario`;
   private readonly TOKEN_KEY = 'progest_token';
   private readonly USER_KEY = 'progest_user';
 
   constructor(private http: HttpClient) {}
-
+  getUsuarioLogado(){
+    return JSON.parse(localStorage.getItem(this.USER_KEY)!);
+  }
   // ✅ LOGIN
   login(email: string, password: string): Observable<any> {
     console.log(this.apiUrl);

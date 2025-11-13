@@ -5,8 +5,8 @@ import { CodigoVerificacao } from './pages/codigo-verificacao/codigo-verificacao
 import { RedefinirSenha } from './pages/redefinir-senha/redefinir-senha';
 import { HomeComponent } from './pages/home/home';
 import { ProdutosComponent } from './pages/produtos/produtos';
-import { MovimentacoesComponent } from './pages/movimentacoes/movimentacoes';
-//import { CadastroComponent } from './pages/cadastro/cadastro'; // ← CORRIGIDO!
+import { UsuariosComponent } from './pages/usuarios/usuarios';
+//import { Cadastro Component } from './pages/cadastro/cadastro'; // ← CORRIGIDO!
 import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -18,6 +18,6 @@ export const routes: Routes = [
  // { path: 'cadastro', component: CadastroComponent }, // ← AGORA VAI FUNCIONAR!
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'produtos', component: ProdutosComponent, canActivate: [AuthGuard] },
-  { path: 'movimentacoes', component: MovimentacoesComponent},
+  { path: 'usuarios', component: UsuariosComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '/login' }
 ];

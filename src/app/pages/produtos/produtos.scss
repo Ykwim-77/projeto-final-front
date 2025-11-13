@@ -285,7 +285,7 @@ section,
     cursor: pointer;
     border: none;
     transition: all 0.3s ease;
-    width: 15.5%;
+    width: 18%;
     height: 6%;
     margin-top: -5%;
     margin-left: 82%;
@@ -307,7 +307,6 @@ section,
     width: 80%;
     margin-top: 4%;
     height: 4%;
-    border-radius: 15px;
 }
 
 .search-bar input {
@@ -316,7 +315,8 @@ section,
     border: 1px solid #ccc;
     font-size: 16px;
     height: 4%;
-    background: white !important;
+    background: rgb(255, 255, 255) !important;
+    border-radius: 5px
 }
 
 .search-bar .fa-search {
@@ -327,49 +327,50 @@ section,
     color: #555;
     z-index: 2;
 }
-
 .botao-opcoes {
-    background-color: #0B1D5A;
+    background-color: #8b9bcf;
     border-radius: 5px;
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px 22px;
-    color: white;
+    color: #000; /* Preto quando desativado */
     cursor: pointer;
     border: none;
     transition: all 0.3s ease;
     width: 7.5%;
     height: 6%;
-    margin-top: -3.5%;
+    margin-top: -3%;
     margin-left: 82%;
 }
 
-.botao-opcoes:hover {
+.botao-opcoes:active {
     background-color: #0A2D8A;
     transform: translateY(-1px);
+    color: #ffffff !important; /* Branco quando ativado */
 }
 
 .botao-opcoes-tabela {
-    background-color: #0B1D5A;
+    background-color: #8b9bcf;
     border-radius: 5px;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 22px;
-    color: white;
+    padding: 10px 20px;
+    color: #000; /* Preto quando desativado */
     cursor: pointer;
     border: none;
     transition: all 0.3s ease;
     width: 7.5%;
     height: 6%;
-    margin-top: -3.5%;
-    margin-left: 90%;
+    margin-top: -3%;
+    margin-left: 92%;
 }
 
-.botao-opcoes-tabela:hover {
+.botao-opcoes-tabela:active {
     background-color: #0A2D8A;
     transform: translateY(-1px);
+    color: #ffffff !important; /* Branco quando ativado */
 }
 
 /* ===== CONTROLES DE VISUALIZAÇÃO ===== */
@@ -378,8 +379,14 @@ section,
     background: #0A2D8A !important;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(11, 29, 90, 0.3);
+    color: #ffffff !important; /* Branco quando ativo */
 }
 
+/* Garantir que quando não estiver ativo, o texto seja preto */
+.botao-opcoes:not(.active),
+.botao-opcoes-tabela:not(.active) {
+    color: #000000 !important; /* Preto quando não ativo */
+}
 /* ===== GRADE DE PRODUTOS ===== */
 .produtos-grade {
     display: grid;
@@ -491,7 +498,7 @@ section,
     margin-top: 20px;
     width: 100%;
     background: transparent !important;
-    border-radius: 0 0 12px 12px;
+    border-radius: 5px;
     padding-left: 0;
     padding-right: 0;
     padding-top: 20px;
@@ -507,7 +514,7 @@ section,
     width: 100%;
     border-collapse: collapse;
     font-size: 0.9rem;
-    background: white !important;
+    background: transparent !important;
 
     th {
         color: white;
@@ -906,13 +913,13 @@ section,
 
 .cadastro-card {
     background: white !important;
-    border-radius: 16px;
+    border-radius: 5px;
     width: 800px;
     max-width: calc(100% - 40px);
     max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    border: 1px solid #e6e9f2;
+    border: 1px solid transparent;
     animation: slideUp 0.3s ease;
     position: relative;
 }

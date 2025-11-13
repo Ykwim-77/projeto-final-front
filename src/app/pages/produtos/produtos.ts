@@ -1,14 +1,11 @@
-
-import { Component, OnInit, HostListener } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { DecimalPipe } from '@angular/common';
 import { Produto, ProdutoService } from '../../services/produto.service';
+import { AuthService } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { SidebarComponent } from "../../components/sidebar/sidebar.component";
+import { CommonModule, DecimalPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -34,6 +31,9 @@ interface LowStockProduct {
   category: string;
 }
 
+
+
+
 @Component({
   selector: 'app-produtos',
   templateUrl: './produtos.html',
@@ -42,33 +42,6 @@ interface LowStockProduct {
   imports: [CommonModule, FormsModule, DecimalPipe, SidebarComponent]
 })
 export class ProdutosComponent implements OnInit {
-  
-categoriasUnicas: string[] = [];
-limparFiltroPreco() {
-  this.filtros.precoMin = null;
-  this.filtros.precoMax = null;
-  this.aplicarFiltros();
-}
-toggleFiltro(campo: string) {
-  this.filtroAberto = this.filtroAberto === campo ? null : campo;
-  this.aplicarFiltros();
-}
-
-aplicarFiltros() {
-  this.ngOnInit(); {  
-    this.carregarProdutos();
-  }
-  this.produtosFiltrados = this.produtos.filter(p => {
-    const produto: any = p;
-    const nomeMatch = !this.filtros.nome || (p.nome || '').toLowerCase().includes(this.filtros.nome.toLowerCase());
-    const skuMatch = !this.filtros.sku || ((p.sku || produto.codigo_publico || '') + '').toLowerCase().includes(this.filtros.sku.toLowerCase());
-    const categoriaMatch = !this.filtros.categoria || (p.categoria || '') === this.filtros.categoria;
-    const precoMinMatch = !this.filtros.precoMin || (p.preco_unitario || 0) >= Number(this.filtros.precoMin);
-    const precoMaxMatch = !this.filtros.precoMax || (p.preco_unitario || 0) <= Number(this.filtros.precoMax);
-    const estoqueMinMatch = !this.filtros.estoqueMin || (p.quantidade || 0) >= Number(this.filtros.estoqueMin);
-    return nomeMatch && skuMatch && categoriaMatch && precoMinMatch && precoMaxMatch && estoqueMinMatch;
-  });
-}
   // Controle de exibição
   showCardCadastro: boolean = false;
   produtoEditando: Produto | null = null;
@@ -87,56 +60,64 @@ aplicarFiltros() {
 
   // Lista de produtos
   produtos: Produto[] = [];
+  produtosFiltrados: Produto[] = [];
+
+  // Filtros
+  filtros: any = {
+    nome: '',
+    sku: '',
+    categoria: '',
+    precoMin: null,
+    precoMax: null,
+    estoqueMin: 0
+  };
+  filtroAberto: string | null = null;
+  categoriasUnicas: string[] = [];
 
   // Dados de interface
-  menuItems: MenuItem[] = [];
+  menuItems: any[] = [];
   lowStockCount: number = 0;
   lowStockAlert: string = '';
 
   // Cards de Métricas
-  metricCards: MetricCard[] = [];
+  metricCards: any[] = [];
+  
   // Dados individuais
   totalProducts: number = 0;
   stockValue: string = '';
 
   // Listas
-  categories: Category[] = [];
-  lowStockProducts: LowStockProduct[] = [];
+  categories: any[] = [];
+  lowStockProducts: any[] = [];
 
   // Usuário
   usuarioNome: string = '';
   usuarioEmail: string = '';
   usuarioIniciais: string = '';
-produtosFiltrados: Produto[] = [];
-filtros: any = {
-  nome: '',
-  sku: '',
-  categoria: '',
-  precoMin: null,
-  precoMax: null,
-  estoqueMin: 0
-};
-filtroAberto: string | null = null;
+
+
+
+
 
   constructor(
-    private router: Router,
     private authService: AuthService,
-    private produtoService: ProdutoService
+    private router: Router,
+    private produtoService:ProdutoService
   ) {}
 
-  // Inicialização
   ngOnInit() {
+    console.log('🚀 ProdutosComponent ngOnInit iniciado');
     this.carregarDadosUsuario();
     this.initializeMenu();
-    this.carregarProdutos();
+    this.initializeAlerts();
     this.initializeMetrics();
     this.initializeCategories();
     this.initializeLowStockProducts();
+    this.carregarProdutos();
   }
 
   // 🔧 MÉTODOS DO CRUD
 
-  // Abrir card de cadastro
   abrirCardCadastro() {
     this.produtoEditando = null;
     this.novoProduto = {
@@ -151,110 +132,6 @@ filtroAberto: string | null = null;
     this.showCardCadastro = true;
   }
 
-  // Editar produto
-  editarProduto(produto: Produto) {
-    this.produtoEditando = produto;
-    this.novoProduto = {
-      nome: produto.nome || produto.name || '',
-      codigo_publico: produto.sku || (produto as any).codigo_publico || '',
-      categoria: produto.categoria || '',
-      preco_unitario: produto.preco_unitario || (produto as any).preco_unitario || 0,
-      unidade_medida: (produto as any).unidade_medida || '',
-      descricao: produto.descricao || '',
-      id_fornecedor: (produto as any).id_fornecedor || null
-    };
-    this.showCardCadastro = true;
-  }
-
-  // Salvar produto (criar ou atualizar)
-  async salvarProduto() {
-    // Detecta ID do produto que será atualizado (suporta id_produto ou id)
-    const idToUpdate = this.produtoEditando ? (this.produtoEditando.id_produto || (this.produtoEditando as any).id) : null;
-    
-    try {
-      if (idToUpdate) {
-        // Atualizar produto existente
-        const payload = {
-          nome: this.novoProduto.nome.trim(),
-          descricao: this.novoProduto.descricao?.trim() || null,
-          categoria: this.novoProduto.categoria?.trim() || null,
-          codigo_publico: this.novoProduto.codigo_publico?.trim() || null,
-          preco_unitario: Number(this.novoProduto.preco_unitario) || null,
-          unidade_medida: this.novoProduto.unidade_medida?.trim() || null,
-          id_fornecedor: this.novoProduto.id_fornecedor || null
-        };
-        
-        const res = await fetch(`${environment.apiUrl}/produto/${idToUpdate}`, {
-          method: 'PUT',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error('Erro ao atualizar produto:', res.status, errorText);
-          return;
-        }
-        
-        const data = await res.json();
-        console.log('✅ Produto atualizado:', data);
-        this.fecharCardCadastro();
-        await this.carregarProdutos();
-      } else {
-        // Criar novo produto
-        const payload = {
-          nome: this.novoProduto.nome.trim(),
-          descricao: this.novoProduto.descricao?.trim() || null,
-          categoria: this.novoProduto.categoria?.trim() || null,
-          codigo_publico: this.novoProduto.codigo_publico?.trim() || null,
-          preco_unitario: Number(this.novoProduto.preco_unitario) || null,
-          unidade_medida: this.novoProduto.unidade_medida?.trim() || null,
-          id_fornecedor: this.novoProduto.id_fornecedor || null
-        };
-        
-        const res = await fetch(`${environment.apiUrl}/produto`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        
-        if (!res.ok) {
-          const errorText = await res.text();
-          console.error('Erro ao criar produto:', res.status, errorText);
-          return;
-        }
-        
-        const data = await res.json();
-        console.log('✅ Produto criado:', data);
-        this.fecharCardCadastro();
-        await this.carregarProdutos();
-      }
-    } catch (err) {
-      console.error('Erro ao salvar produto:', err);
-    }
-  }
-
-  // Excluir produto
-  async excluirProduto(id: number) {
-    if (!confirm('Tem certeza que deseja excluir este produto?')) {
-      return;
-    }
-    this.produtoService.deletarProduto(id).subscribe({
-      complete: () => {
-        this.carregarProdutos();
-      },
-      next: () => {
-        
-      },
-      error: (error) => {
-        console.error('Erro ao deletar produto:', error);
-      }
-    });
-
-  } 
-  // Fechar card de cadastro
   fecharCardCadastro() {
     this.showCardCadastro = false;
     this.produtoEditando = null;
@@ -269,53 +146,146 @@ filtroAberto: string | null = null;
     };
   }
 
-  // Mudar entre visualização grade/tabela
-  mudarVisualizacao(tipo: 'grade' | 'tabela') {
-    this.visualizacao = tipo;
+  editarProduto(produto: Produto) {
+    this.produtoEditando = produto;
+    this.novoProduto = {
+      nome: produto.nome || produto.name || '',
+      codigo_publico: produto.sku || (produto as any).codigo_publico || '',
+      categoria: produto.categoria || '',
+      preco_unitario: produto.preco_unitario || (produto as any).preco_unitario || 0,
+      unidade_medida: (produto as any).unidade_medida || '',
+      descricao: produto.descricao || '',
+      id_fornecedor: (produto as any).id_fornecedor || null
+    };
+    this.showCardCadastro = true;
   }
 
-  // Atualizar métricas
-  atualizarMetricas() {
-    this.totalProducts = this.produtos.length;
-    
-    const valorTotal = this.produtos.reduce((total, produto) => 
-      total + ((produto.preco_unitario || 0) * (produto.estoque || 0)), 0
-    );
-    
-    this.stockValue = new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(valorTotal);
-
-    this.lowStockCount = this.produtos.filter(p => (p.estoque || 0) < 5).length;
-
-    // Atualizar metricCards
-    this.metricCards = [
-      {
-        title: 'Total de Produtos',
-        value: this.totalProducts,
-        variation: this.totalProducts > 0 ? '+12% este mês' : '-',
-        trend: this.totalProducts > 0 ? 'positive' : 'neutral'
-      },
-      {
-        title: 'Valor do Estoque',
-        value: this.stockValue,
-        variation: valorTotal > 0 ? '+8.2%' : '-',
-        trend: valorTotal > 0 ? 'positive' : 'neutral'
-      },
-      {
-        title: 'Itens em Baixa',
-        value: this.lowStockCount,
-        variation: this.lowStockCount > 0 ? 'atenção' : 'tudo ok',
-        trend: this.lowStockCount > 0 ? 'negative' : 'positive'
-      },
-      {
-        title: 'Saídas do Mês',
-        value: 0,
-        variation: '-',
-        trend: 'neutral'
+  async salvarProduto() {
+    try {
+      const idToUpdate = this.produtoEditando ? 
+        (this.produtoEditando.id_produto || (this.produtoEditando as any).id) : null;
+      
+      const payload = {
+        nome: this.novoProduto.nome.trim(),
+        descricao: this.novoProduto.descricao?.trim() || null,
+        categoria: this.novoProduto.categoria?.trim() || null,
+        codigo_publico: this.novoProduto.codigo_publico?.trim() || null,
+        preco_unitario: Number(this.novoProduto.preco_unitario) || null,
+        unidade_medida: this.novoProduto.unidade_medida?.trim() || null,
+        id_fornecedor: this.novoProduto.id_fornecedor || null
+      };
+      
+      const url = idToUpdate ? 
+        `${environment.apiUrl}/produto/${idToUpdate}` : 
+        `${environment.apiUrl}/produto`;
+      
+      const method = idToUpdate ? 'PUT' : 'POST';
+      
+      const res = await fetch(url, {
+        method: method,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Erro ao salvar produto:', res.status, errorText);
+        return;
       }
-    ];
+      
+      const data = await res.json();
+      console.log('✅ Produto salvo:', data);
+      this.fecharCardCadastro();
+      await this.carregarProdutos();
+    } catch (err) {
+      console.error('Erro ao salvar produto:', err);
+    }
+  }
+
+  async excluirProduto(id: number) {
+    if (!confirm('Tem certeza que deseja excluir este produto?')) {
+      return;
+    }
+    
+    try {
+      const res = await fetch(`${environment.apiUrl}/produto/${id}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Erro ao excluir produto:', res.status, errorText);
+        return;
+      }
+      
+      console.log('✅ Produto excluído');
+      await this.carregarProdutos();
+    } catch (err) {
+      console.error('Erro ao excluir produto:', err);
+    }
+  }
+
+  // 🔧 MÉTODOS DE VISUALIZAÇÃO E FILTROS
+
+  mudarVisualizacao(tipo: 'grade' | 'tabela') {
+    this.visualizacao = tipo;
+    if (tipo === 'tabela' && this.produtosFiltrados.length === 0) {
+      this.produtosFiltrados = [...this.produtos];
+    }
+  }
+
+  toggleFiltro(campo: string) {
+    this.filtroAberto = this.filtroAberto === campo ? null : campo;
+  }
+
+  aplicarFiltros() {
+    this.produtosFiltrados = this.produtos.filter(produto => {
+      // Filtro por nome
+      if (this.filtros.nome && 
+          !produto.nome?.toLowerCase().includes(this.filtros.nome.toLowerCase())) {
+        return false;
+      }
+      
+      // Filtro por SKU
+      if (this.filtros.sku && 
+          !produto.codigo_publico?.toLowerCase().includes(this.filtros.sku.toLowerCase())) {
+        return false;
+      }
+      
+      // Filtro por categoria
+      if (this.filtros.categoria && 
+          produto.categoria !== this.filtros.categoria) {
+        return false;
+      }
+      
+      // Filtro por preço mínimo
+      if (this.filtros.precoMin !== null && 
+          (produto.preco_unitario || 0) < this.filtros.precoMin) {
+        return false;
+      }
+      
+      // Filtro por preço máximo
+      if (this.filtros.precoMax !== null && 
+          (produto.preco_unitario || 0) > this.filtros.precoMax) {
+        return false;
+      }
+      
+      // Filtro por estoque mínimo
+      if (this.filtros.estoqueMin > 0 && 
+          (produto.quantidade || 0) < this.filtros.estoqueMin) {
+        return false;
+      }
+      
+      return true;
+    });
+  }
+
+  limparFiltroPreco() {
+    this.filtros.precoMin = null;
+    this.filtros.precoMax = null;
+    this.aplicarFiltros();
   }
 
   // 🔧 MÉTODOS AUXILIARES
@@ -367,64 +337,111 @@ filtroAberto: string | null = null;
   }
 
   private carregarDadosUsuario(): void {
-    const usuario = this.authService.getUsuarioLogado() as unknown as { nome?: string; email?: string } | null;
-
-    if (usuario !== null && typeof usuario === 'object') {
-      this.usuarioNome = usuario.nome || 'Usuário';
-      this.usuarioEmail = usuario.email || '';
-      this.usuarioIniciais = this.gerarIniciais(this.usuarioNome);
-    }
+    
   }
 
   private async carregarProdutos(): Promise<void> {
     console.log('🔄 Iniciando carregamento de produtos da API...');
     
+    try {
+      const res = await fetch(`${environment.apiUrl}/produto`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Accept': 'application/json' }
+      });
       
-       this.produtoService.listarProdutos().subscribe({
-            next: (produtos) => {
-                this.produtos = produtos;
-            },
-            error: (error) => {
-              console.error('❌ Erro ao carregar produtos:', error);
-              this.produtos = [];
-              this.atualizarMetricas();
-              this.initializeAlerts();
-              this.initializeCategories();
-              this.initializeLowStockProducts();
-            }
-        });
-  
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('❌ Erro ao carregar produtos:', res.status, errorText);
+        this.produtos = [];
+        this.produtosFiltrados = [];
+        this.atualizarMetricas();
+        this.initializeAlerts();
+        this.initializeCategories();
+        this.initializeLowStockProducts();
+        return;
+      }
+      
+      const produtos = await res.json();
+      console.log('✅ Produtos carregados da API:', produtos);
+      
+      // Convertendo e normalizando campos
+      this.produtos = (produtos || []).map((p: any) => ({
+        ...p,
+        id: p.id || p.id_produto,
+        nome: p.nome || p.name || '',
+        name: p.name || p.nome || '',
+        preco: p.preco || p.preco_unitario || 0,
+        quantidade: (typeof p.quantidade === 'number' ? p.quantidade : (p.quantidade ?? p.estoque ?? p.quantidade_atual ?? 0)),
+        categoria: p.categoria || 'Sem categoria'
+      }));
 
-      // Ajusta nomes conflitantes retornados pela API
-    //   this.produtos = (produtos || []).map((p: any) => ({
-    //     ...p,
-    //     nome: p.nome || p.name,
-    //     id: p.id || p.id_produto,
-    //     preco: p.preco || p.preco_unitario || 0,
-    //     quantidade: p.quantidade ?? p.estoque ?? p.quantidade_atual ?? 0,
-    //     sku: p.sku || p.codigo_publico || ''
-    //   }));
+      // Inicializar produtos filtrados
+      this.produtosFiltrados = [...this.produtos];
       
-    //   // Extrair categorias únicas
-    //   this.categoriasUnicas = [...new Set(this.produtos.map(p => p.categoria).filter(c => c))];
+      // Extrair categorias únicas para os filtros
+      this.categoriasUnicas = [...new Set(this.produtos
+        .map(p => p.categoria)
+        .filter(cat => cat && cat !== 'Sem categoria')
+      )];
       
-    //   // Aplicar filtros após carregar produtos
-    //   this.aplicarFiltros();
+      this.atualizarMetricas();
+      this.initializeAlerts();
+      this.initializeCategories();
+      this.initializeLowStockProducts();
       
-    //   this.atualizarMetricas();
-    //   this.initializeAlerts();
-    //   this.initializeCategories();
-    //   this.initializeLowStockProducts();
-    // } catch (error) {
-    //   console.error('❌ Erro ao carregar produtos da API:', error);
-    //   this.produtos = [];
-    //   this.produtosFiltrados = [];
-    //   this.categoriasUnicas = [];
-    //   this.atualizarMetricas();
-    //   this.initializeAlerts();
-    //   this.initializeCategories();
-    //   this.initializeLowStockProducts();
-    // }
+    } catch (error) {
+      console.error('❌ Erro ao carregar produtos da API:', error);
+      this.produtos = [];
+      this.produtosFiltrados = [];
+      this.atualizarMetricas();
+      this.initializeAlerts();
+      this.initializeCategories();
+      this.initializeLowStockProducts();
+    }
+  }
+
+  private atualizarMetricas(): void {
+    this.totalProducts = this.produtos.length;
+    
+    const valorTotal = this.produtos.reduce((total, produto) => 
+      total + ((produto.preco_unitario || 0) * (produto.quantidade || 0)), 0
+    );
+    
+    this.stockValue = new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(valorTotal);
+
+    this.lowStockCount = this.produtos.filter(p => (p.quantidade || 0) < 5).length;
+
+    // Atualizar metricCards
+    this.metricCards = [
+      {
+        title: 'Total de Produtos',
+        value: this.totalProducts,
+        variation: this.totalProducts > 0 ? '+12% este mês' : '-',
+        trend: this.totalProducts > 0 ? 'positive' : 'neutral'
+      },
+      {
+        title: 'Valor do Estoque',
+        value: this.stockValue,
+        variation: valorTotal > 0 ? '+8.2%' : '-',
+        trend: valorTotal > 0 ? 'positive' : 'neutral'
+      },
+      {
+        title: 'Itens em Baixa',
+        value: this.lowStockCount,
+        variation: this.lowStockCount > 0 ? 'atenção' : 'tudo ok',
+        trend: this.lowStockCount > 0 ? 'negative' : 'positive'
+      },
+      {
+        title: 'Saídas do Mês',
+        value: 0,
+        variation: '-',
+        trend: 'neutral'
+      }
+    ];
   }
 
   private gerarIniciais(nome: string): string {
