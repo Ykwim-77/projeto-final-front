@@ -1,18 +1,45 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Produto } from '../../services/produto.service';
+import { Produto, ProdutoService } from '../../services/produto.service';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { SidebarComponent } from "../../components/sidebar/sidebar.component";
+import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
+
+
+interface MenuItem {
+  name: string;
+  active?: boolean;
+}
+
+interface MetricCard {
+  title: string;
+  value: string | number;
+  variation: string;
+  trend: 'positive' | 'negative' | 'neutral';
+}
+
+interface Category {
+  name: string;
+  percentage: string;
+}
+
+interface LowStockProduct {
+  name: string;
+  category: string;
+}
+
+
+
 
 @Component({
   selector: 'app-produtos',
   templateUrl: './produtos.html',
   styleUrls: ['./produtos.scss'],
   standalone: true,
-  imports: [CommonModule, RouterLink, FormsModule]
+  imports: [CommonModule, FormsModule, DecimalPipe, SidebarComponent]
 })
 export class ProdutosComponent implements OnInit {
   // Controle de exibição
@@ -68,9 +95,14 @@ export class ProdutosComponent implements OnInit {
   usuarioEmail: string = '';
   usuarioIniciais: string = '';
 
+
+
+
+
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private produtoService:ProdutoService
   ) {}
 
   ngOnInit() {
@@ -305,13 +337,7 @@ export class ProdutosComponent implements OnInit {
   }
 
   private carregarDadosUsuario(): void {
-    const usuario = this.authService.getUsuarioLogado() as unknown as { nome?: string; email?: string } | null;
-
-    if (usuario && typeof usuario === 'object') {
-      this.usuarioNome = usuario?.nome ?? '';
-      this.usuarioEmail = usuario?.email ?? '';
-      this.usuarioIniciais = this.gerarIniciais(this.usuarioNome);
-    }
+    
   }
 
   private async carregarProdutos(): Promise<void> {
