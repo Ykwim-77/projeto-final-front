@@ -1,28 +1,25 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
     <!-- Menu Lateral -->
     <app-sidebar></app-sidebar>
     <!-- Conteúdo Principal -->
     <main>
         <header class="topo">
-            <h1 class="titulo-Topo">Dashboard</h1>
-            <div class="subtitulo">Uma Visão Geral Do Seu Estoque</div>
+            <h1 class="titulo-Topo">Movimentações</h1>
+            <div class="subtitulo">Controle entradas e saídas do estoque</div>
         </header>
         <br>
         <br>
         <section class="conteudo-principal flex gap-xl">
             <!-- Card 1: Total de Produtos -->
             <div class="card">
-                <div class="card-title">
-                    
-                </div>
-                <div class="card-value">
-
-                </div>
+                <div class="card-title">{{ metricCards[0]?.title || 'Total' }}</div>
+                <div class="card-value">{{ totalProducts || 0 }}</div>
                 <div class="card-variation">
-                    
+                    <p>Movimentações</p>
                 </div>
                 <div class="imgCard"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                         width="24px" fill="#F3F3F3">
@@ -30,16 +27,25 @@
                     </svg> </div>
             </div>
 
-            <!-- Card 2: Valor do Estoque -->
+            <!-- Card 2: Produtos de Entrada -->
             <div class="card">
-                <div class="card-title">
-                    <p>vhbhhb</p>
-                </div>
-                <div class="card-value">
-
-                </div>
+                <div class="card-title">{{ metricCards[1]?.title || 'Entradas' }}</div>
+                <div class="card-value">{{ produtosEntrada || 0 }}</div>
                 <div class="card-variation">
-                    
+                    <p>Unidades</p>
+                </div>
+                <div class="imgCard"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
+                        width="24px" fill="#F3F3F3">
+                        <path d="m256-240-56-56 384-384H240v-80h480v480h-80v-344L256-240Z" />
+                    </svg> </div>
+            </div>
+
+            <!-- Card 3: Produtos de Saida -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[2]?.title || 'Saídas' }}</div>
+                <div class="card-value">{{ produtosSaida || 0 }}</div>
+                <div class="card-variation">
+                    <p>Unidades</p>
                 </div>
                 <div class="imgCard2"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                         width="24px" fill="#F3F3F3">
@@ -47,23 +53,37 @@
                     </svg> </div>
             </div>
 
-            <!-- Card 2: Valor do Estoque -->
-            <div class="card">
-                <div class="card-title">
-                    <p>vhbhhb</p>
-                </div>
-                <div class="card-value">
-
-                </div>
-                <div class="card-variation">
-                    
-                </div>
-                <div class="imgCard2"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
-                        width="24px" fill="#F3F3F3">
-                        <path d="M360-200v-80h264L160-744l56-56 464 464v-264h80v400H360Z" />
-                    </svg> </div>
+        </section>
+        <section class="escolha">
+            <div
+                class="opcao1"
+                [class.active]="selectedOption === 'opcao1'"
+                (click)="selectOption('opcao1')"
+            >
+                Total
             </div>
 
+            <div
+                class="opcao2"
+                [class.active]="selectedOption === 'opcao2'"
+                (click)="selectOption('opcao2')"
+            >
+                Entradas
+            </div>
+
+            <div
+                class="opcao3"
+                [class.active]="selectedOption === 'opcao3'"
+                (click)="selectOption('opcao3')"
+            >
+                Saídas
+            </div>
+            </section>
+
+        <section class="valoresContainer">
+            <div class="produtos">
+                <p>bhbhv</p>
+            </div>
         </section>
         <br>
     </main>

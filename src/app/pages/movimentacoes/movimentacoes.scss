@@ -7,7 +7,7 @@
 
 /* CORREÇÃO DO FUNDO - APLICAR EM TODOS OS NÍVEIS */
 html, body {
-    background-color: #D0DAED !important;
+    background-color: #e9e3fa !important;
     min-height: 100%;
     margin: 0;
     padding: 0;
@@ -17,7 +17,7 @@ html, body {
 }
 
 body {
-    background-color: #D0DAED !important;
+    background-color: #e6ebf8 !important;
     display: flex;
     min-height: 100vh;
     width: 100%;
@@ -46,6 +46,22 @@ main {
     flex: 1;
 }
 
+.titulo-Topo {
+    color: #0B1D5A;
+    margin-bottom: 5px;
+}
+
+.titulo-Topo h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.subtitulo {
+    color: rgba(44, 40, 40, 0.801);
+    margin-bottom: 20px;
+}
+
 /* CARDS DE MÉTRICAS */
 .conteudo-principal {
     display: flex;
@@ -58,8 +74,8 @@ main {
 .card {
     flex: 1;
     min-width: 220px;
-    max-width: 280px;
-    background-color: white;
+    max-width: 32%;
+    background-color: #f5f5f5;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     padding: 25px;
@@ -87,3 +103,71 @@ main {
 
 .imgCard { background-color: #4fa877; }
 .imgCard2 { background-color: #d63647; }
+
+/* produtos */
+
+.valoresContainer {
+    background-color: #f5f5f5;
+    display: flex;
+    gap: 1px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: purple;
+}
+
+.card-title {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.card-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.card-variation {
+    font-size: 13px;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+}
+
+.escolha {
+    background-color: #f5f5f5;
+    display: flex;
+    gap: 1px;
+    padding: 5px;
+    width: 25%;
+    border-radius: 8px;
+}
+
+.opcao1 {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.opcao3 {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.opcao1, .opcao2, .opcao3 {
+  background-color: #f5f5f5;
+  color: #707583;
+  padding: 10px 15px;
+  text-align: center;
+  width: 80px;
+  height: 40px;
+  cursor: pointer;
+  flex: 1;
+  user-select: none;
+
+  &.active {
+    background-color: #e9e3fa;
+    color: #111111;
+  }
+}
