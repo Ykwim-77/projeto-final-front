@@ -61,7 +61,6 @@
             </button>
         </div>
     </nav>
-
     <main>
         <header class="topo">
             <div class="topo-texto">
@@ -106,15 +105,14 @@
                             <label><i class="fas fa-ruler"></i> Categorias</label>
                             <select [(ngModel)]="novoProduto.unidade_medida" name="unidade_medida" class="input">
                                 <option value="">Selecione...</option>
-                                <option value="UN">Maquinas e Equipamentos</option>
-                                <option value="KG">Quilograma (KG)</option>
-                                <option value="G">Grama (G)</option>
-                                <option value="L">Litro (L)</option>
-                                <option value="ML">Mililitro (ML)</option>
-                                <option value="M">Metro (M)</option>
-                                <option value="CM">Centímetro (CM)</option>
-                                <option value="CX">Caixa (CX)</option>
-                                <option value="PC">Peça (PC)</option>
+                                <option value="ME">Maquinas e Equipamentos</option>
+                                <option value="A">Acessórios</option>
+                                <option value="MU">Moveis e Utensílios</option>
+                                <option value="P">Patrimônio</option>
+                                <option value="EL">Eletrodomésticos</option>
+                                <option value="CO">Componentes</option>
+                                <option value="SU">Suportes</option>
+                                <option value="CX">Caixas</option>
                             </select>
                         </div>
                     </div>
@@ -330,23 +328,27 @@
                       </div>
                     </div>
                   </th>
-                  
-                  <th>Valor Total</th>
                   <th>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 <tr class="linha-vertical" *ngFor="let produto of produtosFiltrados" 
                     [class.estoque-baixo]="(produto.quantidade || 0) < 5">
+
                   <td class="nome-produto">
                     <strong>{{ produto.nome || 'Produto sem nome' }}</strong>
                     <small *ngIf="produto.descricao">{{ produto.descricao }}</small>
                   </td>
                   <td class="sku">{{ produto.sku || 'N/A' }}</td>
+
                   <td class="categoria">
                     <span class="categoria-badge">{{ produto.categoria || 'Sem categoria' }}</span>
                   </td>
-                  <td class="preco">R$ {{ (produto.preco_unitario || 0) | number:'1.2-2' }}</td>
+
+                  <td class="valor-total">
+                    R$ {{ ((produto.preco_unitario || 0) * (produto.quantidade || 0)) | number:'1.2-2' }}
+                  </td>
+                  
                   <td class="estoque">
                     <span [class.estoque-critico]="(produto.quantidade || 0) < 5">
                       {{ produto.quantidade || 0 }} unidades
@@ -356,9 +358,7 @@
                       Estoque baixo
                     </div>
                   </td>
-                  <td class="valor-total">
-                    R$ {{ ((produto.preco_unitario || 0) * (produto.quantidade || 0)) | number:'1.2-2' }}
-                  </td>
+
                   <td class="acoes">
                     <button class="btn-acao btn-editar-tabela" 
                             (click)="editarProduto(produto)"
