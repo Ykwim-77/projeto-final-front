@@ -1,12 +1,15 @@
 <nav class="sidebar">
     <div class="logo-container">
         <div class="logo">
-            <img src="assets/imagens/logoprogestao.png  " alt="Logo StockSmart" class="logoTopo">
-            <span id="titulo-topo">ProGest</span>
-            <div id="tagline">Gestão Inteligente</div>
+            <img src="assets/imagens/logoprogestao.png" alt="Logo StockSmart" class="logoTopo">
+            <div class="logo-text">
+                <span id="titulo-topo">ProGest</span>
+                <div id="tagline">Gestão Inteligente</div>
+            </div>
         </div>
     </div>
-    <hr/>
+
+    <hr />
     <div class="menu-container">
         <!-- Use routerLink para navegação no Angular -->
         <a routerLink="/home" class="menu-item active" routerLinkActive="active">
@@ -17,14 +20,14 @@
             <i class="fas fa-box-open"></i>
             <span class="menu-text">Produtos</span>
         </a>
+        <a routerLink="/emprestimos" class="menu-item" routerLinkActive="active">
+            <i class="fas fa-boxes"></i>
+            <span class="menu-text">Emprestimos</span>
+        </a>
         <!-- Adicione as outras rotas conforme necessário -->
         <a routerLink="/movimentacoes" class="menu-item" routerLinkActive="active">
             <i class="fas fa-exchange-alt"></i>
             <span class="menu-text">Movimentações</span>
-        </a>
-        <a routerLink="/relatorios" class="menu-item" routerLinkActive="active">
-            <i class="fas fa-chart-bar"></i>
-            <span class="menu-text">Relatórios</span>
         </a>
         <a routerLink="/previsao-ia" class="menu-item" routerLinkActive="active">
             <i class="fas fa-robot"></i>
@@ -33,10 +36,6 @@
         <a routerLink="/usuarios" class="menu-item" routerLinkActive="active">
             <i class="fas fa-users"></i>
             <span class="menu-text">Usuários</span>
-        </a>
-        <a routerLink="/configuracoes" class="menu-item" routerLinkActive="active">
-            <i class="fas fa-cog"></i>
-            <span class="menu-text">Configurações</span>
         </a>
     </div>
     <hr>

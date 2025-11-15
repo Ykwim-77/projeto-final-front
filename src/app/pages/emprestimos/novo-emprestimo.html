@@ -1,0 +1,64 @@
+<body>
+  <app-sidebar></app-sidebar>
+  <main>
+    <header class="topo">
+      <div class="topo-texto">
+        <h1 class="titulo-Topo">Novo Empréstimo</h1>
+        <div class="subtitulo">Registre um novo empréstimo de produto</div>
+      </div>
+    </header>
+
+    <section class="conteudo-principal">
+      <div class="form-card">
+        <form (ngSubmit)="submit()" #form="ngForm">
+          <div class="form-group">
+            <label for="produto">Produto</label>
+            <select id="produto" name="produto" [(ngModel)]="novoEmprestimo.id_patrimonio" (change)="onProdutoChange()" required>
+              <option [ngValue]="undefined">-- selecione --</option>
+              <option *ngFor="let p of produtos" [ngValue]="p.id_patrimonio">{{ p.nome }} (estoque: {{ p.estoque }})</option>
+            </select>
+          </div>
+
+          <div *ngIf="selecionadoProduto" class="produto-estado">
+            <p><strong>Estado:</strong> <span [class]="selecionadoProduto.status ? 'disponivel' : 'indisponivel'">{{ selecionadoProduto.status ? 'Disponível' : 'Indisponível' }}</span></p>
+            <p><strong>Estoque:</strong> {{ selecionadoProduto.estoque }}</p>
+          </div>
+
+          <div class="form-group">
+            <label for="usuario">Usuário</label>
+            <select id="usuario" name="usuario" [(ngModel)]="novoEmprestimo.id_usuario" required>
+              <option [ngValue]="undefined">-- selecione --</option>
+              <option *ngFor="let u of usuarios" [ngValue]="u.id_usuario">{{ u.nome }} ({{ u.email }})</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="quantidade">Quantidade</label>
+            <input id="quantidade" name="quantidade" type="number" min="1" [(ngModel)]="novoEmprestimo.quantidade" required />
+          </div>
+
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status" [(ngModel)]="novoEmprestimo.status">
+              <option value="ativo">Ativo</option>
+              <option value="atrasado">Atrasado</option>
+              <option value="devolvido">Devolvido</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="observacoes">Observações</label>
+            <textarea id="observacoes" name="observacoes" rows="3" [(ngModel)]="novoEmprestimo.observacoes"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-cancelar" (click)="router.navigate(['/emprestimos'])">Cancelar</button>
+            <button type="submit" class="btn-salvar" [disabled]="!form.valid || carregando">Cadastrar</button>
+          </div>
+
+          <div *ngIf="mensagemErro" class="erro">{{ mensagemErro }}</div>
+        </form>
+      </div>
+    </section>
+  </main>
+</body>

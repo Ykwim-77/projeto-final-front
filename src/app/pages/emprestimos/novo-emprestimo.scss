@@ -1,0 +1,14 @@
+.form-card {
+  max-width: 900px;
+  margin: 24px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.form-group { margin-bottom: 12px; }
+.produto-estado { margin-bottom: 12px; }
+.produto-estado .disponivel { color: green; }
+.produto-estado .indisponivel { color: red; }
+.form-actions { display:flex; gap:12px; justify-content:flex-end; margin-top: 16px; }
+.erro { color: #c00; margin-top: 12px; }
