@@ -3,6 +3,9 @@ import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EmprestimoService, Emprestimo } from '../../services/emprestimo.service';
+import { ProdutoService, Produto } from '../../services/produto.service';
+import { UsuarioService } from '../../services/usuario.service';
+import { Usuario } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 
 // Interface para os cards de métricas
@@ -53,7 +56,9 @@ export class EmprestimosComponent implements OnInit {
   // Controle dos modais
   isModalNovoEmprestimoAberto: boolean = false;
   isModalEditarEmprestimoAberto: boolean = false;
+  isModalDevolucaoAberto: boolean = false;
   emprestimoSelecionado: Emprestimo | null = null;
+  emprestimoDevolucao: Emprestimo | null = null;
   isCarregando: boolean = false;
   mensagemErro: string = '';
   
@@ -66,17 +71,42 @@ export class EmprestimosComponent implements OnInit {
     valor_total: 0,
     status: 'ativo',
     observacoes: '',
-    id_usuario: 1
+    id_usuario: 1,
+    quantidade: 1
   };
+
+  // Lista de produtos para seleção no modal
+  produtosDisponiveis: Produto[] = [];
+  usuariosDisponiveis: Usuario[] = [];
+  produtoModalSelecionado: Produto | null = null;
 
   constructor(
     private emprestimoService: EmprestimoService,
     private authService: AuthService
+    , private produtoService: ProdutoService
+    , private usuarioService: UsuarioService
   ) {}
 
   ngOnInit(): void {
     this.carregarUsuarioLogado();
     this.carregarListaEmprestimos();
+    // carregar itens de seleção do modal imediatamente
+    this.carregarProdutosDisponiveis();
+    this.carregarUsuariosDisponiveis();
+  }
+
+  carregarProdutosDisponiveis(): void {
+    this.produtoService.listarProdutos().subscribe({
+      next: (p) => this.produtosDisponiveis = p || [],
+      error: (err) => console.warn('Não foi possível carregar produtos para seleção:', err)
+    });
+  }
+
+  carregarUsuariosDisponiveis(): void {
+    this.usuarioService.listarUsuarios().subscribe({
+      next: (u) => this.usuariosDisponiveis = u || [],
+      error: (err) => console.warn('Não foi possível carregar usuários para seleção:', err)
+    });
   }
 
   /**
@@ -101,8 +131,8 @@ export class EmprestimosComponent implements OnInit {
           ...e,
           // Compatibility aliases used by existing template
           id_movimentacao: e.id_emprestimo,
-          produto: e.usuario?.nome || 'Sem descrição',
-          usuario: e.usuario?.nome || '',
+          produto: e.patrimonio?.nome || 'Sem produto',
+          usuario: e.usuario?.nome || 'Sem usuário',
           dataEmprestimo: this.formatarData(e.data_pedido),
           dataDevolucao: e.data_recebimento ? this.formatarData(e.data_recebimento) : null,
           observacao: e.observacoes || null,
@@ -111,6 +141,16 @@ export class EmprestimosComponent implements OnInit {
         } as Emprestimo));
         this.atualizarContadores();
         this.isCarregando = false;
+          // carregar produtos para seleção no modal
+          this.produtoService.listarProdutos().subscribe({
+            next: (p) => this.produtosDisponiveis = p || [],
+            error: (err) => console.warn('Não foi possível carregar produtos para seleção:', err)
+          });
+          // carregar usuarios para seleção no modal
+          this.usuarioService.listarUsuarios().subscribe({
+            next: (u) => this.usuariosDisponiveis = u || [],
+            error: (err) => console.warn('Não foi possível carregar usuários para seleção:', err)
+          });
       },
       error: (err) => {
         console.error('Erro ao carregar empréstimos:', err);
@@ -194,9 +234,15 @@ export class EmprestimosComponent implements OnInit {
       valor_total: 0,
       status: 'ativo',
       observacoes: '',
-      id_usuario: this.userLogado?.id_usuario || 1
+      id_usuario: this.userLogado?.id_usuario || undefined,
+      quantidade: 1
     };
     this.isModalNovoEmprestimoAberto = true;
+  }
+
+  onModalProdutoChange(): void {
+    const id = this.novoEmprestimo.id_patrimonio;
+    this.produtoModalSelecionado = this.produtosDisponiveis.find(p => p.id_patrimonio === id) || null;
   }
 
   /**
@@ -210,9 +256,9 @@ export class EmprestimosComponent implements OnInit {
    * Processa o cadastro de novo empréstimo
    */
   cadastrarEmprestimo(novoEmprestimoForm: any): void {
-    // Usar form como referência para validação, mas usar dados do this.novoEmprestimo
-    if (!novoEmprestimoForm.value.valor_total) {
-      this.mensagemErro = 'Preencha todos os campos obrigatórios';
+    // Validação básica: precisa de usuário e produto selecionados
+    if (!this.novoEmprestimo.id_patrimonio || !this.novoEmprestimo.id_usuario) {
+      this.mensagemErro = 'Selecione usuário e produto.';
       return;
     }
 
@@ -222,8 +268,16 @@ export class EmprestimosComponent implements OnInit {
       valor_total: novoEmprestimoForm.value.valor_total || 0,
       status: novoEmprestimoForm.value.status || 'ativo',
       observacoes: novoEmprestimoForm.value.observacoes || '',
-      id_usuario: this.userLogado?.id_usuario || 1
+      id_usuario: this.novoEmprestimo.id_usuario || this.userLogado?.id_usuario || 1,
+      id_patrimonio: this.novoEmprestimo.id_patrimonio,
+      quantidade: this.novoEmprestimo.quantidade || 1
     };
+
+    // Validação adicional: se produto selecionado tem estoque
+    if (this.produtoModalSelecionado && (payload.quantidade || 1) > (this.produtoModalSelecionado.estoque ?? 0)) {
+      this.mensagemErro = 'Quantidade excede o estoque disponível do produto selecionado.';
+      return;
+    }
 
     this.mensagemErro = '';
     this.emprestimoService.criarEmprestimo(payload).subscribe({
@@ -235,7 +289,9 @@ export class EmprestimosComponent implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao criar empréstimo:', err);
-        this.mensagemErro = 'Erro ao criar empréstimo: ' + (err?.message || 'Verifique os dados');
+        console.error('Resposta do servidor:', err.error);
+        // Preferir a mensagem do servidor quando disponível
+        this.mensagemErro = err.error?.mensagem || err.error?.dados || err.message || 'Erro ao criar empréstimo';
       }
     });
   }
@@ -254,6 +310,48 @@ export class EmprestimosComponent implements OnInit {
   fecharModalEditarEmprestimo(): void {
     this.isModalEditarEmprestimoAberto = false;
     this.emprestimoSelecionado = null;
+  }
+
+  /**
+   * Abre modal de devolução ao fazer duplo-clique
+   */
+  abrirModalDevolucao(emprestimo: Emprestimo): void {
+    this.emprestimoDevolucao = { ...emprestimo };
+    this.isModalDevolucaoAberto = true;
+  }
+
+  /**
+   * Fecha modal de devolução
+   */
+  fecharModalDevolucao(): void {
+    this.isModalDevolucaoAberto = false;
+    this.emprestimoDevolucao = null;
+  }
+
+  /**
+   * Confirma devolução do empréstimo
+   */
+  confirmarDevolucao(): void {
+    if (!this.emprestimoDevolucao) return;
+
+    const id = this.emprestimoDevolucao.id_movimentacao || this.emprestimoDevolucao.id_emprestimo;
+    if (!id) return;
+
+    // Marcar como devolvido
+    this.emprestimoService.atualizarEmprestimo(id, {
+      status: 'devolvido',
+      data_recebimento: new Date().toISOString()
+    }).subscribe({
+      next: () => {
+        this.carregarListaEmprestimos();
+        this.fecharModalDevolucao();
+        console.log('Empréstimo marcado como devolvido');
+      },
+      error: (err) => {
+        console.error('Erro ao marcar como devolvido:', err);
+        this.mensagemErro = 'Erro ao marcar como devolvido';
+      }
+    });
   }
 
   /**
@@ -315,7 +413,9 @@ export class EmprestimosComponent implements OnInit {
       id,
       {
         status: this.emprestimoSelecionado.status,
-        observacoes: (this.emprestimoSelecionado as any).observacoes ?? (this.emprestimoSelecionado as any).observacao
+        observacoes: (this.emprestimoSelecionado as any).observacoes ?? (this.emprestimoSelecionado as any).observacao,
+        id_patrimonio: (this.emprestimoSelecionado as any).id_patrimonio,
+        quantidade: (this.emprestimoSelecionado as any).quantidade || 1
       }
     ).subscribe({
       next: () => {

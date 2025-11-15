@@ -11,7 +11,10 @@ export interface Emprestimo {
   status: string;
   observacoes?: string | null;
   id_usuario?: number;
+  id_patrimonio?: number;
+  quantidade?: number;
   usuario?: any;
+  patrimonio?: any;
 
   // compatibility fields (optional)
   produto?: string;
@@ -20,7 +23,6 @@ export interface Emprestimo {
 
   // UI/backwards-compatibility aliases
   id_movimentacao?: number;
-  id_patrimonio?: number;
   tipo_movimentacao?: string;
   origem?: string;
   data_movimento?: string;
@@ -28,6 +30,7 @@ export interface Emprestimo {
   usuarioNome?: string;
   departamento?: string;
   contato?: string;
+  // Removed duplicate declaration of id_patrimonio
 }
 
 @Injectable({

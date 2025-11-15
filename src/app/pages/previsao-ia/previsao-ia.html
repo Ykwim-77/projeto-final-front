@@ -1,0 +1,46 @@
+<app-sidebar></app-sidebar>
+
+<main>
+    <header class="topo">
+        <div class="topo-texto">
+            <h1 class="titulo-Topo">Previsão com IA</h1>
+            <div class="subtitulo">Insights inteligentes para seu estoque</div>
+        </div>
+        <button class="botao-gerar-previsao">Gerar Previsão</button>
+    </header>
+
+    <section class="principal">
+        <div id="container">
+            <h1 id="titulo">Previsões de Reposição</h1>
+            <p id="texto">Abaixo estão recomendações geradas automaticamente com base no estoque atual.</p>
+
+            <div *ngIf="carregando">Carregando previsões...</div>
+            <table *ngIf="!carregando && previsoes.length>0" class="table-previsao">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Estoque</th>
+                        <th>Min. Estoque</th>
+                        <th>Sugestão</th>
+                        <th>Urgência</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of previsoes">
+                        <td>{{ p.nome }}</td>
+                        <td>{{ p.estoque }}</td>
+                        <td>{{ p.min_estoque }}</td>
+                        <td>{{ p.sugestao }}</td>
+                        <td>{{ p.urgencia }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div *ngIf="!carregando && previsoes.length===0">Nenhuma previsão disponível.</div>
+
+            <div class="acoes">
+                <button (click)="carregarPrevisoes()">Gerar / Atualizar Previsões</button>
+            </div>
+        </div>
+    </section>
+</main>

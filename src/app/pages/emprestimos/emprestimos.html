@@ -10,7 +10,7 @@
                 <div class="adicionar-emprestimo-container" (click)="abrirModalNovoEmprestimo()">
                     <i class="fas fa-hand-holding-usd"></i>
                     <div class="adicionar-emprestimo-text">Novo Empréstimo</div>
-                </div>  
+                </div>
             </div>
         </header>
 
@@ -144,7 +144,8 @@
 
                 <div class="movimentacoes-list" *ngIf="emprestimosFiltrados.length > 0">
                     <div class="movimentacao-item emprestimo-item" *ngFor="let emprestimo of emprestimosFiltrados" 
-                         [class]="getStatusClass(emprestimo.status)">
+                         [class]="getStatusClass(emprestimo.status)"
+                         (dblclick)="abrirModalDevolucao(emprestimo)">
                         <div class="mov-icon" [class]="'mov-' + emprestimo.status">
                             <i [class]="getStatusIcon(emprestimo.status)"></i>
                         </div>
@@ -203,9 +204,29 @@
                 <div class="modal-body">
                     <form (ngSubmit)="cadastrarEmprestimo(emprestimoForm)" #emprestimoForm="ngForm">
                         <div class="form-group">
-                            <label for="valor_total">Valor Total:</label>
-                            <input type="number" id="valor_total" name="valor_total" 
-                                   [(ngModel)]="novoEmprestimo.valor_total" required>
+                            <label for="quantidade">Quantidade</label>
+                            <input type="number" id="quantidade" name="quantidade" min="1"
+                                   [(ngModel)]="novoEmprestimo.quantidade" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="produtoSelect">Produto:</label>
+                            <select id="produtoSelect" name="produtoSelect" [(ngModel)]="novoEmprestimo.id_patrimonio" (change)="onModalProdutoChange()" required>
+                                <option [ngValue]="undefined">-- selecione --</option>
+                                <option *ngFor="let p of produtosDisponiveis" [ngValue]="p.id_patrimonio">{{ p.nome }} ({{ p.estoque }})</option>
+                            </select>
+                            <div *ngIf="produtoModalSelecionado" class="produto-estado">
+                                <small><strong>Estado:</strong> <span [class]="produtoModalSelecionado.status ? 'disponivel' : 'indisponivel'">{{ produtoModalSelecionado.status ? 'Disponível' : 'Indisponível' }}</span></small>
+                                <small style="display:block"><strong>Estoque:</strong> {{ produtoModalSelecionado.estoque }}</small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="usuarioSelect">Usuário que pega</label>
+                            <select id="usuarioSelect" name="usuarioSelect" [(ngModel)]="novoEmprestimo.id_usuario" required>
+                                <option [ngValue]="undefined">-- selecione --</option>
+                                <option *ngFor="let u of usuariosDisponiveis" [ngValue]="u.id_usuario">{{ u.nome }} ({{ u.email }})</option>
+                            </select>
                         </div>
                         
                         <div class="form-group">
@@ -250,9 +271,22 @@
                 <div class="modal-body">
                     <form (ngSubmit)="salvarAlteracoesEmprestimo()" #editarEmprestimoForm="ngForm">
                         <div class="form-group">
+                            <label for="editProduto">Produto:</label>
+                            <select id="editProduto" name="editProduto" [(ngModel)]="emprestimoSelecionado.id_patrimonio">
+                                <option *ngFor="let p of produtosDisponiveis" [ngValue]="p.id_patrimonio">{{ p.nome }} ({{ p.estoque }})</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
                             <label for="editValor">Valor Total:</label>
                             <input type="number" id="editValor" name="editValor" 
                                    [(ngModel)]="emprestimoSelecionado.valor_total" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="editQuantidade">Quantidade:</label>
+                            <input type="number" id="editQuantidade" name="editQuantidade" min="1"
+                                   [(ngModel)]="emprestimoSelecionado.quantidade" required>
                         </div>
 
                         <div class="form-group">
@@ -282,6 +316,39 @@
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Devolução (duplo-clique) -->
+        <div *ngIf="isModalDevolucaoAberto && emprestimoDevolucao" class="modal-overlay">
+            <div class="modal-devolucao">
+                <div class="modal-header">
+                    <h3>Confirmar Devolução</h3>
+                    <button class="fechar-btn" (click)="fecharModalDevolucao()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="devolucao-info">
+                        <p><strong>Produto:</strong> {{ emprestimoDevolucao.produto }}</p>
+                        <p><strong>Usuário:</strong> {{ emprestimoDevolucao.usuario }}</p>
+                        <p><strong>Empréstimo em:</strong> {{ emprestimoDevolucao.dataEmprestimo }}</p>
+                        <p><strong>Quantidade:</strong> {{ emprestimoDevolucao.quantidade || 1 }}</p>
+                        <p style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 4px;">
+                            <i class="fas fa-info-circle"></i> Deseja confirmar a devolução deste empréstimo?
+                        </p>
+                    </div>
+                    
+                    <div class="form-actions" style="margin-top: 20px;">
+                        <button type="button" class="btn-cancelar" (click)="fecharModalDevolucao()">
+                            Cancelar
+                        </button>
+                        <button type="button" class="btn-salvar" (click)="confirmarDevolucao()">
+                            Confirmar Devolução
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

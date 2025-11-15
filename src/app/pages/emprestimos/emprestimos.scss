@@ -897,3 +897,25 @@ main {
         padding: 20px;
     }
 }
+
+// Modal de devolução
+.modal-devolucao {
+    background: white !important;
+    border-radius: 8px;
+    width: 500px;
+    max-width: calc(100% - 40px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+
+    .devolucao-info {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 4px;
+
+        p {
+            margin: 10px 0;
+            font-size: 0.95rem;
+            color: #333;
+        }
+    }
+}

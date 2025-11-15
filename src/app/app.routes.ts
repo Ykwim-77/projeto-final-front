@@ -7,6 +7,7 @@ import { HomeComponent } from './pages/home/home';
 import { ProdutosComponent } from './pages/produtos/produtos';
 import { UsuariosComponent } from './pages/usuarios/usuarios';
 import { EmprestimosComponent } from './pages/emprestimos/emprestimos';
+import { PrevisaoIa } from './pages/previsao-ia/previsao-ia';
 // import { CadastroComponent } from './pages/cadastro/cadastro'; // ← Mantenha comentado se não existe
 import { AuthGuard } from './guards/auth.guard';
 import { MovimentacoesComponent } from './pages/movimentacoes/movimentacoes';
@@ -17,6 +18,7 @@ export const routes: Routes = [
   { path: 'esqueceu-senha', component: EsqueceuSenhaComponent },
   { path: 'codigo-verificacao', component: CodigoVerificacao },
   { path: 'redefinir-senha', component: RedefinirSenha },
+  { path: 'previsao-ia', component: PrevisaoIa},
   // { path: 'cadastro', component: CadastroComponent }, // ← Mantenha comentado se não existe
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'movimentacoes', component: MovimentacoesComponent},
