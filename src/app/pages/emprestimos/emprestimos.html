@@ -1,6 +1,7 @@
 <body>
     <app-sidebar></app-sidebar>
     <main>
+        <!-- Header com título e botão alinhados -->
         <header class="topo">
             <div class="topo-texto">
                 <h1 class="titulo-Topo">Empréstimos</h1>
@@ -98,10 +99,6 @@
             <div class="grafico-card">
                 <div class="card-title">Ações Rápidas</div>
                 <div class="quick-actions">
-                    <button class="btn-novo-emprestimo" (click)="abrirModalNovoEmprestimo()">
-                        <i class="fas fa-hand-holding-usd"></i>
-                        Novo Empréstimo
-                    </button>
                     <button class="btn-relatorios" (click)="gerarRelatorio()">
                         <i class="fas fa-chart-bar"></i>
                         Gerar Relatório

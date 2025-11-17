@@ -1,0 +1,9 @@
+<div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-content">
+      <img [src]="logoPath" [alt]="logoAlt" class="loading-logo" *ngIf="showLogo">
+      <div class="progress-bar-indeterminate" *ngIf="type === 'progress'">
+        <div class="progress-track"></div>
+      </div>
+      <p class="loading-text">{{ message }}</p>
+    </div>
+  </div>

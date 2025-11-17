@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 import { FormsModule, NgForm } from '@angular/forms';
@@ -16,7 +17,7 @@ interface MetricCard {
   trend?: 'positive' | 'negative' | 'neutral';
 }
 
-// Tipo `Emprestimo` importado de `emprestimo.service.ts` para evitar conflitos de tipos entre arquivos.
+// Tipo Emprestimo importado de emprestimo.service.ts para evitar conflitos de tipos entre arquivos.
 
 @Component({
   selector: 'app-emprestimos',
@@ -262,7 +263,7 @@ export class EmprestimosComponent implements OnInit {
       return;
     }
 
-    // Construir payload compatível com o backend (modelo `emprestimo`)
+    // Construir payload compatível com o backend (modelo emprestimo)
     const payload: Partial<Emprestimo> = {
       data_pedido: new Date().toISOString(),
       valor_total: novoEmprestimoForm.value.valor_total || 0,

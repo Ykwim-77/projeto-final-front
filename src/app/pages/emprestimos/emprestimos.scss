@@ -41,7 +41,7 @@ main {
     min-height: 100vh;
     position: relative;
     margin-left: 240px; /* Largura do sidebar */
-    padding: 20px;
+    padding: 30px;
     width: calc(100% - 240px);
     flex: 1;
 }
@@ -54,13 +54,15 @@ main {
     width: 100%;
 }
 
-/* HEADER DO TOPO */
+/* HEADER DO TOPO - COM BOTÃO ALINHADO À DIREITA */
 .topo {
     background: transparent !important;
     margin-bottom: 20px;
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 20px;
 }
 
 .topo-texto {
@@ -70,25 +72,30 @@ main {
 .titulo-Topo {
     color: #0B1D5A;
     margin-bottom: 5px;
+}
+
+.titulo-Topo h1 {
     font-size: 2.5rem;
     font-weight: 700;
+    margin: 0;
 }
 
 .subtitulo {
     color: rgba(44, 40, 40, 0.801);
-    margin-bottom: 20px;
+    margin-bottom: 0;
 }
 
-/* ===== BOTÃO ADICIONAR EMPRÉSTIMO ===== */
+/* ===== BOTÃO ADICIONAR EMPRÉSTIMO - ALINHADO À DIREITA ===== */
 .adicionar-emprestimo-container {
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .adicionar-emprestimo-container > div {
     background-color: #0B1D5A;
-    border-radius: 5px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -97,23 +104,26 @@ main {
     cursor: pointer;
     border: none;
     transition: all 0.3s ease;
-    height: 100%;
+    white-space: nowrap;
+    height: 6%;
+    margin-top: 1px;
 }
 
 .adicionar-emprestimo-container > div:hover {
     background-color: #0A2D8A;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(11, 29, 90, 0.3);
 }
 
 .adicionar-emprestimo-text {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 /* ===== CARDS DE MÉTRICAS ===== */
 .conteudo-principal {
     display: flex;
-    gap: 20px;
+    gap: 30px;
     flex-wrap: wrap;
     margin-bottom: 30px;
     background: transparent !important;
@@ -783,6 +793,28 @@ main {
     }
 }
 
+// Modal de devolução
+.modal-devolucao {
+    background: white !important;
+    border-radius: 8px;
+    width: 500px;
+    max-width: calc(100% - 40px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+
+    .devolucao-info {
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 4px;
+
+        p {
+            margin: 10px 0;
+            font-size: 0.95rem;
+            color: #333;
+        }
+    }
+}
+
 /* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
     main {
@@ -870,7 +902,7 @@ main {
 }
 
 @media (max-width: 480px) {
-    .titulo-Topo {
+    .titulo-Topo h1 {
         font-size: 2rem;
     }
     
@@ -895,27 +927,5 @@ main {
 
     .modal-body {
         padding: 20px;
-    }
-}
-
-// Modal de devolução
-.modal-devolucao {
-    background: white !important;
-    border-radius: 8px;
-    width: 500px;
-    max-width: calc(100% - 40px);
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: slideUp 0.3s ease;
-
-    .devolucao-info {
-        padding: 20px;
-        background: #f8f9fa;
-        border-radius: 4px;
-
-        p {
-            margin: 10px 0;
-            font-size: 0.95rem;
-            color: #333;
-        }
     }
 }

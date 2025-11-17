@@ -1,55 +1,109 @@
 <div class="form">
   <div class="leftside">
-    <img src="assets/imagens/codigoVerificacao.png" alt="Tela de login">
+    <img src="assets/imagens/esqueceuSenha.png" alt="Tela de login">
   </div>
-
   <div class="rightside">
     <div class="login-title">
       <img src="assets/imagens/logoprogestao.png" alt="Logo" class="login-logo">
-      <h2>ProGest</h2>
+      <h2><strong>Pro</strong>Gest</h2>
+    </div>
+    <br>
+    <div id="texto">
+      <p>Digite o código de 6 dígitos enviado para seu email</p>
     </div>
     <br>
 
-    <div id="texto">
-      <h3>Agora digite o código de verificação<br> para continuar</h3>
-    </div>
-
     <form class="input-container" (ngSubmit)="onSubmit($event)">
-      <div class="containerCodigo">
-        <div class="inputCodigo" *ngFor="let i of [1,2,3,4,5,6]; let idx = index">
-          <input #inputRef type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" [(ngModel)]="codigo[idx]"
-            name="codigo{{idx+1}}" placeholder="-" required (input)="onInput($event, idx)"
-            (keydown)="onKeyDown($event, idx)" (focus)="onFocus($event)" (paste)="onPaste($event)" />
-        </div>
+      <div class="code-inputs-container">
+        <input 
+          type="text" 
+          maxlength="1" 
+          class="code-input" 
+          (input)="onInput($event, 0)" 
+          (keydown)="onKeyDown($event, 0)"
+          (focus)="onFocus($event)"
+          (paste)="onPaste($event)"
+          #inputRef
+          autocomplete="off"
+        >
+        <input 
+          type="text" 
+          maxlength="1" 
+          class="code-input" 
+          (input)="onInput($event, 1)" 
+          (keydown)="onKeyDown($event, 1)"
+          (focus)="onFocus($event)"
+          #inputRef
+          autocomplete="off"
+        >
+        <input 
+          type="text" 
+          maxlength="1" 
+          class="code-input" 
+          (input)="onInput($event, 2)" 
+          (keydown)="onKeyDown($event, 2)"
+          (focus)="onFocus($event)"
+          #inputRef
+          autocomplete="off"
+        >
+        <input 
+          type="text" 
+          maxlength="1" 
+          class="code-input" 
+          (input)="onInput($event, 3)" 
+          (keydown)="onKeyDown($event, 3)"
+          (focus)="onFocus($event)"
+          #inputRef
+          autocomplete="off"
+        >
+        <input 
+          type="text" 
+          maxlength="1" 
+          class="code-input" 
+          (input)="onInput($event, 4)" 
+          (keydown)="onKeyDown($event, 4)"
+          (focus)="onFocus($event)"
+          #inputRef
+          autocomplete="off"
+        >
+        <input 
+          type="text" 
+          maxlength="1" 
+          class="code-input" 
+          (input)="onInput($event, 5)" 
+          (keydown)="onKeyDown($event, 5)"
+          (focus)="onFocus($event)"
+          #inputRef
+          autocomplete="off"
+        >
       </div>
 
-      <div class="errorContainer">
-        <div *ngIf="errorMessage" class="error-message">
-          {{ errorMessage }}
-        </div>
-      </div>
-      <br>
       <br>
 
-      <div class="buttonContainer">
-        <button type="submit" class="login">Próximo</button>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
       </div>
-      <br>
-      <div class="resend-container">
-        <p>
-          Não recebeu o código?
-          <button type="button" (click)="reenviarCodigo()" class="resend-btn" [disabled]="!podeReenviar">
-            {{ podeReenviar ? 'Reenviar código' : 'Reenviar em ' + tempoRestante + 's' }}
-          </button>
-        </p>
-      </div>
+
+      <button type="submit" class="login" [disabled]="!todosCamposPreenchidos()">
+        Verificar Código
+      </button>
     </form>
-    <div class="indicators">
-      <ul>
-        <li [class.active]="currentStep === 0"></li>
-        <li [class.active]="currentStep === 1"></li>
-        <li [class.active]="currentStep === 2"></li>
-      </ul>
+
+    <div class="reenviar-codigo">
+      <p>
+        Não recebeu o código? 
+        <a 
+          href="#" 
+          (click)="reenviarCodigo()" 
+          [class.disabled]="!podeReenviar"
+        >
+          {{ podeReenviar ? 'Reenviar código' : 'Reenviar em ' + tempoRestante + 's' }}
+        </a>
+      </p>
     </div>
+
+    <button class="voltar-login" (click)="voltarParaLogin()">
+      Voltar para Login
+    </button>
   </div>
 </div>
