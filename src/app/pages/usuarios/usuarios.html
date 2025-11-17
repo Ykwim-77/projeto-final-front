@@ -206,6 +206,203 @@
         </section>
         <br>
         <br>
-        <!-- Restante do código (modais) permanece igual -->
+        
     </main>
+        <!-- Modal de Edição Completa de Usuário -->
+    <div *ngIf="isModalEditarUsuarioAberto && usuarioSelecionadoParaEdicao" class="modal-overlay">
+        <div class="modal-editar-usuario">
+            <div class="modal-header">
+                <h3>Editar Usuário - {{ usuarioSelecionadoParaEdicao.name }}</h3>
+                <button class="fechar-btn" (click)="fecharModalEditarUsuario()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form (ngSubmit)="salvarEdicaoUsuario()" #editarUsuarioForm="ngForm">
+                    <!-- Nome -->
+                    <div class="form-group">
+                        <label for="nomeEditar">Nome Completo:</label>
+                        <input type="text" id="nomeEditar" name="nomeEditar"
+                            [(ngModel)]="usuarioSelecionadoParaEdicao.name" required #nomeInput="ngModel">
+                        <div *ngIf="nomeInput.invalid && nomeInput.touched" class="erro-validacao">
+                            Nome é obrigatório
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="emailEditar">Email:</label>
+                        <input type="email" id="emailEditar" name="emailEditar"
+                            [(ngModel)]="usuarioSelecionadoParaEdicao.email" required #emailInput="ngModel">
+                        <div *ngIf="emailInput.invalid && emailInput.touched" class="erro-validacao">
+                            Email é obrigatório
+                        </div>
+                    </div>
+
+                    <!-- Senha -->
+                    <div class="form-group">
+                        <label for="senhaEditar">Nova Senha:</label>
+                        <input type="password" id="senhaEditar" name="senhaEditar"
+                            [(ngModel)]="novaSenha"
+                            placeholder="Deixe em branco para manter a senha atual"
+                            #senhaInput="ngModel">
+                        <small class="texto-ajuda">Deixe em branco para manter a senha atual</small>
+                    </div>
+
+                    <!-- Tipo de Usuário -->
+                    <div class="form-group"
+                        *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'">
+                        <label for="perfilEditar">Tipo de Usuário:</label>
+                        <select id="perfilEditar" name="perfilEditar"
+                            [(ngModel)]="usuarioSelecionadoParaEdicao.role"
+                            (ngModelChange)="onRoleChangeEditar($event)">
+                            <option value="admin">Administrador</option>
+                            <option value="gerente">Gerente</option>
+                            <option value="operador">Operador</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Ativo/Inativo -->
+                    <div class="form-group"
+                        *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A'">
+                        <label class="checkbox-container">
+                            <input type="checkbox"
+                                [(ngModel)]="usuarioSelecionadoParaEdicao.ativo"
+                                name="ativoEditar">
+                            <span class="checkmark"></span>
+                            Usuário Ativo
+                        </label>
+                    </div>
+
+                    <!-- Descrição das Permissões -->
+                    <div class="permissoes-descricao"
+                        *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'">
+                        <h4>Permissões Atribuídas:</h4>
+                        <div *ngIf="usuarioSelecionadoParaEdicao.role === 'admin'"
+                            class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Acesso total ao sistema</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionadoParaEdicao.role === 'gerente'"
+                            class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Todas as funcionalidades e gerenciar usuários</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionadoParaEdicao.role === 'operador'"
+                            class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Gerenciar produtos e dar baixa em empréstimos</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionadoParaEdicao.role === 'cliente'"
+                            class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Apenas realizar empréstimos</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar"
+                            (click)="fecharModalEditarUsuario()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-salvar"
+                            [disabled]="!editarUsuarioForm.valid">
+                            Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes do Cliente -->
+    <div *ngIf="isModalDetalhesClienteAberto && clienteSelecionado" class="modal-overlay">
+        <div class="modal-detalhes-cliente">
+            <div class="modal-header">
+                <h3>Detalhes do Cliente - {{ clienteSelecionado.name }}</h3>
+                <button class="fechar-btn" (click)="fecharModalDetalhesCliente()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="detalhes-cliente-body">
+                <!-- Informações Pessoais -->
+                <div class="detalhes-section">
+                    <h4>Informações Pessoais</h4>
+                    <div class="detalhes-grid">
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Nome Completo:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.name }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Email:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.email }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Telefone:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.infoAdicional?.telefone || 'Não informado' }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">CPF:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.infoAdicional?.cpf || 'Não informado' }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Data de Nascimento:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.infoAdicional?.dataNascimento || 'Não informada' }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Status:</span>
+                            <span class="detalhe-value" [class.ativo]="clienteSelecionado.ativo" [class.inativo]="!clienteSelecionado.ativo">
+                                {{ clienteSelecionado.ativo ? 'Ativo' : 'Inativo' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Endereço -->
+                <div class="detalhes-section" *ngIf="clienteSelecionado.infoAdicional?.endereco">
+                    <h4>Endereço</h4>
+                    <div class="detalhe-item">
+                        <span class="detalhe-value">{{ clienteSelecionado.infoAdicional?.endereco }}</span>
+                    </div>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="detalhes-section">
+                    <h4>Estatísticas</h4>
+                    <div class="estatisticas-cliente">
+                        <div class="estatistica-card">
+                            <span class="estatistica-valor">{{ clienteSelecionado.infoAdicional?.totalEmprestimos || 0 }}</span>
+                            <span class="estatistica-label">Total de Empréstimos</span>
+                        </div>
+                        <div class="estatistica-card">
+                            <span class="estatistica-valor">{{ clienteSelecionado.infoAdicional?.emprestimosAtivos || 0 }}</span>
+                            <span class="estatistica-label">Empréstimos Ativos</span>
+                        </div>
+                        <div class="estatistica-card">
+                            <span class="estatistica-valor">{{ clienteSelecionado.since }}</span>
+                            <span class="estatistica-label">Cliente Desde</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações -->
+                <div class="form-actions">
+                    <button type="button" class="btn-cancelar" (click)="fecharModalDetalhesCliente()">
+                        Fechar
+                    </button>
+                    <button 
+                        *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'"
+                        type="button" 
+                        class="btn-salvar" 
+                        (click)="abrirModalEditarUsuario(clienteSelecionado)">
+                        <i class="fas fa-edit"></i>
+                        Editar Cliente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
