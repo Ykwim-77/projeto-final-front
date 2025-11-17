@@ -97,24 +97,7 @@
                                 <span class="user-name">{{ user.name }}</span>
                             </div>
                             <div class="user-actions">
-                                <!-- Botão de editar permissões (visível apenas para ADM e Gerente) -->
-                                <button 
-                                    *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'"
-                                    class="btn-editar-permissoes"
-                                    (click)="abrirModalEditarPermissoes(user)">
-                                    <i class="fas fa-edit"></i>
-                                    Editar
-                                </button>
                                 <!-- Botão editar permissões (substitui deletar) -->
-                                <button 
-                                    *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
-                                    class="btn-editar-permissoes"
-                                    (click)="abrirModalEditarPermissoes(user)">
-                                    <i class="fas fa-user-cog"></i>
-                                    Editar Permissões
-                                </button>
-                                </div>
-                                <!-- Botão único: Editar Permissões (aparece para ADM/Gerente e não permite editar a si mesmo) -->
                                 <button
                                     *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
                                     class="btn-editar-permissoes"
@@ -176,6 +159,7 @@
                                 <option value="O">Operador</option>
                                 <option value="G">Gerente</option>
                                 <option value="A">Administrador</option>
+                                <option value="C">Cliente</option>
                             </select>
                         </div>
                         
