@@ -7,6 +7,8 @@ export interface Emprestimo {
   id_emprestimo?: number;
   data_pedido: string;
   data_recebimento?: string | null;
+  data_entrega?: string;
+  data_devolucao?: string;
   valor_total: number;
   status: string;
   observacoes?: string | null;
@@ -41,60 +43,15 @@ export class EmprestimoService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Lista todos os empréstimos (movimentações)
-   */
   listarEmprestimos(): Observable<Emprestimo[]> {
-    return this.http.get<Emprestimo[]>(this.apiUrl, { withCredentials: true });
+    return this.http.get<Emprestimo[]>(this.apiUrl);
   }
 
-  /**
-   * Busca um empréstimo por ID
-   */
-  buscarEmprestimoPorId(id: number): Observable<Emprestimo> {
-    return this.http.get<Emprestimo>(`${this.apiUrl}/${id}`, { withCredentials: true });
+  criarEmprestimo(emprestimo: any): Observable<Emprestimo> {
+    return this.http.post<Emprestimo>(this.apiUrl, emprestimo);
   }
 
-  /**
-   * Cria um novo empréstimo (movimentação)
-   */
-  criarEmprestimo(dados: Partial<Emprestimo>): Observable<any> {
-    return this.http.post<any>(this.apiUrl, dados, { withCredentials: true });
-  }
-
-  /**
-   * Atualiza um empréstimo
-   */
-  atualizarEmprestimo(id: number, dados: Partial<Emprestimo>): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, dados, { withCredentials: true });
-  }
-
-  /**
-   * Deleta um empréstimo
-   */
-  deletarEmprestimo(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
-  }
-
-  /**
-   * Marca empréstimo como devolvido
-   */
-  marcarComoDevolvido(id: number): Observable<any> {
-    return this.http.put<any>(
-      `${this.apiUrl}/${id}`,
-      { status: 'devolvido' },
-      { withCredentials: true }
-    );
-  }
-
-  /**
-   * Renova um empréstimo
-   */
-  renovarEmprestimo(id: number, novaDataDevolucao: string): Observable<any> {
-    return this.http.put<any>(
-      `${this.apiUrl}/${id}`,
-      { data_recebimento: novaDataDevolucao },
-      { withCredentials: true }
-    );
+  devolverEmprestimo(id: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/devolver`, {});
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { Produto, ProdutoService } from '../../services/produto.service';
 import { AuthService } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
@@ -83,7 +84,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private produtoService: ProdutoService
+    private produtoService: ProdutoService,
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -853,32 +855,33 @@ export class HomeComponent implements OnInit, AfterViewInit {
       .slice(0, 5);
   }
 
-  // Atualizar Movimentações (simulado por enquanto)
+  // Atualizar Movimentações (carregar do backend)
   private atualizarMovimentacoes(): void {
-    // Simular movimentações baseadas nos produtos
-    this.movimentacoes = [];
-    
-    if (!this.produtos || this.produtos.length === 0) {
-      return;
-    }
+    // Importar o serviço de movimentação
+    import('../../services/movimentacao.service').then(({ MovimentacaoService }) => {
+      const movimentacaoService = new MovimentacaoService(this.http);
 
-    // Pegar alguns produtos aleatórios para simular movimentações
-    const produtosParaMovimentacao = this.produtos.slice(0, Math.min(5, this.produtos.length));
-    
-    produtosParaMovimentacao.forEach((produto, index) => {
-      const diasAtras = 5 - index;
-      const data = new Date();
-      data.setDate(data.getDate() - diasAtras);
-      
-      this.movimentacoes.push({
-        produto: produto.nome || produto.name || 'Produto sem nome',
-        quantidade: Math.floor(Math.random() * 10) + 1,
-        tipo: Math.random() > 0.5 ? 'entrada' : 'saida',
-        data: data
+      movimentacaoService.listarMovimentacoes().subscribe({
+        next: (movimentacoes: any[]) => {
+          // Mapear para o formato esperado pela UI
+          this.movimentacoes = movimentacoes.slice(0, 5).map(movi => ({
+            produto: movi.patrimonio?.nome || 'Produto sem nome',
+            quantidade: 1, // Backend não tem quantidade específica
+            tipo: movi.tipo_movimentacao === 'entrada' ? 'entrada' : 'saida',
+            data: new Date(movi.data_movimento)
+          }));
+
+          // Ordenar por data (mais recente primeiro)
+          this.movimentacoes.sort((a, b) => b.data.getTime() - a.data.getTime());
+
+          console.log('✅ Movimentações carregadas do backend:', this.movimentacoes);
+        },
+        error: (error) => {
+          console.error('❌ Erro ao carregar movimentações:', error);
+          // Fallback: manter vazio ou dados simulados se necessário
+          this.movimentacoes = [];
+        }
       });
     });
-
-    // Ordenar por data (mais recente primeiro)
-    this.movimentacoes.sort((a, b) => b.data.getTime() - a.data.getTime());
   }
 }

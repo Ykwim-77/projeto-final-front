@@ -64,6 +64,7 @@ export class ProdutosComponent implements OnInit {
 
   // Filtros
   filtros: any = {
+    pesquisaGeral: '',
     nome: '',
     sku: '',
     categoria: '',
@@ -223,42 +224,53 @@ export class ProdutosComponent implements OnInit {
 
   aplicarFiltros() {
     this.produtosFiltrados = this.produtos.filter(produto => {
+      // Pesquisa geral (nome, sku ou categoria)
+      if (this.filtros.pesquisaGeral) {
+        const termo = this.filtros.pesquisaGeral.toLowerCase();
+        const nomeMatch = produto.nome?.toLowerCase().includes(termo);
+        const skuMatch = produto.codigo_publico?.toLowerCase().includes(termo);
+        const categoriaMatch = produto.categoria?.toLowerCase().includes(termo);
+        if (!nomeMatch && !skuMatch && !categoriaMatch) {
+          return false;
+        }
+      }
+
       // Filtro por nome
-      if (this.filtros.nome && 
+      if (this.filtros.nome &&
           !produto.nome?.toLowerCase().includes(this.filtros.nome.toLowerCase())) {
         return false;
       }
-      
+
       // Filtro por SKU
-      if (this.filtros.sku && 
+      if (this.filtros.sku &&
           !produto.codigo_publico?.toLowerCase().includes(this.filtros.sku.toLowerCase())) {
         return false;
       }
-      
+
       // Filtro por categoria
-      if (this.filtros.categoria && 
+      if (this.filtros.categoria &&
           produto.categoria !== this.filtros.categoria) {
         return false;
       }
-      
+
       // Filtro por preço mínimo
-      if (this.filtros.precoMin !== null && 
+      if (this.filtros.precoMin !== null &&
           (produto.preco_unitario || 0) < this.filtros.precoMin) {
         return false;
       }
-      
+
       // Filtro por preço máximo
-      if (this.filtros.precoMax !== null && 
+      if (this.filtros.precoMax !== null &&
           (produto.preco_unitario || 0) > this.filtros.precoMax) {
         return false;
       }
-      
+
       // Filtro por estoque mínimo
-      if (this.filtros.estoqueMin > 0 && 
+      if (this.filtros.estoqueMin > 0 &&
           (produto.quantidade || 0) < this.filtros.estoqueMin) {
         return false;
       }
-      
+
       return true;
     });
   }

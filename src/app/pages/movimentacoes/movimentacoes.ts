@@ -5,6 +5,7 @@ import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 import { ProdutoService, Produto } from '../../services/produto.service';
 import { AuthService } from '../../services/auth.service';
 import { MovimentacaoService, Movimentacao as MovimentacaoBackend } from '../../services/movimentacao.service';
+import { UsuarioService } from '../../services/usuario.service';
 
 // Interface para Movimentação (UI)
 export interface Movimentacao {
@@ -38,7 +39,8 @@ export class MovimentacoesComponent implements OnInit {
     private router: Router,
     private produtoService: ProdutoService,
     private authService: AuthService,
-    private movimentacaoService: MovimentacaoService
+    private movimentacaoService: MovimentacaoService,
+    private usuarioService: UsuarioService
   ) { }
 
   // Dados principais
@@ -50,6 +52,22 @@ export class MovimentacoesComponent implements OnInit {
   filteredMovimentacoes: Movimentacao[] = [];
   loading: boolean = true;
   produtos: Produto[] = [];
+  produtosDisponiveis: Produto[] = [];
+  usuariosDisponiveis: any[] = [];
+
+  // modal novo movimentacao
+  isModalNovoMovimentacaoAberto: boolean = false;
+  novoMovimentacao: Partial<any> = {
+    id_patrimonio: undefined,
+    id_usuario: undefined,
+    tipo_movimentacao: 'emprestimo',
+    origem: '',
+    observacao: ''
+  };
+
+  // modal editar movimentacao
+  isModalEditarMovimentacaoAberto: boolean = false;
+  movimentacaoSelecionada: Movimentacao | null = null;
 
   // Cards estáticos
   metricCards = [
@@ -77,6 +95,9 @@ export class MovimentacoesComponent implements OnInit {
         this.calcularMetricas();
         this.filtrarMovimentacoes();
         this.loading = false;
+        // carregar produtos e usuários para o modal
+        this.carregarProdutosDisponiveis();
+        this.carregarUsuariosDisponiveis();
       },
       error: (error: any) => {
         console.error('Erro ao carregar movimentações:', error);
@@ -177,6 +198,20 @@ export class MovimentacoesComponent implements OnInit {
     
     // Ordena por data (mais recente primeiro)
     return movimentacoes.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+  }
+
+  carregarProdutosDisponiveis(): void {
+    this.produtoService.listarProdutos().subscribe({
+      next: (p) => this.produtosDisponiveis = p || [],
+      error: (err) => console.warn('Erro ao carregar produtos:', err)
+    });
+  }
+
+  carregarUsuariosDisponiveis(): void {
+    this.usuarioService.listarUsuarios().subscribe({
+      next: (u) => this.usuariosDisponiveis = u || [],
+      error: (err) => console.warn('Erro ao carregar usuários:', err)
+    });
   }
 
   private filtrarMovimentacoes(): void {
