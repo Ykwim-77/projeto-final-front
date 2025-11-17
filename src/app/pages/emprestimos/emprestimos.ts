@@ -21,6 +21,7 @@ export class EmprestimosComponent implements OnInit {
   produtos: Produto[] = [];
   produtosFiltrados: Produto[] = [];
   usuariosDisponiveis: Usuario[] = [];
+  usuariosFiltrados: Usuario[] = [];
   carregando = false;
   mensagemErro = '';
 
@@ -51,6 +52,15 @@ export class EmprestimosComponent implements OnInit {
 
   // Usuário logado
   userLogado: any = null;
+
+  // Propriedades para pesquisa e seleção
+  produtoPesquisa = '';
+  selecionadoProduto: Produto | null = null;
+  mostrarDropdownProdutos = false;
+
+  usuarioPesquisa = '';
+  selecionadoUsuario: Usuario | null = null;
+  mostrarDropdownUsuarios = false;
 
   constructor(
     private emprestimoService: EmprestimoService,
@@ -100,15 +110,25 @@ export class EmprestimosComponent implements OnInit {
   fecharModalNovoEmprestimo(): void {
     this.isModalNovoEmprestimoAberto = false;
     this.novoEmprestimo = {};
+    this.selecionadoProduto = null;
+    this.selecionadoUsuario = null;
+    this.produtoPesquisa = '';
+    this.usuarioPesquisa = '';
   }
 
-  cadastrarEmprestimo(form: any): void {
-    if (!form.valid) {
+  cadastrarEmprestimo(emprestimo: any): void {
+    if (!this.formValid()) {
       this.mensagemErro = 'Preencha todos os campos obrigatórios';
       return;
     }
 
-    this.emprestimoService.criarEmprestimo(this.novoEmprestimo).subscribe({
+    const emprestimoData = {
+      ...emprestimo,
+      id_patrimonio: this.selecionadoProduto?.id_patrimonio,
+      id_usuario: this.selecionadoUsuario?.id_usuario
+    };
+
+    this.emprestimoService.criarEmprestimo(emprestimoData).subscribe({
       next: () => {
         this.fecharModalNovoEmprestimo();
         this.carregarEmprestimos();
@@ -160,6 +180,7 @@ export class EmprestimosComponent implements OnInit {
     this.usuarioService.listarUsuarios().subscribe({
       next: (usuarios) => {
         this.usuariosDisponiveis = usuarios || [];
+        this.usuariosFiltrados = this.usuariosDisponiveis;
       },
       error: (err: any) => {
         console.error('Erro ao carregar usuários:', err);
@@ -256,7 +277,6 @@ export class EmprestimosComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Erro ao marcar como devolvido:', err);
-        this.mensagemErro = 'Erro ao marcar como devolvido';
       }
     });
   }
@@ -307,5 +327,87 @@ export class EmprestimosComponent implements OnInit {
 
   onPesquisaChange(): void {
     this.aplicarFiltro();
+  }
+
+  // Métodos para pesquisa e seleção
+  filtrarProdutos(): void {
+    if (this.produtoPesquisa.trim()) {
+      this.produtosFiltrados = this.produtos.filter(p =>
+        p.nome.toLowerCase().includes(this.produtoPesquisa.toLowerCase()) ||
+        p.id_patrimonio.toString().includes(this.produtoPesquisa) ||
+        (p.codigo_publico && p.codigo_publico.toLowerCase().includes(this.produtoPesquisa.toLowerCase()))
+      );
+    } else {
+      this.produtosFiltrados = this.produtos;
+    }
+  }
+
+  selecionarProduto(produto: Produto): void {
+    this.selecionadoProduto = produto;
+    this.produtoPesquisa = produto.nome;
+    this.mostrarDropdownProdutos = false;
+  }
+
+  removerProduto(): void {
+    this.selecionadoProduto = null;
+    this.produtoPesquisa = '';
+  }
+
+  onBlurProduto(): void {
+    setTimeout(() => {
+      this.mostrarDropdownProdutos = false;
+    }, 200);
+  }
+
+  filtrarUsuarios(): void {
+    if (this.usuarioPesquisa.trim()) {
+      this.usuariosFiltrados = this.usuariosDisponiveis.filter(u =>
+        u.nome.toLowerCase().includes(this.usuarioPesquisa.toLowerCase()) ||
+        u.email.toLowerCase().includes(this.usuarioPesquisa.toLowerCase())
+      );
+    } else {
+      this.usuariosFiltrados = this.usuariosDisponiveis;
+    }
+  }
+
+  selecionarUsuario(usuario: Usuario): void {
+    this.selecionadoUsuario = usuario;
+    this.usuarioPesquisa = usuario.nome;
+    this.mostrarDropdownUsuarios = false;
+  }
+
+  removerUsuario(): void {
+    this.selecionadoUsuario = null;
+    this.usuarioPesquisa = '';
+  }
+
+  onBlurUsuario(): void {
+    setTimeout(() => {
+      this.mostrarDropdownUsuarios = false;
+    }, 200);
+  }
+
+  onQuantidadeChange(): void {
+    // Validação adicional se necessário
+  }
+
+  calcularDataDevolucao(): void {
+    if (this.novoEmprestimo.prazo_dias && this.novoEmprestimo.prazo_dias > 0) {
+      const hoje = new Date();
+      hoje.setDate(hoje.getDate() + this.novoEmprestimo.prazo_dias);
+      this.novoEmprestimo.data_devolucao = hoje.toISOString().split('T')[0];
+    }
+  }
+
+  fecharCardCadastro(): void {
+    this.fecharModalNovoEmprestimo();
+  }
+
+  formValid(): boolean {
+    return !!(this.selecionadoProduto && this.selecionadoUsuario && this.novoEmprestimo.quantidade && this.novoEmprestimo.quantidade > 0);
+  }
+
+  editarEmprestimo(emprestimo: any): void {
+    this.abrirModalEditarEmprestimo(emprestimo);
   }
 }
