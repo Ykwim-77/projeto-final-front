@@ -22,6 +22,7 @@
             <!-- Card 1: Total de Produtos -->
             <div class="card">
                 <div class="card-title">{{ metricCards[0]?.title || 'Total de Produtos' }}</div>
+                <br>
                 <div class="card-value">{{ totalProducts || 0 }}</div>
                 <div class="card-variation" [class]="'card-variation ' + (metricCards[0]?.trend || 'neutral')">
                     {{ metricCards[0]?.variation || '-' }}
@@ -50,6 +51,7 @@
             <!-- Card 3: Itens em Baixa -->
             <div class="card">
                 <div class="card-title">{{ metricCards[2]?.title || 'Itens em Baixa' }}</div>
+                <br>
                 <div class="card-value">{{ lowStockCount || 0 }}</div>
                 <div class="card-variation" [class]="'card-variation ' + (metricCards[2]?.trend || 'neutral')">
                     {{ metricCards[2]?.variation || '-' }}
@@ -63,6 +65,7 @@
             <!-- Card 4: Saídas do Mês -->
             <div class="card">
                 <div class="card-title">{{ metricCards[3]?.title || 'Saídas do Mês' }}</div>
+                <br>
                 <div class="card-value">{{ metricCards[3]?.value || 0 }}</div>
                 <div class="card-variation" [class]="'card-variation ' + (metricCards[3]?.trend || 'neutral')">
                     {{ metricCards[3]?.variation || '-' }}

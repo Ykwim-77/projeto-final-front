@@ -5,7 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 
 
 
@@ -39,9 +39,74 @@ interface LowStockProduct {
   templateUrl: './produtos.html',
   styleUrls: ['./produtos.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, DecimalPipe, SidebarComponent]
+  imports: [CommonModule, FormsModule, SidebarComponent]
 })
 export class ProdutosComponent implements OnInit {
+abrirModalNovoEmprestimo() {
+throw new Error('Method not implemented.');
+}
+emprestimosAtrasadosLista: any;
+gerarRelatorio() {
+throw new Error('Method not implemented.');
+}
+filtroPesquisa: any;
+filtroStatus: any;
+devolvidosMes: any;
+emprestimosAtrasados: any;
+emprestimosAtivos: any;
+totalEmprestimos: any;
+getStatusClass(arg0: any) {
+throw new Error('Method not implemented.');
+}
+abrirModalDevolucao(_t90: any) {
+throw new Error('Method not implemented.');
+}
+getStatusIcon(arg0: any) {
+throw new Error('Method not implemented.');
+}
+marcarComoDevolvido(_t90: any) {
+throw new Error('Method not implemented.');
+}
+abrirModalEditarEmprestimo(_t90: any) {
+throw new Error('Method not implemented.');
+}
+userLogado: any;
+getStatusDescription(arg0: any) {
+throw new Error('Method not implemented.');
+}
+emprestimosFiltrados: any;
+fecharModalNovoEmprestimo() {
+throw new Error('Method not implemented.');
+}
+cadastrarEmprestimo(_t141: NgForm) {
+throw new Error('Method not implemented.');
+}
+onModalProdutoChange() {
+throw new Error('Method not implemented.');
+}
+isModalEditarEmprestimoAberto: any;
+novoEmprestimo: any;
+usuariosDisponiveis: any;
+produtoModalSelecionado: any;
+salvarAlteracoesEmprestimo() {
+throw new Error('Method not implemented.');
+}
+produtosDisponiveis: any;
+onStatusChange($event: any) {
+throw new Error('Method not implemented.');
+}
+emprestimoSelecionado: any;
+fecharModalEditarEmprestimo() {
+throw new Error('Method not implemented.');
+}
+emprestimoDevolucao: any;
+isModalDevolucaoAberto: any;
+fecharModalDevolucao() {
+throw new Error('Method not implemented.');
+}
+confirmarDevolucao() {
+throw new Error('Method not implemented.');
+}
   // Controle de exibição
   showCardCadastro: boolean = false;
   produtoEditando: Produto | null = null;

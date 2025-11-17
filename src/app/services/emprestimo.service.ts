@@ -44,14 +44,18 @@ export class EmprestimoService {
   constructor(private http: HttpClient) {}
 
   listarEmprestimos(): Observable<Emprestimo[]> {
-    return this.http.get<Emprestimo[]>(this.apiUrl);
+    return this.http.get<Emprestimo[]>(this.apiUrl, { withCredentials: true });
   }
 
   criarEmprestimo(emprestimo: any): Observable<Emprestimo> {
-    return this.http.post<Emprestimo>(this.apiUrl, emprestimo);
+    return this.http.post<Emprestimo>(this.apiUrl, emprestimo, { withCredentials: true });
   }
 
   devolverEmprestimo(id: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${id}/devolver`, {});
+    return this.http.put(`${this.apiUrl}/${id}/devolver`, {}, { withCredentials: true });
+  }
+
+  atualizarEmprestimo(id: number, emprestimo: any): Observable<Emprestimo> {
+    return this.http.put<Emprestimo>(`${this.apiUrl}/${id}`, emprestimo, { withCredentials: true });
   }
 }

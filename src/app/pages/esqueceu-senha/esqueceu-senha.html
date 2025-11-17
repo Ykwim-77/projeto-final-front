@@ -1,4 +1,4 @@
-<div class="form">
+<div class="form" [class.blur]="isLoading">
   <div class="leftside">
     <img src="assets/imagens/esqueceuSenha.png" alt="Tela de login">
   </div>
@@ -13,11 +13,17 @@
     </div>
     <br>
 
-    <!-- ✅ CORREÇÃO: Botão corrigido para type="submit" -->
     <form class="input-container" (ngSubmit)="onSubmit($event)">
       <div class="input">
         <i class="fa fa-user"></i>
-        <input type="email" [(ngModel)]="email" name="email" placeholder="Email" required />
+        <input 
+          type="email" 
+          [(ngModel)]="email" 
+          name="email" 
+          placeholder="Email" 
+          required 
+          [disabled]="isLoading"
+        />
       </div>
 
       <br>
@@ -26,15 +32,15 @@
         {{ errorMessage }}
       </div>
 
-      <!-- ✅ CORREÇÃO: type="submit" e [disabled]="isLoading" -->
       <button type="submit" class="login" [disabled]="isLoading">
-        {{ isLoading ? 'Enviando...' : 'Proximo' }}
+        {{ isLoading ? 'Enviando...' : 'Próximo' }}
       </button>
     </form>
-    <!-- ✅ ADICIONADO: Botão Voltar -->
-    <button class="voltar-login" (click)="voltarParaLogin()">
-      Voltar para Login
+
+    <button class="voltar-login" (click)="voltarParaLogin()" [disabled]="isLoading">
+      {{ isLoading ? 'Carregando...' : 'Voltar para Login' }}
     </button>
+
     <div class="indicators">
       <ul>
         <li [class.active]="currentStep === 0"></li>
