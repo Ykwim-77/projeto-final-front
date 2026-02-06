@@ -1,12 +1,4 @@
-<div class="loading-overlay" *ngIf="isLoading">
-  <div class="loading-content">
-    <img src="../../../assets/imagens/logoprogestao.png" alt="Logo ProGest" class="loading-logo">
-    <div class="progress-bar-indeterminate">
-      <div class="progress-track"></div>
-    </div>
-    <p class="loading-text">Carregando...</p>
-  </div>
-</div>
+<app-loading [isLoading]="isLoading"></app-loading>
 
 <div class="form" [class.blur]="isLoading">
     <div class="leftside">
@@ -17,40 +9,73 @@
             <img src="../../../assets/imagens/logoprogestao.png" alt="Logo" class="login-logo">
             <h2><strong>Pro</strong>Gest</h2>
         </div>
-        <form class="input-container" (ngSubmit)="onSubmit($event)">
-            <div class="input">
-                <i class="fa fa-user"></i>
-                <input
-                type="email"
-                [(ngModel)]="email"
-                name="email"
-                placeholder="Email"
-                required
-                (input)="onInputChange()"
-                />
+        
+        <!-- Mensagem de erro geral (erro de servidor) -->
+        <div class="error-message" *ngIf="errorMessage">
+            <i class="fa fa-exclamation-circle"></i>
+            {{ errorMessage }}
+        </div>
+
+        <form class="input-container" (ngSubmit)="onSubmit($event)" #loginForm="ngForm">
+            <!-- Campo Email -->
+            <div class="input-wrapper">
+                <div class="input" [class.invalid]="getEmailError()">
+                    <i class="fa fa-user"></i>
+                    <input
+                      type="email"
+                      [(ngModel)]="email"
+                      name="email"
+                      placeholder="Email"
+                      (input)="onEmailInput()"
+                      (blur)="onEmailBlur()"
+                    />
+                </div>
+                <!-- Mensagem de erro específica do email -->
+                <div class="field-error" *ngIf="getEmailError()">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    {{ getEmailError() }}
+                </div>
             </div>
 
-            <div class="input">
-                <i class="fa fa-lock"></i>
-                <input
-                type="password"
-                [(ngModel)]="password"
-                name="password"
-                placeholder="Senha"
-                required
-                minlength="6"
-                (input)="onInputChange()"
-                />
+            <!-- Campo Senha -->
+            <div class="input-wrapper">
+                <div class="input" [class.invalid]="getPasswordError()">
+                    <i class="fa fa-lock"></i>
+                    <input
+                      type="password"
+                      [(ngModel)]="password"
+                      name="password"
+                      placeholder="Senha"
+                      (input)="onPasswordInput()"
+                      (blur)="onPasswordBlur()"
+                    />
+                </div>
+                <!-- Mensagem de erro específica da senha -->
+                <div class="field-error" *ngIf="getPasswordError()">
+                    <i class="fa fa-exclamation-triangle"></i>
+                    {{ getPasswordError() }}
+                </div>
             </div>
 
-            <button type="submit" class="login" [disabled]="isLoading">
-                {{ isLoading ? 'Entrando...' : 'Entrar' }}
+            <button 
+              type="submit" 
+              class="login" 
+              [disabled]="isLoading"
+              [class.loading]="isLoading"
+            >
+              <span *ngIf="!isLoading">Entrar</span>
+              <span *ngIf="isLoading" class="loading-button-text">
+                <i class="fa fa-spinner fa-spin"></i>
+                Entrando...
+              </span>
             </button>
         </form>
 
-        <!-- ✅ CORREÇÃO: Link com navegação programática como fallback -->
         <div class="forgot-password">
-            <a (click)="navigateToEsqueceuSenha()">Esqueceu a senha?</a>
+            <a (click)="navigateToEsqueceuSenha()" class="forgot-link" [class.disabled]="isLoading">
+              <i class="fa fa-key"></i>
+              {{ isLoading ? 'Carregando...' : 'Esqueceu a senha?' }}
+            </a>
         </div>
     </div>
 </div>

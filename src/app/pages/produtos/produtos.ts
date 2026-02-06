@@ -5,7 +5,7 @@ import { AuthService } from '../../services/auth.service';
 import { environment } from '../../environments/environment';
 import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
 
 
 
@@ -39,9 +39,74 @@ interface LowStockProduct {
   templateUrl: './produtos.html',
   styleUrls: ['./produtos.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, DecimalPipe, SidebarComponent]
+  imports: [CommonModule, FormsModule, SidebarComponent]
 })
 export class ProdutosComponent implements OnInit {
+abrirModalNovoEmprestimo() {
+throw new Error('Method not implemented.');
+}
+emprestimosAtrasadosLista: any;
+gerarRelatorio() {
+throw new Error('Method not implemented.');
+}
+filtroPesquisa: any;
+filtroStatus: any;
+devolvidosMes: any;
+emprestimosAtrasados: any;
+emprestimosAtivos: any;
+totalEmprestimos: any;
+getStatusClass(arg0: any) {
+throw new Error('Method not implemented.');
+}
+abrirModalDevolucao(_t90: any) {
+throw new Error('Method not implemented.');
+}
+getStatusIcon(arg0: any) {
+throw new Error('Method not implemented.');
+}
+marcarComoDevolvido(_t90: any) {
+throw new Error('Method not implemented.');
+}
+abrirModalEditarEmprestimo(_t90: any) {
+throw new Error('Method not implemented.');
+}
+userLogado: any;
+getStatusDescription(arg0: any) {
+throw new Error('Method not implemented.');
+}
+emprestimosFiltrados: any;
+fecharModalNovoEmprestimo() {
+throw new Error('Method not implemented.');
+}
+cadastrarEmprestimo(_t141: NgForm) {
+throw new Error('Method not implemented.');
+}
+onModalProdutoChange() {
+throw new Error('Method not implemented.');
+}
+isModalEditarEmprestimoAberto: any;
+novoEmprestimo: any;
+usuariosDisponiveis: any;
+produtoModalSelecionado: any;
+salvarAlteracoesEmprestimo() {
+throw new Error('Method not implemented.');
+}
+produtosDisponiveis: any;
+onStatusChange($event: any) {
+throw new Error('Method not implemented.');
+}
+emprestimoSelecionado: any;
+fecharModalEditarEmprestimo() {
+throw new Error('Method not implemented.');
+}
+emprestimoDevolucao: any;
+isModalDevolucaoAberto: any;
+fecharModalDevolucao() {
+throw new Error('Method not implemented.');
+}
+confirmarDevolucao() {
+throw new Error('Method not implemented.');
+}
   // Controle de exibição
   showCardCadastro: boolean = false;
   produtoEditando: Produto | null = null;
@@ -64,6 +129,7 @@ export class ProdutosComponent implements OnInit {
 
   // Filtros
   filtros: any = {
+    pesquisaGeral: '',
     nome: '',
     sku: '',
     categoria: '',
@@ -223,42 +289,53 @@ export class ProdutosComponent implements OnInit {
 
   aplicarFiltros() {
     this.produtosFiltrados = this.produtos.filter(produto => {
+      // Pesquisa geral (nome, sku ou categoria)
+      if (this.filtros.pesquisaGeral) {
+        const termo = this.filtros.pesquisaGeral.toLowerCase();
+        const nomeMatch = produto.nome?.toLowerCase().includes(termo);
+        const skuMatch = produto.codigo_publico?.toLowerCase().includes(termo);
+        const categoriaMatch = produto.categoria?.toLowerCase().includes(termo);
+        if (!nomeMatch && !skuMatch && !categoriaMatch) {
+          return false;
+        }
+      }
+
       // Filtro por nome
-      if (this.filtros.nome && 
+      if (this.filtros.nome &&
           !produto.nome?.toLowerCase().includes(this.filtros.nome.toLowerCase())) {
         return false;
       }
-      
+
       // Filtro por SKU
-      if (this.filtros.sku && 
+      if (this.filtros.sku &&
           !produto.codigo_publico?.toLowerCase().includes(this.filtros.sku.toLowerCase())) {
         return false;
       }
-      
+
       // Filtro por categoria
-      if (this.filtros.categoria && 
+      if (this.filtros.categoria &&
           produto.categoria !== this.filtros.categoria) {
         return false;
       }
-      
+
       // Filtro por preço mínimo
-      if (this.filtros.precoMin !== null && 
+      if (this.filtros.precoMin !== null &&
           (produto.preco_unitario || 0) < this.filtros.precoMin) {
         return false;
       }
-      
+
       // Filtro por preço máximo
-      if (this.filtros.precoMax !== null && 
+      if (this.filtros.precoMax !== null &&
           (produto.preco_unitario || 0) > this.filtros.precoMax) {
         return false;
       }
-      
+
       // Filtro por estoque mínimo
-      if (this.filtros.estoqueMin > 0 && 
+      if (this.filtros.estoqueMin > 0 &&
           (produto.quantidade || 0) < this.filtros.estoqueMin) {
         return false;
       }
-      
+
       return true;
     });
   }

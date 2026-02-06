@@ -1,233 +1,98 @@
 import { Component, OnInit } from '@angular/core';
-import { SidebarComponent } from "../../components/sidebar/sidebar.component";
-import { FormsModule, NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { EmprestimoService, Emprestimo } from '../../services/emprestimo.service';
+import { AuthService } from '../../services/auth.service';
 import { ProdutoService, Produto } from '../../services/produto.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from '../../models/user.model';
-import { AuthService } from '../../services/auth.service';
-
-// Interface para os cards de métricas
-interface MetricCard {
-  title: string;
-  value?: string | number;
-  variation?: string;
-  trend?: 'positive' | 'negative' | 'neutral';
-}
-
-// Tipo `Emprestimo` importado de `emprestimo.service.ts` para evitar conflitos de tipos entre arquivos.
+import { SidebarComponent } from '../../components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-emprestimos',
   templateUrl: './emprestimos.html',
   styleUrls: ['./emprestimos.scss'],
-  imports: [SidebarComponent, FormsModule, CommonModule],
-  standalone: true
+  standalone: true,
+  imports: [CommonModule, FormsModule, SidebarComponent]
 })
 export class EmprestimosComponent implements OnInit {
-
-  // Dados dos cards de métricas
-  metricCards: MetricCard[] = [
-    { title: 'Empréstimos Pendentes', variation: '+5%', trend: 'positive' },
-    { title: 'Empréstimos Ativos', variation: '+2%', trend: 'neutral' },
-    { title: 'Empréstimos Recebidos', variation: '+15%', trend: 'positive' },
-    { title: 'Total de Empréstimos', variation: '+8%', trend: 'positive' }
-  ];
-
-  // Valores reais para empréstimos
-  emprestimosPendentes: number = 0;
-  emprestimosAtivos: number = 0;
-  emprestimosRecebidos: number = 0;
-  totalEmprestimos: number = 0;
-
-  // Listas
   emprestimos: Emprestimo[] = [];
-  emprestimosPendentesLista: Emprestimo[] = [];
-  // Backwards-compatible aliases used by template
-  emprestimosAtrasados: number = 0;
-  devolvidosMes: number = 0;
-  emprestimosAtrasadosLista: Emprestimo[] = [];
+  produtos: Produto[] = [];
+  produtosFiltrados: Produto[] = [];
+  usuariosDisponiveis: Usuario[] = [];
+  usuariosFiltrados: Usuario[] = [];
+  carregando = false;
+  mensagemErro = '';
 
-  // Filtros
-  filtroStatus: string = 'todos';
-  filtroPesquisa: string = '';
+  // Métricas
+  metricCards: any[] = [];
+  emprestimosAtivos = 0;
+  emprestimosAtrasados = 0;
+  devolvidosMes = 0;
+  totalEmprestimos = 0;
+  emprestimosAtrasadosLista: any[] = [];
+  filtroStatus = 'todos';
+  filtroPesquisa = '';
+  emprestimosFiltrados: any[] = [];
 
-  // Controle dos modais
-  isModalNovoEmprestimoAberto: boolean = false;
-  isModalEditarEmprestimoAberto: boolean = false;
-  isModalDevolucaoAberto: boolean = false;
-  emprestimoSelecionado: Emprestimo | null = null;
-  emprestimoDevolucao: Emprestimo | null = null;
-  isCarregando: boolean = false;
-  mensagemErro: string = '';
-  
+  // Modal para novo empréstimo
+  isModalNovoEmprestimoAberto = false;
+  novoEmprestimo: any = {};
+  produtosDisponiveis: Produto[] = [];
+  produtoModalSelecionado: Produto | null = null;
+
+  // Modal para editar empréstimo
+  isModalEditarEmprestimoAberto = false;
+  emprestimoSelecionado: any = null;
+
+  // Modal para devolução
+  isModalDevolucaoAberto = false;
+  emprestimoDevolucao: any = null;
+
   // Usuário logado
   userLogado: any = null;
 
-  // Dados para novo empréstimo (usar modelo correto do backend)
-  novoEmprestimo: Partial<Emprestimo> = {
-    data_pedido: new Date().toISOString(),
-    valor_total: 0,
-    status: 'ativo',
-    observacoes: '',
-    id_usuario: 1,
-    quantidade: 1
-  };
+  // Propriedades para pesquisa e seleção
+  produtoPesquisa = '';
+  selecionadoProduto: Produto | null = null;
+  mostrarDropdownProdutos = false;
 
-  // Lista de produtos para seleção no modal
-  produtosDisponiveis: Produto[] = [];
-  usuariosDisponiveis: Usuario[] = [];
-  produtoModalSelecionado: Produto | null = null;
+  usuarioPesquisa = '';
+  selecionadoUsuario: Usuario | null = null;
+  mostrarDropdownUsuarios = false;
 
   constructor(
     private emprestimoService: EmprestimoService,
-    private authService: AuthService
-    , private produtoService: ProdutoService
-    , private usuarioService: UsuarioService
+    private authService: AuthService,
+    private produtoService: ProdutoService,
+    private usuarioService: UsuarioService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.carregarUsuarioLogado();
-    this.carregarListaEmprestimos();
-    // carregar itens de seleção do modal imediatamente
-    this.carregarProdutosDisponiveis();
-    this.carregarUsuariosDisponiveis();
+    this.userLogado = this.authService.getUsuarioLogado();
+    this.carregarEmprestimos();
+    this.carregarProdutos();
+    this.carregarUsuarios();
   }
 
-  carregarProdutosDisponiveis(): void {
-    this.produtoService.listarProdutos().subscribe({
-      next: (p) => this.produtosDisponiveis = p || [],
-      error: (err) => console.warn('Não foi possível carregar produtos para seleção:', err)
-    });
-  }
-
-  carregarUsuariosDisponiveis(): void {
-    this.usuarioService.listarUsuarios().subscribe({
-      next: (u) => this.usuariosDisponiveis = u || [],
-      error: (err) => console.warn('Não foi possível carregar usuários para seleção:', err)
-    });
-  }
-
-  /**
-   * Carrega dados do usuário logado
-   */
-  private carregarUsuarioLogado(): void {
-    const usuario = this.authService.getUsuarioLogado();
-    this.userLogado = usuario;
-  }
-
-  /**
-   * Carrega a lista de empréstimos do backend
-   */
-  carregarListaEmprestimos(): void {
-    this.isCarregando = true;
-    this.mensagemErro = '';
-    
+  carregarEmprestimos(): void {
+    this.carregando = true;
     this.emprestimoService.listarEmprestimos().subscribe({
-      next: (emprestimos: Emprestimo[]) => {
-        // Map backend fields to UI-compatible fields for the template
-        this.emprestimos = emprestimos.map(e => ({
-          ...e,
-          // Compatibility aliases used by existing template
-          id_movimentacao: e.id_emprestimo,
-          produto: e.patrimonio?.nome || 'Sem produto',
-          usuario: e.usuario?.nome || 'Sem usuário',
-          dataEmprestimo: this.formatarData(e.data_pedido),
-          dataDevolucao: e.data_recebimento ? this.formatarData(e.data_recebimento) : null,
-          observacao: e.observacoes || null,
-          departamento: 'Geral',  // Placeholder se não houver no backend
-          contato: e.usuario?.email || ''  // Usar email do usuário como contato
-        } as Emprestimo));
-        this.atualizarContadores();
-        this.isCarregando = false;
-          // carregar produtos para seleção no modal
-          this.produtoService.listarProdutos().subscribe({
-            next: (p) => this.produtosDisponiveis = p || [],
-            error: (err) => console.warn('Não foi possível carregar produtos para seleção:', err)
-          });
-          // carregar usuarios para seleção no modal
-          this.usuarioService.listarUsuarios().subscribe({
-            next: (u) => this.usuariosDisponiveis = u || [],
-            error: (err) => console.warn('Não foi possível carregar usuários para seleção:', err)
-          });
+      next: (emprestimos) => {
+        this.emprestimos = emprestimos || [];
+        this.calcularMetricas();
+        this.carregando = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao carregar empréstimos:', err);
-        this.mensagemErro = 'Erro ao carregar lista de empréstimos';
-        this.isCarregando = false;
+        this.mensagemErro = 'Erro ao carregar empréstimos';
+        this.carregando = false;
       }
     });
   }
 
-  /**
-   * Formata data para exibição
-   */
-  private formatarData(data: string): string {
-    if (!data) return '';
-    try {
-      const d = new Date(data);
-      return d.toLocaleDateString('pt-BR', { month: 'short', year: 'numeric', day: '2-digit' });
-    } catch {
-      return data;
-    }
-  }
-
-  /**
-   * Retorna a classe CSS para o status
-   */
-  getStatusClass(status: string | undefined): string {
-    const s = status?.toLowerCase() || 'ativo';
-    switch(s) {
-      case 'ativo': return 'status-ativo';
-      case 'atrasado': return 'status-atrasado';
-      case 'devolvido': return 'status-devolvido';
-      default: return 'status-default';
-    }
-  }
-
-  /**
-   * Retorna o ícone para o status
-   */
-  getStatusIcon(status: string | undefined): string {
-    const s = status?.toLowerCase() || 'ativo';
-    switch(s) {
-      case 'ativo': return 'fas fa-box-open';
-      case 'atrasado': return 'fas fa-exclamation-triangle';
-      case 'devolvido': return 'fas fa-check-circle';
-      default: return 'fas fa-question-circle';
-    }
-  }
-
-  /**
-   * Retorna a descrição do status
-   */
-  getStatusDescription(status: string | undefined): string {
-    const s = status?.toLowerCase() || 'ativo';
-    switch(s) {
-      case 'ativo': return 'Empréstimo ativo';
-      case 'atrasado': return 'Empréstimo em atraso';
-      case 'devolvido': return 'Devolvido';
-      default: return 'Status desconhecido';
-    }
-  }
-
-  /**
-   * Filtra os empréstimos baseado no status e pesquisa
-   */
-  get emprestimosFiltrados(): Emprestimo[] {
-    return this.emprestimos.filter(emp => {
-      const statusMatch = this.filtroStatus === 'todos' || emp.status === this.filtroStatus;
-      const pesquisaMatch = this.filtroPesquisa === '' || 
-        (emp.produto && emp.produto.toLowerCase().includes(this.filtroPesquisa.toLowerCase()));
-      
-      return statusMatch && pesquisaMatch;
-    });
-  }
-
-  /**
-   * Abre/fecha o modal de novo empréstimo
-   */
   abrirModalNovoEmprestimo(): void {
     this.novoEmprestimo = {
       data_pedido: new Date().toISOString(),
@@ -235,262 +100,329 @@ export class EmprestimosComponent implements OnInit {
       status: 'ativo',
       observacoes: '',
       id_usuario: this.userLogado?.id_usuario || undefined,
-      quantidade: 1
+      quantidade: 1,
+      data_entrega: new Date().toISOString().split('T')[0],
+      data_devolucao: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     };
     this.isModalNovoEmprestimoAberto = true;
   }
 
-  onModalProdutoChange(): void {
-    const id = this.novoEmprestimo.id_patrimonio;
-    this.produtoModalSelecionado = this.produtosDisponiveis.find(p => p.id_patrimonio === id) || null;
-  }
-
-  /**
-   * Fecha o modal de novo empréstimo
-   */
   fecharModalNovoEmprestimo(): void {
     this.isModalNovoEmprestimoAberto = false;
+    this.novoEmprestimo = {};
+    this.selecionadoProduto = null;
+    this.selecionadoUsuario = null;
+    this.produtoPesquisa = '';
+    this.usuarioPesquisa = '';
   }
 
-  /**
-   * Processa o cadastro de novo empréstimo
-   */
-  cadastrarEmprestimo(novoEmprestimoForm: any): void {
-    // Validação básica: precisa de usuário e produto selecionados
-    if (!this.novoEmprestimo.id_patrimonio || !this.novoEmprestimo.id_usuario) {
-      this.mensagemErro = 'Selecione usuário e produto.';
+  cadastrarEmprestimo(emprestimo: any): void {
+    if (!this.formValid()) {
+      this.mensagemErro = 'Preencha todos os campos obrigatórios';
       return;
     }
 
-    // Construir payload compatível com o backend (modelo `emprestimo`)
-    const payload: Partial<Emprestimo> = {
-      data_pedido: new Date().toISOString(),
-      valor_total: novoEmprestimoForm.value.valor_total || 0,
-      status: novoEmprestimoForm.value.status || 'ativo',
-      observacoes: novoEmprestimoForm.value.observacoes || '',
-      id_usuario: this.novoEmprestimo.id_usuario || this.userLogado?.id_usuario || 1,
-      id_patrimonio: this.novoEmprestimo.id_patrimonio,
-      quantidade: this.novoEmprestimo.quantidade || 1
+    const emprestimoData = {
+      ...emprestimo,
+      id_patrimonio: this.selecionadoProduto?.id_patrimonio,
+      id_usuario: this.selecionadoUsuario?.id_usuario
     };
 
-    // Validação adicional: se produto selecionado tem estoque
-    if (this.produtoModalSelecionado && (payload.quantidade || 1) > (this.produtoModalSelecionado.estoque ?? 0)) {
-      this.mensagemErro = 'Quantidade excede o estoque disponível do produto selecionado.';
-      return;
-    }
-
-    this.mensagemErro = '';
-    this.emprestimoService.criarEmprestimo(payload).subscribe({
+    this.emprestimoService.criarEmprestimo(emprestimoData).subscribe({
       next: () => {
-        this.carregarListaEmprestimos();
         this.fecharModalNovoEmprestimo();
-        novoEmprestimoForm.resetForm();
-        console.log('Empréstimo criado com sucesso');
+        this.carregarEmprestimos();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao criar empréstimo:', err);
-        console.error('Resposta do servidor:', err.error);
-        // Preferir a mensagem do servidor quando disponível
-        this.mensagemErro = err.error?.mensagem || err.error?.dados || err.message || 'Erro ao criar empréstimo';
+        this.mensagemErro = 'Erro ao criar empréstimo';
       }
     });
   }
 
-  /**
-   * Abre modal para editar empréstimo
-   */
-  abrirModalEditarEmprestimo(emprestimo: Emprestimo): void {
+  devolverEmprestimo(id: number): void {
+    if (confirm('Confirmar devolução do empréstimo?')) {
+      this.emprestimoService.devolverEmprestimo(id).subscribe({
+        next: () => {
+          this.carregarEmprestimos();
+        },
+        error: (err: any) => {
+          console.error('Erro ao devolver empréstimo:', err);
+          this.mensagemErro = 'Erro ao devolver empréstimo';
+        }
+      });
+    }
+  }
+
+  navegarParaNovoEmprestimo(): void {
+    this.router.navigate(['/novo-emprestimo']);
+  }
+
+  carregarProdutos(): void {
+    this.produtoService.listarProdutos().subscribe({
+      next: (produtos) => {
+        this.produtos = produtos || [];
+        this.produtosFiltrados = this.produtos;
+        this.produtosDisponiveis = this.produtos.filter(p => p.estoque > 0);
+      },
+      error: (err: any) => {
+        console.error('Erro ao carregar produtos:', err);
+        this.mensagemErro = 'Erro ao carregar produtos';
+      }
+    });
+  }
+
+  onModalProdutoChange(): void {
+    this.produtoModalSelecionado = this.produtosDisponiveis.find(p => p.id_patrimonio === this.novoEmprestimo.id_patrimonio) || null;
+  }
+
+  carregarUsuarios(): void {
+    this.usuarioService.listarUsuarios().subscribe({
+      next: (usuarios) => {
+        this.usuariosDisponiveis = usuarios || [];
+        this.usuariosFiltrados = this.usuariosDisponiveis;
+      },
+      error: (err: any) => {
+        console.error('Erro ao carregar usuários:', err);
+        this.mensagemErro = 'Erro ao carregar usuários';
+      }
+    });
+  }
+
+  // Métodos para métricas e filtros
+  calcularMetricas(): void {
+    this.totalEmprestimos = this.emprestimos.length;
+    this.emprestimosAtivos = this.emprestimos.filter(e => e.status === 'ativo').length;
+    this.emprestimosAtrasados = this.emprestimos.filter(e => e.status === 'atrasado').length;
+    this.devolvidosMes = this.emprestimos.filter(e => e.status === 'devolvido').length;
+    this.emprestimosAtrasadosLista = this.emprestimos.filter(e => e.status === 'atrasado');
+    this.aplicarFiltro();
+  }
+
+  aplicarFiltro(): void {
+    let filtrados = this.emprestimos;
+
+    // Filtro por status
+    if (this.filtroStatus !== 'todos') {
+      filtrados = filtrados.filter(e => e.status === this.filtroStatus);
+    }
+
+    // Filtro por pesquisa (produto ou usuário)
+    if (this.filtroPesquisa.trim()) {
+      const pesquisa = this.filtroPesquisa.toLowerCase();
+      filtrados = filtrados.filter(e =>
+        e.produto?.toLowerCase().includes(pesquisa) ||
+        e.usuario?.toLowerCase().includes(pesquisa)
+      );
+    }
+
+    this.emprestimosFiltrados = filtrados;
+  }
+
+  // Métodos para modais
+  abrirModalEditarEmprestimo(emprestimo: any): void {
     this.emprestimoSelecionado = { ...emprestimo };
     this.isModalEditarEmprestimoAberto = true;
   }
 
-  /**
-   * Fecha modal de edição de empréstimo
-   */
   fecharModalEditarEmprestimo(): void {
     this.isModalEditarEmprestimoAberto = false;
     this.emprestimoSelecionado = null;
   }
 
-  /**
-   * Abre modal de devolução ao fazer duplo-clique
-   */
-  abrirModalDevolucao(emprestimo: Emprestimo): void {
-    this.emprestimoDevolucao = { ...emprestimo };
+  salvarAlteracoesEmprestimo(): void {
+    if (this.emprestimoSelecionado) {
+      this.emprestimoService.atualizarEmprestimo(this.emprestimoSelecionado.id_emprestimo!, this.emprestimoSelecionado).subscribe({
+        next: () => {
+          this.fecharModalEditarEmprestimo();
+          this.carregarEmprestimos();
+        },
+        error: (err: any) => {
+          console.error('Erro ao salvar alterações:', err);
+          this.mensagemErro = 'Erro ao salvar alterações';
+        }
+      });
+    }
+  }
+
+  abrirModalDevolucao(emprestimo: any): void {
+    this.emprestimoDevolucao = emprestimo;
     this.isModalDevolucaoAberto = true;
   }
 
-  /**
-   * Fecha modal de devolução
-   */
   fecharModalDevolucao(): void {
     this.isModalDevolucaoAberto = false;
     this.emprestimoDevolucao = null;
   }
 
-  /**
-   * Confirma devolução do empréstimo
-   */
   confirmarDevolucao(): void {
-    if (!this.emprestimoDevolucao) return;
+    if (this.emprestimoDevolucao) {
+      this.emprestimoService.devolverEmprestimo(this.emprestimoDevolucao.id_emprestimo).subscribe({
+        next: () => {
+          this.fecharModalDevolucao();
+          this.carregarEmprestimos();
+        },
+        error: (err: any) => {
+          console.error('Erro ao confirmar devolução:', err);
+          this.mensagemErro = 'Erro ao confirmar devolução';
+        }
+      });
+    }
+  }
 
-    const id = this.emprestimoDevolucao.id_movimentacao || this.emprestimoDevolucao.id_emprestimo;
-    if (!id) return;
-
-    // Marcar como devolvido
-    this.emprestimoService.atualizarEmprestimo(id, {
-      status: 'devolvido',
-      data_recebimento: new Date().toISOString()
-    }).subscribe({
+  marcarComoDevolvido(emprestimo: any): void {
+    this.emprestimoService.devolverEmprestimo(emprestimo.id_emprestimo).subscribe({
       next: () => {
-        this.carregarListaEmprestimos();
-        this.fecharModalDevolucao();
-        console.log('Empréstimo marcado como devolvido');
+        this.carregarEmprestimos();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Erro ao marcar como devolvido:', err);
-        this.mensagemErro = 'Erro ao marcar como devolvido';
       }
     });
   }
 
-  /**
-   * Marca empréstimo como devolvido
-   */
-  marcarComoDevolvido(emprestimo: Emprestimo): void {
-    const id = emprestimo.id_movimentacao || emprestimo.id_emprestimo;
-    if (!id) return;
-
-    // Marcar como recebido no novo modelo
-    this.emprestimoService.atualizarEmprestimo(id, {
-      status: 'recebido',
-      data_recebimento: new Date().toISOString()
-    }).subscribe({
-      next: () => {
-        this.carregarListaEmprestimos();
-        console.log('Empréstimo marcado como recebido');
-      },
-      error: (err) => {
-        console.error('Erro ao marcar como recebido:', err);
-        this.mensagemErro = 'Erro ao marcar como recebido';
-      }
-    });
+  renovarEmprestimo(emprestimo: any): void {
+    // Lógica para renovar empréstimo
+    console.log('Renovar empréstimo:', emprestimo);
   }
 
-  /**
-   * Renova um empréstimo
-   */
-  renovarEmprestimo(emprestimo: Emprestimo): void {
-    const id = emprestimo.id_movimentacao || emprestimo.id_emprestimo;
-    if (!id) return;
-
-    const novaData = new Date();
-    novaData.setDate(novaData.getDate() + 7);
-
-    // Usar campo data_recebimento como aproximação para renovação/atualização
-    this.emprestimoService.atualizarEmprestimo(id, { data_recebimento: novaData.toISOString() }).subscribe({
-      next: () => {
-        this.carregarListaEmprestimos();
-        console.log('Empréstimo renovado (data_recebimento atualizada)');
-      },
-      error: (err) => {
-        console.error('Erro ao renovar:', err);
-        this.mensagemErro = 'Erro ao renovar empréstimo';
-      }
-    });
-  }
-
-  /**
-   * Salva as alterações do empréstimo
-   */
-  salvarAlteracoesEmprestimo(): void {
-    if (!this.emprestimoSelecionado) return;
-
-    const id = this.emprestimoSelecionado.id_movimentacao || this.emprestimoSelecionado.id_emprestimo;
-    if (!id) return;
-
-    this.emprestimoService.atualizarEmprestimo(
-      id,
-      {
-        status: this.emprestimoSelecionado.status,
-        observacoes: (this.emprestimoSelecionado as any).observacoes ?? (this.emprestimoSelecionado as any).observacao,
-        id_patrimonio: (this.emprestimoSelecionado as any).id_patrimonio,
-        quantidade: (this.emprestimoSelecionado as any).quantidade || 1
-      }
-    ).subscribe({
-      next: () => {
-        this.carregarListaEmprestimos();
-        this.fecharModalEditarEmprestimo();
-        console.log('Empréstimo atualizado');
-      },
-      error: (err) => {
-        console.error('Erro ao atualizar:', err);
-        this.mensagemErro = 'Erro ao salvar alterações';
-      }
-    });
-  }
-
-  /**
-   * Manipula mudança de status no select
-   */
-  onStatusChange(newStatus: string): void {
-    if (this.emprestimoSelecionado) {
-      this.emprestimoSelecionado.status = newStatus;
-    }
-  }
-
-  /**
-   * Deleta um empréstimo
-   */
-  deletarEmprestimo(emprestimo: Emprestimo): void {
-    const id = emprestimo.id_movimentacao || emprestimo.id_emprestimo;
-    if (!id) return;
-
-    if (!confirm('Tem certeza que deseja deletar este empréstimo?')) {
-      return;
-    }
-
-    this.emprestimoService.deletarEmprestimo(id).subscribe({
-      next: () => {
-        this.carregarListaEmprestimos();
-        console.log('Empréstimo deletado');
-      },
-      error: (err) => {
-        console.error('Erro ao deletar:', err);
-        this.mensagemErro = 'Erro ao deletar empréstimo';
-      }
-    });
-  }
-
-  /**
-   * Gera relatório
-   */
   gerarRelatorio(): void {
-    console.log('Gerando relatório de empréstimos...');
-    // TODO: implementar exportação de relatório
+    // Lógica para gerar relatório
+    console.log('Gerar relatório');
   }
 
-  /**
-   * Atualiza os contadores de empréstimos
-   */
-  private atualizarContadores(): void {
-    this.emprestimosPendentes = this.emprestimos.filter(emp => emp.status === 'pendente').length;
-    this.emprestimosAtivos = this.emprestimos.filter(emp => emp.status === 'ativo').length;
-    this.emprestimosRecebidos = this.emprestimos.filter(emp => emp.status === 'recebido').length;
-    this.totalEmprestimos = this.emprestimos.length;
+  // Mapeamento de tipos de usuário
+  private mapTipoUsuario(tipo: string): string {
+    const tipos: { [key: string]: string } = {
+      'A': 'admin',
+      'G': 'gerente',
+      'O': 'operador',
+      'C': 'cliente',
+      'admin': 'admin',
+      'gerente': 'gerente',
+      'operador': 'operador',
+      'cliente': 'cliente'
+    };
+    return tipos[tipo] || tipo;
+  }
 
-    // Atualizar lista de pendentes
-    this.emprestimosPendentesLista = this.emprestimos.filter(emp => emp.status === 'pendente');
+  // Métodos auxiliares
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'ativo': return 'ativo';
+      case 'atrasado': return 'atrasado';
+      case 'devolvido': return 'devolvido';
+      default: return '';
+    }
+  }
 
-    // Back-compat aliases
-    this.emprestimosAtrasados = this.emprestimosPendentes;
-    this.devolvidosMes = this.emprestimosRecebidos;
-    this.emprestimosAtrasadosLista = this.emprestimosPendentesLista;
+  getStatusIcon(status: string): string {
+    switch (status) {
+      case 'ativo': return 'fas fa-clock';
+      case 'atrasado': return 'fas fa-exclamation-triangle';
+      case 'devolvido': return 'fas fa-check';
+      default: return 'fas fa-question';
+    }
+  }
 
-    // Atualizar os valores nos cards
-    this.metricCards[0].value = this.emprestimosPendentes;
-    this.metricCards[1].value = this.emprestimosAtivos;
-    this.metricCards[2].value = this.emprestimosRecebidos;
-    this.metricCards[3].value = this.totalEmprestimos;
+  getStatusDescription(status: string): string {
+    switch (status) {
+      case 'ativo': return 'Ativo';
+      case 'atrasado': return 'Atrasado';
+      case 'devolvido': return 'Devolvido';
+      default: return 'Desconhecido';
+    }
+  }
+
+  onStatusChange(status: string): void {
+    if (this.emprestimoSelecionado) {
+      this.emprestimoSelecionado.status = status;
+    }
+  }
+
+  onPesquisaChange(): void {
+    this.aplicarFiltro();
+  }
+
+  // Métodos para pesquisa e seleção
+  filtrarProdutos(): void {
+    if (this.produtoPesquisa.trim()) {
+      this.produtosFiltrados = this.produtos.filter(p =>
+        p.nome.toLowerCase().includes(this.produtoPesquisa.toLowerCase()) ||
+        p.id_patrimonio.toString().includes(this.produtoPesquisa) ||
+        (p.codigo_publico && p.codigo_publico.toLowerCase().includes(this.produtoPesquisa.toLowerCase()))
+      );
+    } else {
+      this.produtosFiltrados = this.produtos;
+    }
+  }
+
+  selecionarProduto(produto: Produto): void {
+    this.selecionadoProduto = produto;
+    this.produtoPesquisa = produto.nome;
+    this.mostrarDropdownProdutos = false;
+  }
+
+  removerProduto(): void {
+    this.selecionadoProduto = null;
+    this.produtoPesquisa = '';
+  }
+
+  onBlurProduto(): void {
+    setTimeout(() => {
+      this.mostrarDropdownProdutos = false;
+    }, 200);
+  }
+
+  filtrarUsuarios(): void {
+    if (this.usuarioPesquisa.trim()) {
+      this.usuariosFiltrados = this.usuariosDisponiveis.filter(u =>
+        u.nome.toLowerCase().includes(this.usuarioPesquisa.toLowerCase()) ||
+        u.email.toLowerCase().includes(this.usuarioPesquisa.toLowerCase())
+      );
+    } else {
+      this.usuariosFiltrados = this.usuariosDisponiveis;
+    }
+  }
+
+  selecionarUsuario(usuario: Usuario): void {
+    this.selecionadoUsuario = usuario;
+    this.usuarioPesquisa = usuario.nome;
+    this.mostrarDropdownUsuarios = false;
+  }
+
+  removerUsuario(): void {
+    this.selecionadoUsuario = null;
+    this.usuarioPesquisa = '';
+  }
+
+  onBlurUsuario(): void {
+    setTimeout(() => {
+      this.mostrarDropdownUsuarios = false;
+    }, 200);
+  }
+
+  onQuantidadeChange(): void {
+    // Validação adicional se necessário
+  }
+
+  calcularDataDevolucao(): void {
+    if (this.novoEmprestimo.prazo_dias && this.novoEmprestimo.prazo_dias > 0) {
+      const hoje = new Date();
+      hoje.setDate(hoje.getDate() + this.novoEmprestimo.prazo_dias);
+      this.novoEmprestimo.data_devolucao = hoje.toISOString().split('T')[0];
+    }
+  }
+
+  fecharCardCadastro(): void {
+    this.fecharModalNovoEmprestimo();
+  }
+
+  formValid(): boolean {
+    return !!(this.selecionadoProduto && this.selecionadoUsuario && this.novoEmprestimo.quantidade && this.novoEmprestimo.quantidade > 0);
+  }
+
+  editarEmprestimo(emprestimo: any): void {
+    this.abrirModalEditarEmprestimo(emprestimo);
   }
 }

@@ -24,6 +24,17 @@ interface UserDisplay {
   role?: string;
   department?: string;
   ativo?: boolean;
+  infoAdicional?: ClienteInfoAdicional;
+}
+
+// Interface para informações adicionais do cliente
+interface ClienteInfoAdicional {
+  telefone?: string;
+  endereco?: string;
+  cpf?: string;
+  dataNascimento?: string;
+  emprestimosAtivos?: number;
+  totalEmprestimos?: number;
 }
 
 @Component({
@@ -40,7 +51,8 @@ export class UsuariosComponent implements OnInit {
     { title: 'Total de Usuários', variation: '+8%', trend: 'positive' },
     { title: 'Administradores', variation: '+2%', trend: 'positive' },
     { title: 'Gerentes', variation: '+5%', trend: 'positive' },
-    { title: 'Operadores', variation: '+12%', trend: 'positive' }
+    { title: 'Operadores', variation: '+12%', trend: 'positive' },
+    { title: 'Clientes', variation: '+15%', trend: 'positive' }
   ];
 
   // Valores reais para usuários
@@ -48,12 +60,16 @@ export class UsuariosComponent implements OnInit {
   administradoresCount: number = 0;
   gerentesCount: number = 0;
   operadoresCount: number = 0;
+  clientesCount: number = 0;
 
-  // Lista de usuários
+  // Listas separadas
   users: UserDisplay[] = [];
+  usuarios: UserDisplay[] = []; // Não clientes
+  clientes: UserDisplay[] = []; // Apenas clientes
 
   // Controle do card de cadastro
   isCardCadastroAberto: boolean = false;
+  novoUsuario: any = {};
   isCarregando: boolean = false;
   mensagemErro: string = '';
 
@@ -61,13 +77,22 @@ export class UsuariosComponent implements OnInit {
   isModalEditarPermissoesAberto: boolean = false;
   usuarioSelecionado: UserDisplay | null = null;
   
+  // Controle do modal de edição de usuário
+  isModalEditarUsuarioAberto: boolean = false;
+  usuarioSelecionadoParaEdicao: UserDisplay | null = null;
+  novaSenha: string = '';
+
+  // Controle do modal de detalhes do cliente
+  isModalDetalhesClienteAberto: boolean = false;
+  clienteSelecionado: UserDisplay | null = null;
+
   // Usuário logado
   userLogado: any = null;
 
   constructor(
     private usuarioService: UsuarioService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.carregarUsuarioLogado();
@@ -88,19 +113,14 @@ export class UsuariosComponent implements OnInit {
   carregarListaUsuarios(): void {
     this.isCarregando = true;
     this.mensagemErro = '';
-    
+
     this.usuarioService.listarUsuarios().subscribe({
       next: (usuarios: Usuario[]) => {
-        this.users = usuarios.map((u) => ({
-          id_usuario: u.id_usuario,
-          name: u.nome,
-          email: u.email,
-          since: 'nov/2025',
-          permissions: this.getPermissionsDescription(u.tipo_usuario),
-          role: this.normalizarRole(u.tipo_usuario),
-          ativo: u.ativo
-        }));
+        // Mapeia os usuários do banco para o formato de exibição
+        this.users = usuarios.map((usuario) => this.mapearUsuarioParaDisplay(usuario));
+        
         this.atualizarContadores();
+        this.filtrarListas();
         this.isCarregando = false;
       },
       error: (err) => {
@@ -109,6 +129,55 @@ export class UsuariosComponent implements OnInit {
         this.isCarregando = false;
       }
     });
+  }
+
+  /**
+   * Mapeia um usuário do banco para o formato de exibição
+   */
+  private mapearUsuarioParaDisplay(usuario: Usuario): UserDisplay {
+    return {
+      id_usuario: usuario.id_usuario,
+      name: usuario.nome,
+      email: usuario.email,
+      since: this.gerarDataDesde(), // Gera data fictícia já que não temos data_cadastro
+      permissions: this.getPermissionsDescription(usuario.tipo_usuario),
+      role: this.normalizarRole(usuario.tipo_usuario),
+      ativo: usuario.ativo,
+      infoAdicional: this.gerarInfoAdicionalCliente(usuario)
+    };
+  }
+
+  /**
+   * Gera uma data "desde" fictícia baseada no ID do usuário
+   */
+  private gerarDataDesde(): string {
+    const meses = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+    const mes = meses[Math.floor(Math.random() * 12)];
+    const ano = 2023 + Math.floor(Math.random() * 3); // 2023, 2024 ou 2025
+    return `${mes}/${ano}`;
+  }
+
+  /**
+   * Filtra as listas de usuários e clientes
+   */
+  private filtrarListas(): void {
+    this.usuarios = this.users.filter(user => user.role !== 'cliente');
+    this.clientes = this.users.filter(user => user.role === 'cliente');
+  }
+
+  /**
+   * Gera informações adicionais para clientes (valores padrão)
+   */
+  private gerarInfoAdicionalCliente(usuario: Usuario): ClienteInfoAdicional {
+    // Como não temos essas informações no banco, usamos valores padrão
+    return {
+      telefone: 'Não informado',
+      endereco: 'Não informado',
+      cpf: 'Não informado',
+      dataNascimento: 'Não informada',
+      emprestimosAtivos: 0,
+      totalEmprestimos: 0
+    };
   }
 
   /**
@@ -130,8 +199,8 @@ export class UsuariosComponent implements OnInit {
    */
   getRoleBadge(role?: string): string {
     if (!role) return 'U';
-    
-    switch(role) {
+
+    switch (role) {
       case 'admin': return 'A';
       case 'gerente': return 'G';
       case 'operador': return 'O';
@@ -145,10 +214,10 @@ export class UsuariosComponent implements OnInit {
    */
   getPermissionsDescription(role?: string): string {
     if (!role) return 'Permissões não definidas';
-    
+
     const roleNormalizado = this.normalizarRole(role);
-    switch(roleNormalizado) {
-      case 'admin': 
+    switch (roleNormalizado) {
+      case 'admin':
         return 'Acesso total ao sistema';
       case 'gerente':
         return 'Todas as funcionalidades e gerenciar usuários';
@@ -159,6 +228,96 @@ export class UsuariosComponent implements OnInit {
       default:
         return 'Permissões não definidas';
     }
+  }
+
+  /**
+   * Abre modal para visualizar detalhes do cliente
+   */
+  abrirModalDetalhesCliente(cliente: UserDisplay): void {
+    this.clienteSelecionado = { ...cliente };
+    this.isModalDetalhesClienteAberto = true;
+  }
+
+  /**
+   * Fecha modal de detalhes do cliente
+   */
+  fecharModalDetalhesCliente(): void {
+    this.isModalDetalhesClienteAberto = false;
+    this.clienteSelecionado = null;
+  }
+
+  /**
+   * Abre modal para editar usuário
+   */
+  abrirModalEditarUsuario(usuario: UserDisplay): void {
+    this.usuarioSelecionadoParaEdicao = {
+      ...usuario,
+      ativo: usuario.ativo !== undefined ? usuario.ativo : true
+    };
+    this.novaSenha = '';
+    this.isModalEditarUsuarioAberto = true;
+  }
+
+  /**
+   * Fecha modal de edição de usuário
+   */
+  fecharModalEditarUsuario(): void {
+    this.isModalEditarUsuarioAberto = false;
+    this.usuarioSelecionadoParaEdicao = null;
+    this.novaSenha = '';
+  }
+
+  /**
+   * Manipula mudança de role no select do modal de edição
+   */
+  onRoleChangeEditar(newRole: string): void {
+    if (this.usuarioSelecionadoParaEdicao) {
+      this.usuarioSelecionadoParaEdicao.role = newRole;
+    }
+  }
+
+  /**
+   * Salva as alterações do usuário no backend
+   */
+  salvarEdicaoUsuario(): void {
+    if (!this.usuarioSelecionadoParaEdicao || !this.usuarioSelecionadoParaEdicao.id_usuario) {
+      return;
+    }
+
+    // Converter role de volta para tipo_usuario (letra)
+    const tipoMap: { [key: string]: string } = {
+      'admin': 'A',
+      'gerente': 'G',
+      'operador': 'O',
+      'cliente': 'C'
+    };
+
+    const novoTipo = tipoMap[this.usuarioSelecionadoParaEdicao.role || ''] || 'O';
+
+    // Preparar os dados para atualização
+    const dadosAtualizacao: any = {
+      nome: this.usuarioSelecionadoParaEdicao.name,
+      email: this.usuarioSelecionadoParaEdicao.email,
+      tipo_usuario: novoTipo,
+      ativo: this.usuarioSelecionadoParaEdicao.ativo
+    };
+
+    // Se a nova senha foi preenchida, adicionar ao objeto de atualização
+    if (this.novaSenha && this.novaSenha.trim() !== '') {
+      dadosAtualizacao.senha = this.novaSenha;
+    }
+
+    this.usuarioService.atualizarUsuario(this.usuarioSelecionadoParaEdicao.id_usuario, dadosAtualizacao).subscribe({
+      next: () => {
+        this.carregarListaUsuarios();
+        this.fecharModalEditarUsuario();
+        console.log('Usuário atualizado com sucesso');
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar usuário:', err);
+        this.mensagemErro = 'Erro ao salvar alterações';
+      }
+    });
   }
 
   /**
@@ -185,13 +344,13 @@ export class UsuariosComponent implements OnInit {
     }
 
     const usuarioData = form.value;
-    
+
     // Mapear para formato do backend
     const novoUsuario: Usuario = {
       nome: usuarioData.nome,
       email: usuarioData.email,
-      senha: usuarioData.senha || Math.random().toString(36).substring(2, 15),
-      tipo_usuario: usuarioData.perfil || 'O', // Padrão operador
+      senha: usuarioData.senha,
+      tipo_usuario: usuarioData.perfil || 'O',
       ativo: true
     };
 
@@ -200,6 +359,7 @@ export class UsuariosComponent implements OnInit {
       next: () => {
         this.carregarListaUsuarios();
         this.fecharCardCadastro();
+        this.novoUsuario = {};
         form.reset();
         console.log('Usuário criado com sucesso');
       },
@@ -214,7 +374,6 @@ export class UsuariosComponent implements OnInit {
    * Abre modal para editar permissões
    */
   abrirModalEditarPermissoes(usuario: UserDisplay): void {
-    // Criar uma cópia do usuário para edição
     this.usuarioSelecionado = { ...usuario };
     this.isModalEditarPermissoesAberto = true;
   }
@@ -273,53 +432,14 @@ export class UsuariosComponent implements OnInit {
   }
 
   /**
-   * Deleta um usuário
-   */
-  deletarUsuario(usuario: UserDisplay): void {
-    if (!usuario.id_usuario) return;
-    
-    if (!confirm(`Tem certeza que deseja deletar o usuário ${usuario.name}?`)) {
-      return;
-    }
-
-    this.usuarioService.deletarUsuario(usuario.id_usuario).subscribe({
-      next: () => {
-        this.carregarListaUsuarios();
-        console.log('Usuário deletado');
-      },
-      error: (err) => {
-        console.error('Erro ao deletar usuário:', err);
-        this.mensagemErro = 'Erro ao deletar usuário';
-      }
-    });
-  }
-
-  /**
-   * Desativa um usuário
-   */
-  desativarUsuario(usuario: UserDisplay): void {
-    if (!usuario.id_usuario) return;
-    
-    this.usuarioService.desativarUsuario(usuario.id_usuario).subscribe({
-      next: () => {
-        this.carregarListaUsuarios();
-        console.log('Usuário desativado');
-      },
-      error: (err) => {
-        console.error('Erro ao desativar usuário:', err);
-        this.mensagemErro = 'Erro ao desativar usuário';
-      }
-    });
-  }
-
-  /**
    * Atualiza os contadores de usuários por role
    */
   private atualizarContadores(): void {
     this.administradoresCount = this.users.filter(user => user.role === 'admin').length;
     this.gerentesCount = this.users.filter(user => user.role === 'gerente').length;
     this.operadoresCount = this.users.filter(user => user.role === 'operador').length;
-    
+    this.clientesCount = this.users.filter(user => user.role === 'cliente').length;
+
     // Atualizar total
     this.totalUsers = this.users.length;
 
@@ -328,6 +448,6 @@ export class UsuariosComponent implements OnInit {
     this.metricCards[1].value = this.administradoresCount;
     this.metricCards[2].value = this.gerentesCount;
     this.metricCards[3].value = this.operadoresCount;
+    this.metricCards[4].value = this.clientesCount;
   }
 }
-

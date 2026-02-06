@@ -1,5 +1,5 @@
 <body>
-    <app-sidebar></app-sidebar>
+        <app-sidebar></app-sidebar>
     <main>
         <header class="topo">
             <div class="topo-texto">
@@ -10,7 +10,7 @@
                 <div class="adicionar-usuario-container" (click)="abrirCardCadastro()">
                     <i class="fas fa-plus"></i>
                     <div class="adicionar-usuario-text">Adicionar Usuário</div>
-                </div>  
+                </div>
             </div>
         </header>
 
@@ -24,9 +24,7 @@
                     {{ metricCards[0]?.variation || '-' }}
                 </div>
                 <div class="imgCard">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
-                        <path d="M40-160v-112q0-34 17.5-62.5T104-378q62-31 126-46.5T360-440q66 0 130 15.5T616-378q29 15 46.5 43.5T680-272v112H40Zm720 0v-120q0-44-24.5-84.5T666-434q51 6 96 20.5t84 35.5q36 20 55 44.5t19 53.5v120H760ZM360-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm400-160q0 66-47 113t-113 47q-11 0-28-2.5t-28-5.5q27-32 41.5-71t14.5-81q0-42-14.5-81T544-792q14-5 28-6.5t28-1.5q66 0 113 47t47 113Z"/>
-                    </svg>
+                    <i class="fas fa-users"></i>
                 </div>
             </div>
 
@@ -38,9 +36,7 @@
                     {{ metricCards[1]?.variation || '-' }}
                 </div>
                 <div class="imgCard2">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
-                        <path d="M400-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM80-160v-112q0-34 17.5-62.5T144-378q62-31 126-46.5T400-440q66 0 130 15.5T656-378q29 15 46.5 43.5T720-272v112H80Zm320-400q33 0 56.5-23.5T480-640q0-33-23.5-56.5T400-720q-33 0-56.5 23.5T320-640q0 33 23.5 56.5T400-560Zm-80 320h160v-32q0-11-5.5-20T580-306q-18-9-39-13.5t-41-4.5q-20 0-41 4.5T420-306q-9 5-14.5 14t-5.5 20v32Zm240-320h240v-80H640v80Zm160 160H640v-80h160v80ZM640-320h160v-80H640v80Zm80 160v-80h-80v-80h160v160H720Z"/>
-                    </svg>
+                    <i class="fas fa-user-shield"></i>
                 </div>
             </div>
 
@@ -52,9 +48,7 @@
                     {{ metricCards[2]?.variation || '-' }}
                 </div>
                 <div class="imgCard3">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
-                        <path d="M160-120q-33 0-56.5-23.5T80-200v-440q0-33 23.5-56.5T160-720h160v-80q0-33 23.5-56.5T400-880h160q33 0 56.5 23.5T640-800v80h160q33 0 56.5 23.5T880-640v440q0 33-23.5 56.5T800-120H160Zm0-80h640v-440H160v440Zm240-520h160v-80H400v80ZM160-200v-440 440Z"/>
-                    </svg>
+                    <i class="fas fa-user-tie"></i>
                 </div>
             </div>
 
@@ -66,13 +60,24 @@
                     {{ metricCards[3]?.variation || '-' }}
                 </div>
                 <div class="imgCard4">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F3F3F3">
-                        <path d="M120-240v-80h80v-360q0-50 35-85t85-35h240q50 0 85 35t35 85v360h80v80H120Zm160-80h160v-120H280v120Zm0-200h400v-160q0-17-11.5-28.5T640-720H400q-17 0-28.5 11.5T360-680v160Zm440 200v-280h-80v200h-80v-200h-80v280h240Z"/>
-                    </svg>
+                    <i class="fas fa-user-cog"></i>
+                </div>
+            </div>
+
+            <!-- Card 5: Clientes -->
+            <div class="card">
+                <div class="card-title">{{ metricCards[4]?.title || 'Clientes' }}</div>
+                <div class="card-value">{{ clientesCount || 0 }}</div>
+                <div class="card-variation" [class]="'card-variation ' + (metricCards[4]?.trend || 'neutral')">
+                    {{ metricCards[4]?.variation || '-' }}
+                </div>
+                <div class="imgCard5">
+                    <i class="fas fa-user-friends"></i>
                 </div>
             </div>
         </section>
 
+        <!-- Restante do código permanece igual -->
         <!-- Lista de Usuários -->
         <section class="usuarios-container">
             <div class="usuarios-card">
@@ -89,39 +94,30 @@
                     <i class="fas fa-spinner fa-spin"></i> Carregando usuários...
                 </div>
 
-                <div class="user-list" *ngIf="!isCarregando && users.length > 0">
-                    <div class="user-item" *ngFor="let user of users">
+                <div class="user-list" *ngIf="!isCarregando && usuarios.length > 0">
+                    <div class="user-item" *ngFor="let user of usuarios">
                         <div class="user-header">
                             <div class="user-name-container">
                                 <span class="user-role-badge" *ngIf="user.role">{{ getRoleBadge(user.role) }}</span>
                                 <span class="user-name">{{ user.name }}</span>
                             </div>
+
+                            <!-- BOTÕES DE AÇÃO -->
                             <div class="user-actions">
-                                <!-- Botão de editar permissões (visível apenas para ADM e Gerente) -->
-                                <button 
-                                    *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'"
-                                    class="btn-editar-permissoes"
-                                    (click)="abrirModalEditarPermissoes(user)">
+                                <!-- Botão de Editar Usuário - AGORA EM TODOS OS USUÁRIOS -->
+                                <button class="btn-editar" (click)="abrirModalEditarUsuario(user)">
                                     <i class="fas fa-edit"></i>
                                     Editar
                                 </button>
-                                <!-- Botão editar permissões (substitui deletar) -->
-                                <button 
-                                    *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
-                                    class="btn-editar-permissoes"
-                                    (click)="abrirModalEditarPermissoes(user)">
-                                    <i class="fas fa-user-cog"></i>
-                                    Editar Permissões
-                                </button>
-                                </div>
-                                <!-- Botão único: Editar Permissões (aparece para ADM/Gerente e não permite editar a si mesmo) -->
+
+                                <!-- Botão de Editar Permissões (apenas para ADM/Gerente em outros usuários) -->
                                 <button
                                     *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
-                                    class="btn-editar-permissoes"
-                                    (click)="abrirModalEditarPermissoes(user)">
+                                    class="btn-permissoes" (click)="abrirModalEditarPermissoes(user)">
                                     <i class="fas fa-user-cog"></i>
-                                    Editar Permissões
+                                    Permissões
                                 </button>
+                            </div>
                         </div>
 
                         <div class="user-email">
@@ -135,7 +131,7 @@
                     </div>
                 </div>
 
-                <div class="no-users" *ngIf="!isCarregando && users.length === 0">
+                <div class="no-users" *ngIf="!isCarregando && usuarios.length === 0">
                     <i class="fas fa-users"></i>
                     <p>Nenhum usuário cadastrado</p>
                     <small>Adicione usuários para gerenciar permissões</small>
@@ -143,120 +139,414 @@
             </div>
         </section>
 
-        <!-- Modal de Cadastro de Usuário -->
-        <div *ngIf="isCardCadastroAberto" class="card-cadastro-overlay">
-            <div class="card-cadastro">
-                <div class="card-header">
-                    <h3>Cadastrar Novo Usuário</h3>
-                    <button class="fechar-btn" (click)="fecharCardCadastro()">
-                        <i class="fas fa-times"></i>
-                    </button>
+        <!-- Lista de Clientes -->
+        <section class="usuarios-container">
+            <div class="usuarios-card">
+                <div class="card-title">Clientes</div>
+
+                <!-- Mensagem de erro -->
+                <div *ngIf="mensagemErro" class="alerta-erro">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ mensagemErro }}
                 </div>
-                
-                <div class="card-body">
-                    <form (ngSubmit)="cadastrarUsuario(usuarioForm)" #usuarioForm="ngForm">
-                        <div class="form-group">
-                            <label for="nome">Nome Completo:</label>
-                            <input type="text" id="nome" name="nome" ngModel required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" ngModel required>
+
+                <div class="user-list" *ngIf="!isCarregando && clientes.length > 0">
+                    <div class="user-item cliente-item" *ngFor="let cliente of clientes">
+                        <div class="user-header">
+                            <div class="user-name-container">
+                                <span class="user-role-badge cliente-badge">C</span>
+                                <span class="user-name">{{ cliente.name }}</span>
+                            </div>
+
+                            <!-- BOTÕES DE AÇÃO PARA CLIENTES -->
+                            <div class="user-actions">
+                                <!-- Botão de Editar Cliente - AGORA EM TODOS OS CLIENTES -->
+                                <button class="btn-editar" (click)="abrirModalEditarUsuario(cliente)">
+                                    <i class="fas fa-edit"></i>
+                                    Editar
+                                </button>
+
+                                <!-- Botão de Visualizar Detalhes do Cliente -->
+                                <button class="btn-visualizar-cliente" (click)="abrirModalDetalhesCliente(cliente)">
+                                    <i class="fas fa-eye"></i>
+                                    Detalhes
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="senha">Senha:</label>
-                            <input type="password" id="senha" name="senha" ngModel>
+                        <div class="user-email">
+                            {{ cliente.email }}
+                            <span class="user-since">Desde {{ cliente.since }}</span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="perfil">Perfil:</label>
-                            <select id="perfil" name="perfil" ngModel>
-                                <option value="O">Operador</option>
-                                <option value="G">Gerente</option>
-                                <option value="A">Administrador</option>
-                            </select>
+                        <div class="user-permissions">
+                            {{ getPermissionsDescription(cliente.role) }}
                         </div>
-                        
-                        <div class="form-group">
-                            <label for="departamento">Departamento:</label>
-                            <input type="text" id="departamento" name="departamento" ngModel>
+
+                        <!-- Informações adicionais do cliente -->
+                        <div class="cliente-info-adicional" *ngIf="cliente.infoAdicional">
+                            <div class="info-item">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ cliente.infoAdicional.telefone || 'Telefone não informado' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ cliente.infoAdicional.endereco || 'Endereço não informado' }}</span>
+                            </div>
                         </div>
-                        
-                        <div class="form-actions">
-                            <button type="button" class="btn-cancelar" (click)="fecharCardCadastro()">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="btn-salvar" [disabled]="!usuarioForm.valid">
-                                Cadastrar Usuário
-                            </button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Modal de Edição de Permissões -->
-        <div *ngIf="isModalEditarPermissoesAberto && usuarioSelecionado" class="modal-overlay">
-            <div class="modal-editar-permissoes">
-                <div class="modal-header">
-                    <h3>Editar Permissões - {{ usuarioSelecionado.name }}</h3>
-                    <button class="fechar-btn" (click)="fecharModalEditarPermissoes()">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="modal-body">
-                    <form (ngSubmit)="salvarPermissoes()" #permissoesForm="ngForm">
-                        <div class="form-group">
-                            <label for="nivelPermissao">Nível de Permissão:</label>
-                            <select 
-                                id="nivelPermissao"
-                                name="nivelPermissao"
-                                [ngModel]="usuarioSelecionado.role"
-                                (ngModelChange)="onRoleChange($event)"
-                                required
-                                #nivelPermissao="ngModel">
-                                <option value="admin">Administrador</option>
-                                <option value="gerente">Gerente</option>
-                                <option value="operador">Operador</option>
-                            </select>
-                        </div>
-
-                        <div class="permissoes-descricao">
-                            <h4>Permissões Atribuídas:</h4>
-                            <div *ngIf="usuarioSelecionado.role === 'admin'" class="permissao-item">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Acesso total ao sistema</span>
-                            </div>
-                            <div *ngIf="usuarioSelecionado.role === 'gerente'" class="permissao-item">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Todas as funcionalidades e gerenciar (editar/remover/adicionar) usuários</span>
-                            </div>
-                            <div *ngIf="usuarioSelecionado.role === 'operador'" class="permissao-item">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Gerenciar (editar/remover/adicionar) produtos e dar baixa quando o produto voltar do empréstimo</span>
-                            </div>
-                            <div *ngIf="usuarioSelecionado.role === 'cliente'" class="permissao-item">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Apenas realizar empréstimos</span>
-                            </div>
-                        </div>
-                        
-                        <div class="form-actions">
-                            <button type="button" class="btn-cancelar" (click)="fecharModalEditarPermissoes()">
-                                Cancelar
-                            </button>
-                            <button type="submit" class="btn-salvar" [disabled]="!permissoesForm.valid">
-                                Salvar Alterações
-                            </button>
-                        </div>
-                    </form>
+                <div class="no-users" *ngIf="!isCarregando && clientes.length === 0">
+                    <i class="fas fa-user-friends"></i>
+                    <p>Nenhum cliente cadastrado</p>
+                    <small>Clientes cadastrados aparecerão aqui</small>
                 </div>
             </div>
-        </div>
+        </section>
+        <br>
+        <br>
+        
     </main>
-    <br>
-    <br>
+        <!-- Modal de Edição Completa de Usuário -->
+    <div *ngIf="isModalEditarUsuarioAberto && usuarioSelecionadoParaEdicao" class="modal-overlay">
+        <div class="modal-editar-usuario">
+            <div class="modal-header">
+                <h3>Editar Usuário - {{ usuarioSelecionadoParaEdicao.name }}</h3>
+                <button class="fechar-btn" (click)="fecharModalEditarUsuario()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form (ngSubmit)="salvarEdicaoUsuario()" #editarUsuarioForm="ngForm">
+                    <!-- Nome -->
+                    <div class="form-group">
+                        <label for="nomeEditar">Nome Completo:</label>
+                        <input type="text" id="nomeEditar" name="nomeEditar"
+                            [(ngModel)]="usuarioSelecionadoParaEdicao.name" required #nomeInput="ngModel">
+                        <div *ngIf="nomeInput.invalid && nomeInput.touched" class="erro-validacao">
+                            Nome é obrigatório
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="emailEditar">Email:</label>
+                        <input type="email" id="emailEditar" name="emailEditar"
+                            [(ngModel)]="usuarioSelecionadoParaEdicao.email" required #emailInput="ngModel">
+                        <div *ngIf="emailInput.invalid && emailInput.touched" class="erro-validacao">
+                            Email é obrigatório
+                        </div>
+                    </div>
+
+                    <!-- Senha -->
+                    <div class="form-group">
+                        <label for="senhaEditar">Nova Senha:</label>
+                        <input type="password" id="senhaEditar" name="senhaEditar"
+                            [(ngModel)]="novaSenha"
+                            placeholder="Deixe em branco para manter a senha atual"
+                            #senhaInput="ngModel">
+                        <small class="texto-ajuda">Deixe em branco para manter a senha atual</small>
+                    </div>
+
+                    <!-- Tipo de Usuário -->
+                    <div class="form-group"
+                        *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'">
+                        <label for="perfilEditar">Tipo de Usuário:</label>
+                        <select id="perfilEditar" name="perfilEditar"
+                            [(ngModel)]="usuarioSelecionadoParaEdicao.role"
+                            (ngModelChange)="onRoleChangeEditar($event)">
+                            <option value="admin">Administrador</option>
+                            <option value="gerente">Gerente</option>
+                            <option value="operador">Operador</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Ativo/Inativo -->
+                    <div class="form-group"
+                        *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A'">
+                        <label class="checkbox-container">
+                            <input type="checkbox"
+                                [(ngModel)]="usuarioSelecionadoParaEdicao.ativo"
+                                name="ativoEditar">
+                            <span class="checkmark"></span>
+                            Usuário Ativo
+                        </label>
+                    </div>
+
+                    <!-- Descrição das Permissões -->
+                    <div class="permissoes-descricao"
+                        *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'">
+                        <h4>Permissões Atribuídas:</h4>
+                        <div *ngIf="usuarioSelecionadoParaEdicao.role === 'admin'"
+                            class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Acesso total ao sistema</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionadoParaEdicao.role === 'gerente'"
+                            class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Todas as funcionalidades e gerenciar usuários</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionadoParaEdicao.role === 'operador'"
+                            class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Gerenciar produtos e dar baixa em empréstimos</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionadoParaEdicao.role === 'cliente'"
+                            class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Apenas realizar empréstimos</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar"
+                            (click)="fecharModalEditarUsuario()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-salvar"
+                            [disabled]="!editarUsuarioForm.valid">
+                            Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes do Cliente -->
+    <div *ngIf="isModalDetalhesClienteAberto && clienteSelecionado" class="modal-overlay">
+        <div class="modal-detalhes-cliente">
+            <div class="modal-header">
+                <h3>Detalhes do Cliente - {{ clienteSelecionado.name }}</h3>
+                <button class="fechar-btn" (click)="fecharModalDetalhesCliente()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="detalhes-cliente-body">
+                <!-- Informações Pessoais -->
+                <div class="detalhes-section">
+                    <h4>Informações Pessoais</h4>
+                    <div class="detalhes-grid">
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Nome Completo:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.name }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Email:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.email }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Telefone:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.infoAdicional?.telefone || 'Não informado' }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">CPF:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.infoAdicional?.cpf || 'Não informado' }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Data de Nascimento:</span>
+                            <span class="detalhe-value">{{ clienteSelecionado.infoAdicional?.dataNascimento || 'Não informada' }}</span>
+                        </div>
+                        <div class="detalhe-item">
+                            <span class="detalhe-label">Status:</span>
+                            <span class="detalhe-value" [class.ativo]="clienteSelecionado.ativo" [class.inativo]="!clienteSelecionado.ativo">
+                                {{ clienteSelecionado.ativo ? 'Ativo' : 'Inativo' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Endereço -->
+                <div class="detalhes-section" *ngIf="clienteSelecionado.infoAdicional?.endereco">
+                    <h4>Endereço</h4>
+                    <div class="detalhe-item">
+                        <span class="detalhe-value">{{ clienteSelecionado.infoAdicional?.endereco }}</span>
+                    </div>
+                </div>
+
+                <!-- Estatísticas -->
+                <div class="detalhes-section">
+                    <h4>Estatísticas</h4>
+                    <div class="estatisticas-cliente">
+                        <div class="estatistica-card">
+                            <span class="estatistica-valor">{{ clienteSelecionado.infoAdicional?.totalEmprestimos || 0 }}</span>
+                            <span class="estatistica-label">Total de Empréstimos</span>
+                        </div>
+                        <div class="estatistica-card">
+                            <span class="estatistica-valor">{{ clienteSelecionado.infoAdicional?.emprestimosAtivos || 0 }}</span>
+                            <span class="estatistica-label">Empréstimos Ativos</span>
+                        </div>
+                        <div class="estatistica-card">
+                            <span class="estatistica-valor">{{ clienteSelecionado.since }}</span>
+                            <span class="estatistica-label">Cliente Desde</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ações -->
+                <div class="form-actions">
+                    <button type="button" class="btn-cancelar" (click)="fecharModalDetalhesCliente()">
+                        Fechar
+                    </button>
+                    <button
+                        *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'"
+                        type="button"
+                        class="btn-salvar"
+                        (click)="abrirModalEditarUsuario(clienteSelecionado)">
+                        <i class="fas fa-edit"></i>
+                        Editar Cliente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Permissões -->
+    <div *ngIf="isModalEditarPermissoesAberto && usuarioSelecionado" class="modal-overlay">
+        <div class="modal-editar-permissoes">
+            <div class="modal-header">
+                <h3>Editar Permissões - {{ usuarioSelecionado.name }}</h3>
+                <button class="fechar-btn" (click)="fecharModalEditarPermissoes()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form (ngSubmit)="salvarPermissoes()" #permissoesForm="ngForm">
+                    <!-- Tipo de Usuário -->
+                    <div class="form-group">
+                        <label for="perfilPermissoes">Tipo de Usuário:</label>
+                        <select id="perfilPermissoes" name="perfilPermissoes"
+                            [(ngModel)]="usuarioSelecionado.role"
+                            (ngModelChange)="onRoleChange($event)">
+                            <option value="admin">Administrador</option>
+                            <option value="gerente">Gerente</option>
+                            <option value="operador">Operador</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Ativo/Inativo -->
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox"
+                                [(ngModel)]="usuarioSelecionado.ativo"
+                                name="ativoPermissoes">
+                            <span class="checkmark"></span>
+                            Usuário Ativo
+                        </label>
+                    </div>
+
+                    <!-- Descrição das Permissões -->
+                    <div class="permissoes-descricao">
+                        <h4>Permissões Atribuídas:</h4>
+                        <div *ngIf="usuarioSelecionado.role === 'admin'" class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Acesso total ao sistema</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionado.role === 'gerente'" class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Todas as funcionalidades e gerenciar usuários</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionado.role === 'operador'" class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Gerenciar produtos e dar baixa em empréstimos</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionado.role === 'cliente'" class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Apenas realizar empréstimos</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar" (click)="fecharModalEditarPermissoes()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-salvar">
+                            Salvar Permissões
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro de Usuário -->
+    <div *ngIf="isCardCadastroAberto" class="modal-overlay" (click)="fecharCardCadastro()">
+        <div class="modal-cadastro-usuario" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Novo Usuário</h3>
+                <button class="fechar-btn" (click)="fecharCardCadastro()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form (ngSubmit)="cadastrarUsuario(cadastroForm)" #cadastroForm="ngForm">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo:</label>
+                        <input type="text" id="nome" name="nome"
+                            [(ngModel)]="novoUsuario.nome" required #nomeInput="ngModel">
+                        <div *ngIf="nomeInput.invalid && nomeInput.touched" class="erro-validacao">
+                            Nome é obrigatório
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email"
+                            [(ngModel)]="novoUsuario.email" required #emailInput="ngModel">
+                        <div *ngIf="emailInput.invalid && emailInput.touched" class="erro-validacao">
+                            Email é obrigatório
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senha">Senha:</label>
+                        <input type="password" id="senha" name="senha"
+                            [(ngModel)]="novoUsuario.senha" required #senhaInput="ngModel">
+                        <div *ngIf="senhaInput.invalid && senhaInput.touched" class="erro-validacao">
+                            Senha é obrigatória
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="perfil">Tipo de Usuário:</label>
+                        <select id="perfil" name="perfil"
+                            [(ngModel)]="novoUsuario.perfil" required #perfilInput="ngModel">
+                            <option value="">Selecione...</option>
+                            <option value="A">Administrador</option>
+                            <option value="G">Gerente</option>
+                            <option value="O">Operador</option>
+                            <option value="C">Cliente</option>
+                        </select>
+                        <div *ngIf="perfilInput.invalid && perfilInput.touched" class="erro-validacao">
+                            Tipo de usuário é obrigatório
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observacoes">Observações (Opcional):</label>
+                        <textarea id="observacoes" name="observacoes"
+                            [(ngModel)]="novoUsuario.observacoes" rows="3"
+                            placeholder="Informações adicionais sobre o usuário..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar" (click)="fecharCardCadastro()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-salvar" [disabled]="!cadastroForm.valid">
+                            Criar Usuário
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>

@@ -8,9 +8,10 @@ import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-codigo-verificacao',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './codigo-verificacao.html',
-  styleUrl: './codigo-verificacao.scss',
+  styleUrls: ['./codigo-verificacao.scss']
 })
 export class CodigoVerificacao implements AfterViewInit, OnDestroy {
   @ViewChildren('inputRef') inputs!: QueryList<ElementRef<HTMLInputElement>>;
@@ -44,6 +45,11 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
     }
   }
 
+  // Método para voltar para login
+  voltarParaLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
   onInput(event: any, index: number) {
     const input = event.target as HTMLInputElement;
     const value = input.value;
@@ -54,9 +60,6 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
       this.codigo[index] = '';
       return;
     }
-
-    this.currentStep = 1;
-    this.router.navigate(['/codigo-verificacao']);
 
     // Atualiza o modelo com o valor digitado
     this.codigo[index] = value;
@@ -70,10 +73,8 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
       }
     }
 
-    // Se está no último input e está preenchido, submete automaticamente
-    if (index === 5 && value) {
-      this.verificarCodigo();
-    }
+    // 🔥 CORREÇÃO: Removida a navegação automática
+    // O usuário precisa clicar no botão "Verificar Código"
 
     // Limpa mensagem de erro quando o usuário começa a digitar
     if (this.errorMessage) {
@@ -175,12 +176,18 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
     this.verificarCodigo();
   }
 
+  // 🔥 CORREÇÃO: Método simplificado - só navega quando o usuário clicar
   verificarCodigo() {
-    // vai direto para a próxima página, sem validação e sem tempo de espera
+    // Verifica se todos os campos estão preenchidos
+    if (!this.todosCamposPreenchidos()) {
+      this.errorMessage = 'Por favor, preencha todos os 6 dígitos do código';
+      return;
+    }
+
+    // Se estiver tudo preenchido, navega para redefinir senha
+    console.log('✅ Código completo - Navegando para redefinir senha');
     this.router.navigate(['/redefinir-senha']);
   }
-
-
 
   reenviarCodigo() {
     if (this.podeReenviar && !this.isLoading) {
@@ -201,20 +208,6 @@ export class CodigoVerificacao implements AfterViewInit, OnDestroy {
           this.errorMessage = 'Erro ao reenviar código. Tente novamente.';
         }
       });
-
-      // Método 2: Para teste rápido
-      /*
-      setTimeout(() => {
-        this.isLoading = false;
-        this.iniciarCountdown();
-        this.mostrarMensagemSucesso('Código reenviado com sucesso!');
-        console.log('Código reenviado!');
-      }, 1000);
-      */
-
-      // Reinicia o countdown
-      this.podeReenviar = false;
-      this.tempoRestante = 60;
     }
   }
 

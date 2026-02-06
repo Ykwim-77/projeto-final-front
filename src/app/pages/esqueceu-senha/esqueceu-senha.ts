@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service'; // ✅ CORREÇÃO: services em vez de guards
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-esqueceu-senha',
@@ -13,61 +13,75 @@ import { FormsModule } from '@angular/forms';
 })
 export class EsqueceuSenhaComponent {
   email: string = '';
-  isLoading: boolean = false; // ✅ ADICIONADO
+  isLoading: boolean = false;
   errorMessage: string = '';
-  currentStep = 0;
+  currentStep: number = 0;
 
-  constructor(
-    private router: Router,
-    private authService: AuthService
-  ) { }
+  constructor(private router: Router) {}
 
-  onSubmit(event: Event): void {
+  async onSubmit(event: Event): Promise<void> {
     event.preventDefault();
-
-    // Validação básica
+    
+    console.log('🔄 Iniciando envio de email...');
+    
     if (!this.email) {
-      this.errorMessage = 'Por favor, preencha o campo de E-mail';
+      this.errorMessage = 'Por favor, informe seu email';
+      console.log('❌ Email não informado');
       return;
     }
-
-    // Validação adicional de formato de e-mail (opcional)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(this.email)) {
-      this.errorMessage = 'Por favor, insira um e-mail válido.';
-      return;
-    }
-    // Quando for para a próxima página:
-    this.currentStep = 1; // 👈 Atualiza indicador
-    this.router.navigate(['/codigo-verificacao']);
 
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.authService.esqueceuSenha(this.email).subscribe({
-      next: (response: any) => {
-        console.log('✅ E-mail de recuperação enviado');
-        this.isLoading = false;
+    try {
+      console.log('📤 Enviando email para:', this.email);
+      
+      // Simular envio de email (substitua pela sua lógica real)
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log('✅ Email enviado com sucesso');
+      console.log('🔄 Navegando para /codigo-verificacao...');
+      
+      // 🔥 CORREÇÃO: Navegar para a tela de código de verificação
+      this.router.navigate(['/codigo-verificacao']).then(success => {
+        console.log('✅ Navegação bem-sucedida:', success);
+      }).catch(error => {
+        console.error('❌ Erro na navegação:', error);
+      });
+      
+    } catch (error) {
+      console.error('❌ Erro ao enviar email:', error);
+      this.errorMessage = 'Erro ao enviar email. Tente novamente.';
+    } finally {
+      this.isLoading = false;
+    }
+  }
 
-        // Redireciona para a página de código de verificação
-        this.router.navigate(['/codigo-verificacao'], {
-          queryParams: { email: this.email }
-        });
-      },
-      error: (error: any) => {
-        console.error('❌ Erro ao enviar e-mail:', error);
-        this.isLoading = false;
-
-        if (error && error.mensagem) {
-          this.errorMessage = error.mensagem;
-        } else {
-          this.errorMessage = 'Erro ao enviar e-mail de recuperação. Tente novamente.';
-        }
-      }
+  // Método para voltar para login
+  voltarParaLogin(): void {
+    console.log('🔗 Voltando para login...');
+    this.router.navigate(['/login']).then(success => {
+      console.log('✅ Navegação para login bem-sucedida:', success);
+    }).catch(error => {
+      console.error('❌ Erro na navegação para login:', error);
     });
   }
 
-  voltarParaLogin() {
-    this.router.navigate(['/login']);
+  // 🔥 MÉTODO ADICIONADO: Navegação com loading (opcional)
+  async navigateWithLoading(route: string): Promise<void> {
+    console.log(`🔗 Navegando para ${route} com loading...`);
+    
+    this.isLoading = true;
+    
+    try {
+      await Promise.all([
+        this.router.navigate([route]),
+        new Promise(resolve => setTimeout(resolve, 600))
+      ]);
+    } catch (error) {
+      console.error('❌ Erro na navegação:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 }

@@ -8,4 +8,6 @@ export interface Usuario {
     id_tipo_usuario?: number;
     ativo?: boolean;
     cpf?: string;
+    departamento?: string;
+    role?: string;
   }

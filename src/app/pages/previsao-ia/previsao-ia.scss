@@ -81,8 +81,6 @@ main {
 
 .titulo-Topo {
     color: #0B1D5A;
-    font-size: 2.5rem;
-    font-weight: 700;
 }
 
 .subtitulo {
@@ -103,9 +101,13 @@ main {
 
 #texto {
     margin-top: 20px;
-    color: #c4c7d1;
+    color: #6c757d;
 }
 
 #titulo {
     color: #222222;
+}
+
+#container {
+    text-align: center;
 }
