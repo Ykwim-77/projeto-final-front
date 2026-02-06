@@ -85,7 +85,7 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -1197,6 +1197,21 @@ main {
             transform: translateY(-1px);
         }
     }
+}
+.adicionar-emprestimo-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 10px;
+    background: #0B1D5A;
+    border-radius: 6px; 
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-weight: 900;
 }
 
 /* Animações */

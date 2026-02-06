@@ -420,7 +420,7 @@ main {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
@@ -507,6 +507,8 @@ main {
 .modal-body,
 .detalhes-cliente-body {
     padding: 24px;
+    background: white;
+    border-radius:  0 0 10px 10px;
 }
 
 .form-group {
@@ -917,6 +919,7 @@ main {
     .modal-body,
     .detalhes-cliente-body {
         padding: 20px;
+        background: white;
     }
 
     .user-item {

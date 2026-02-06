@@ -69,6 +69,7 @@ export class UsuariosComponent implements OnInit {
 
   // Controle do card de cadastro
   isCardCadastroAberto: boolean = false;
+  novoUsuario: any = {};
   isCarregando: boolean = false;
   mensagemErro: string = '';
 
@@ -348,7 +349,7 @@ export class UsuariosComponent implements OnInit {
     const novoUsuario: Usuario = {
       nome: usuarioData.nome,
       email: usuarioData.email,
-      senha: usuarioData.senha || Math.random().toString(36).substring(2, 15),
+      senha: usuarioData.senha,
       tipo_usuario: usuarioData.perfil || 'O',
       ativo: true
     };
@@ -358,6 +359,7 @@ export class UsuariosComponent implements OnInit {
       next: () => {
         this.carregarListaUsuarios();
         this.fecharCardCadastro();
+        this.novoUsuario = {};
         form.reset();
         console.log('Usuário criado com sucesso');
       },

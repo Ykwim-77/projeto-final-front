@@ -393,15 +393,159 @@
                     <button type="button" class="btn-cancelar" (click)="fecharModalDetalhesCliente()">
                         Fechar
                     </button>
-                    <button 
+                    <button
                         *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'"
-                        type="button" 
-                        class="btn-salvar" 
+                        type="button"
+                        class="btn-salvar"
                         (click)="abrirModalEditarUsuario(clienteSelecionado)">
                         <i class="fas fa-edit"></i>
                         Editar Cliente
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Permissões -->
+    <div *ngIf="isModalEditarPermissoesAberto && usuarioSelecionado" class="modal-overlay">
+        <div class="modal-editar-permissoes">
+            <div class="modal-header">
+                <h3>Editar Permissões - {{ usuarioSelecionado.name }}</h3>
+                <button class="fechar-btn" (click)="fecharModalEditarPermissoes()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form (ngSubmit)="salvarPermissoes()" #permissoesForm="ngForm">
+                    <!-- Tipo de Usuário -->
+                    <div class="form-group">
+                        <label for="perfilPermissoes">Tipo de Usuário:</label>
+                        <select id="perfilPermissoes" name="perfilPermissoes"
+                            [(ngModel)]="usuarioSelecionado.role"
+                            (ngModelChange)="onRoleChange($event)">
+                            <option value="admin">Administrador</option>
+                            <option value="gerente">Gerente</option>
+                            <option value="operador">Operador</option>
+                            <option value="cliente">Cliente</option>
+                        </select>
+                    </div>
+
+                    <!-- Status Ativo/Inativo -->
+                    <div class="form-group">
+                        <label class="checkbox-container">
+                            <input type="checkbox"
+                                [(ngModel)]="usuarioSelecionado.ativo"
+                                name="ativoPermissoes">
+                            <span class="checkmark"></span>
+                            Usuário Ativo
+                        </label>
+                    </div>
+
+                    <!-- Descrição das Permissões -->
+                    <div class="permissoes-descricao">
+                        <h4>Permissões Atribuídas:</h4>
+                        <div *ngIf="usuarioSelecionado.role === 'admin'" class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Acesso total ao sistema</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionado.role === 'gerente'" class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Todas as funcionalidades e gerenciar usuários</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionado.role === 'operador'" class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Gerenciar produtos e dar baixa em empréstimos</span>
+                        </div>
+                        <div *ngIf="usuarioSelecionado.role === 'cliente'" class="permissao-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Apenas realizar empréstimos</span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar" (click)="fecharModalEditarPermissoes()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-salvar">
+                            Salvar Permissões
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Cadastro de Usuário -->
+    <div *ngIf="isCardCadastroAberto" class="modal-overlay" (click)="fecharCardCadastro()">
+        <div class="modal-cadastro-usuario" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>Novo Usuário</h3>
+                <button class="fechar-btn" (click)="fecharCardCadastro()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form (ngSubmit)="cadastrarUsuario(cadastroForm)" #cadastroForm="ngForm">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo:</label>
+                        <input type="text" id="nome" name="nome"
+                            [(ngModel)]="novoUsuario.nome" required #nomeInput="ngModel">
+                        <div *ngIf="nomeInput.invalid && nomeInput.touched" class="erro-validacao">
+                            Nome é obrigatório
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email"
+                            [(ngModel)]="novoUsuario.email" required #emailInput="ngModel">
+                        <div *ngIf="emailInput.invalid && emailInput.touched" class="erro-validacao">
+                            Email é obrigatório
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="senha">Senha:</label>
+                        <input type="password" id="senha" name="senha"
+                            [(ngModel)]="novoUsuario.senha" required #senhaInput="ngModel">
+                        <div *ngIf="senhaInput.invalid && senhaInput.touched" class="erro-validacao">
+                            Senha é obrigatória
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="perfil">Tipo de Usuário:</label>
+                        <select id="perfil" name="perfil"
+                            [(ngModel)]="novoUsuario.perfil" required #perfilInput="ngModel">
+                            <option value="">Selecione...</option>
+                            <option value="A">Administrador</option>
+                            <option value="G">Gerente</option>
+                            <option value="O">Operador</option>
+                            <option value="C">Cliente</option>
+                        </select>
+                        <div *ngIf="perfilInput.invalid && perfilInput.touched" class="erro-validacao">
+                            Tipo de usuário é obrigatório
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="observacoes">Observações (Opcional):</label>
+                        <textarea id="observacoes" name="observacoes"
+                            [(ngModel)]="novoUsuario.observacoes" rows="3"
+                            placeholder="Informações adicionais sobre o usuário..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancelar" (click)="fecharCardCadastro()">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn-salvar" [disabled]="!cadastroForm.valid">
+                            Criar Usuário
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

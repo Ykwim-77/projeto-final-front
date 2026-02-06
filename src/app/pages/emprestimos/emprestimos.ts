@@ -291,6 +291,21 @@ export class EmprestimosComponent implements OnInit {
     console.log('Gerar relatório');
   }
 
+  // Mapeamento de tipos de usuário
+  private mapTipoUsuario(tipo: string): string {
+    const tipos: { [key: string]: string } = {
+      'A': 'admin',
+      'G': 'gerente',
+      'O': 'operador',
+      'C': 'cliente',
+      'admin': 'admin',
+      'gerente': 'gerente',
+      'operador': 'operador',
+      'cliente': 'cliente'
+    };
+    return tipos[tipo] || tipo;
+  }
+
   // Métodos auxiliares
   getStatusClass(status: string): string {
     switch (status) {
