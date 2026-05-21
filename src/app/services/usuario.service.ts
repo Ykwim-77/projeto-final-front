@@ -5,80 +5,41 @@ import { environment } from '../environments/environment';
 import { tap } from 'rxjs/operators';
 import { Usuario } from '../models/user.model';
 
-
-
-
 @Injectable({
   providedIn: 'root'
 })
-
-
 export class UsuarioService {
   private apiUrl = `${environment.apiUrl}/usuario`;
 
-  usuario: Usuario[] = [] 
+  usuario: Usuario[] = [];
 
-
-  //injeta http client (faz a chamada back)
   constructor(private http: HttpClient) {}
 
-  /**
-   * Busca todos os usuários
-   */
   listarUsuarios(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.apiUrl, { withCredentials: true });
   }
 
-  /**
-   * Busca um usuário por ID
-   */
   buscarUsuarioPorId(id: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/${id}`, { withCredentials: true }).pipe(
       tap((usuario: Usuario) => {
         console.log(usuario);
       })
     );
-    
   }
 
-
-//service por poder usar em varias telas
-
-//
-
-
-
-
-
-
-
-
-  /**
-   * Atualiza dados do usuário
-   */
   atualizarUsuario(id: number, dados: Partial<Usuario>): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, dados, { withCredentials: true });
   }
 
-  /**
-   * Desativa um usuário
-   */
   desativarUsuario(id: number): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/desativar/${id}`, {}, { withCredentials: true });
   }
 
-  /**
-   * Cria um novo usuário
-   */
   criarUsuario(dados: Partial<Usuario>): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}`, dados, { withCredentials: true });
   }
 
-  /**
-   * Deleta um usuário por ID
-   */
   deletarUsuario(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 }
-
