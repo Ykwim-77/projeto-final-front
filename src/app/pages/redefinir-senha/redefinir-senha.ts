@@ -23,29 +23,24 @@ export class RedefinirSenha {
   onSubmit(event: Event): void {
     event.preventDefault();
 
-    // Limpa mensagens de erro antigas
     this.errorMessage = '';
 
-    // 1️⃣ Valida se todos os campos foram preenchidos
     if (!this.password1 || !this.password2) {
       this.errorMessage = 'Por favor, preencha todos os campos';
-      return; // não vai para a próxima tela
+      return;
     }
 
-    // 2️⃣ Valida se as senhas coincidem
     if (this.password1 !== this.password2) {
       this.errorMessage = 'As senhas não coincidem';
-      return; // não vai para a próxima tela
+      return;
     }
 
-    // 3️⃣ Se passou nas validações, mostra loading
     this.isLoading = true;
 
-    // Simula delay de request ou chamada real ao AuthService
     setTimeout(() => {
-      this.isLoading = false; // remove loading
-      this.router.navigate(['/login']); // vai para a próxima página
-    }, 1500); // aqui você pode usar o serviço real, se quiser
+      this.isLoading = false;
+      this.router.navigate(['/login']);
+    }, 1500);
   }
 
 }
