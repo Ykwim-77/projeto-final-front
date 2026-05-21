@@ -18,7 +18,6 @@ export class LoginComponent {
   isLoading: boolean = false;
   errorMessage: string = '';
   
-  // Estados de validação individuais
   emailTouched: boolean = false;
   passwordTouched: boolean = false;
   formSubmitted: boolean = false;
@@ -28,7 +27,6 @@ export class LoginComponent {
     private authService: AuthService
   ) {}
 
-  // Validação de email
   getEmailError(): string {
     if (!this.emailTouched && !this.formSubmitted) return '';
     
@@ -44,7 +42,6 @@ export class LoginComponent {
     return '';
   }
 
-  // Validação de senha
   getPasswordError(): string {
     if (!this.passwordTouched && !this.formSubmitted) return '';
     
@@ -59,7 +56,6 @@ export class LoginComponent {
     return '';
   }
 
-  // Verifica se o formulário é válido
   isFormValid(): boolean {
     return !this.getEmailError() && !this.getPasswordError();
   }
@@ -71,25 +67,12 @@ export class LoginComponent {
     this.emailTouched = true;
     this.passwordTouched = true;
 
-    console.log('🔄 Iniciando login...', {
-      email: this.email,
-      password: this.password ? '*'.repeat(this.password.length) : 'vazio'
-    });
-
-    // Validação antes de enviar
     if (!this.isFormValid()) {
-      console.log('❌ Validação falhou:', {
-        emailError: this.getEmailError(),
-        passwordError: this.getPasswordError()
-      });
       return;
     }
 
-    // Loading para o processo de login
     this.isLoading = true;
     this.errorMessage = '';
-
-    console.log('⏳ Fazendo requisição de login...');
 
     const startTime = Date.now();
     const minLoadingTime = 1500;
@@ -97,24 +80,17 @@ export class LoginComponent {
     try {
       const response = await this.authService.login(this.email.trim(), this.password).toPromise();
       
-      console.log('✅ Login bem-sucedido');
-      
       const elapsedTime = Date.now() - startTime;
       const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
-      
-      console.log(`⏰ Loading visível por mais ${remainingTime}ms`);
       
       if (remainingTime > 0) {
         await new Promise(resolve => setTimeout(resolve, remainingTime));
       }
       
       this.isLoading = false;
-      console.log('🏠 Navegando para home...');
       this.router.navigate(['/home']);
       
     } catch (error: any) {
-      console.error('❌ Erro no login (LoginComponent):', error);
-      
       const elapsedTime = Date.now() - startTime;
       const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
       
@@ -138,14 +114,10 @@ export class LoginComponent {
     }
   }
 
-  // 🔥 NOVO MÉTODO: Navegação com loading entre telas
   async navigateWithLoading(route: string): Promise<void> {
-    console.log(`🔗 Navegando para ${route} com loading...`);
-    
     this.isLoading = true;
     
     try {
-      // Navegação com tempo mínimo de loading
       await Promise.all([
         this.router.navigate([route]),
         new Promise(resolve => setTimeout(resolve, 800))
@@ -157,12 +129,10 @@ export class LoginComponent {
     }
   }
 
-  // 🔥 MODIFICADO: Agora usa navigateWithLoading
   navigateToEsqueceuSenha(): void {
     this.navigateWithLoading('/esqueceu-senha');
   }
 
-  // Marcar campos como "touched" quando o usuário interagir
   onEmailInput(): void {
     this.emailTouched = true;
     this.clearErrors();
@@ -183,14 +153,12 @@ export class LoginComponent {
     }
   }
 
-  // Limpar erros quando o usuário começar a digitar
   clearErrors(): void {
     if (this.errorMessage) {
       this.errorMessage = '';
     }
   }
 
-  // Métodos de blur para validação quando o campo perde o foco
   onEmailBlur(): void {
     this.emailTouched = true;
   }
