@@ -10,14 +10,12 @@
             <h2><strong>Pro</strong>Gest</h2>
         </div>
         
-        <!-- Mensagem de erro geral (erro de servidor) -->
         <div class="error-message" *ngIf="errorMessage">
             <i class="fa fa-exclamation-circle"></i>
             {{ errorMessage }}
         </div>
 
         <form class="input-container" (ngSubmit)="onSubmit($event)" #loginForm="ngForm">
-            <!-- Campo Email -->
             <div class="input-wrapper">
                 <div class="input" [class.invalid]="getEmailError()">
                     <i class="fa fa-user"></i>
@@ -30,14 +28,12 @@
                       (blur)="onEmailBlur()"
                     />
                 </div>
-                <!-- Mensagem de erro específica do email -->
                 <div class="field-error" *ngIf="getEmailError()">
                     <i class="fa fa-exclamation-triangle"></i>
                     {{ getEmailError() }}
                 </div>
             </div>
 
-            <!-- Campo Senha -->
             <div class="input-wrapper">
                 <div class="input" [class.invalid]="getPasswordError()">
                     <i class="fa fa-lock"></i>
@@ -50,7 +46,6 @@
                       (blur)="onPasswordBlur()"
                     />
                 </div>
-                <!-- Mensagem de erro específica da senha -->
                 <div class="field-error" *ngIf="getPasswordError()">
                     <i class="fa fa-exclamation-triangle"></i>
                     {{ getPasswordError() }}
