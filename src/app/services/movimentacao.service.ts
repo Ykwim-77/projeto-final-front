@@ -24,9 +24,6 @@ export class MovimentacaoService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Lista todas as movimentações (filtro por tipo)
-   */
   listarMovimentacoes(tipo?: string): Observable<Movimentacao[]> {
     let url = this.apiUrl;
     if (tipo) {
@@ -35,30 +32,18 @@ export class MovimentacaoService {
     return this.http.get<Movimentacao[]>(url, { withCredentials: true });
   }
 
-  /**
-   * Busca uma movimentação por ID
-   */
   buscarMovimentacao(id: number): Observable<Movimentacao> {
     return this.http.get<Movimentacao>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  /**
-   * Cria uma nova movimentação
-   */
   criarMovimentacao(dados: Partial<Movimentacao>): Observable<any> {
     return this.http.post<any>(this.apiUrl, dados, { withCredentials: true });
   }
 
-  /**
-   * Atualiza uma movimentação
-   */
   atualizarMovimentacao(id: number, dados: Partial<Movimentacao>): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, dados, { withCredentials: true });
   }
 
-  /**
-   * Deleta uma movimentação
-   */
   deletarMovimentacao(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
