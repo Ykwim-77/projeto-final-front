@@ -7,8 +7,6 @@ import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 
-
-
 interface MenuItem {
   name: string;
   active?: boolean;
@@ -30,9 +28,6 @@ interface LowStockProduct {
   name: string;
   category: string;
 }
-
-
-
 
 @Component({
   selector: 'app-produtos',
@@ -107,12 +102,11 @@ throw new Error('Method not implemented.');
 confirmarDevolucao() {
 throw new Error('Method not implemented.');
 }
-  // Controle de exibição
+
   showCardCadastro: boolean = false;
   produtoEditando: Produto | null = null;
   visualizacao: 'grade' | 'tabela' = 'grade';
 
-  // Produto em cadastro/edição
   novoProduto = {
     nome: '',
     codigo_publico: '',
@@ -123,11 +117,9 @@ throw new Error('Method not implemented.');
     id_fornecedor: null as number | null
   };
 
-  // Lista de produtos
   produtos: Produto[] = [];
   produtosFiltrados: Produto[] = [];
 
-  // Filtros
   filtros: any = {
     pesquisaGeral: '',
     nome: '',
@@ -137,38 +129,30 @@ throw new Error('Method not implemented.');
     precoMax: null,
     estoqueMin: 0
   };
+
   filtroAberto: string | null = null;
   categoriasUnicas: string[] = [];
 
-  // Dados de interface
   menuItems: any[] = [];
   lowStockCount: number = 0;
   lowStockAlert: string = '';
 
-  // Cards de Métricas
   metricCards: any[] = [];
-  
-  // Dados individuais
+
   totalProducts: number = 0;
   stockValue: string = '';
 
-  // Listas
   categories: any[] = [];
   lowStockProducts: any[] = [];
 
-  // Usuário
   usuarioNome: string = '';
   usuarioEmail: string = '';
   usuarioIniciais: string = '';
 
-
-
-
-
   constructor(
     private authService: AuthService,
     private router: Router,
-    private produtoService:ProdutoService
+    private produtoService: ProdutoService
   ) {}
 
   ngOnInit() {
@@ -181,8 +165,6 @@ throw new Error('Method not implemented.');
     this.initializeLowStockProducts();
     this.carregarProdutos();
   }
-
-  // 🔧 MÉTODOS DO CRUD
 
   abrirCardCadastro() {
     this.produtoEditando = null;
@@ -234,11 +216,10 @@ throw new Error('Method not implemented.');
       codigo_publico: this.novoProduto.codigo_publico,
       preco_unitario: this.novoProduto.preco_unitario,
       unidade_medida: this.novoProduto.unidade_medida,
-      id_fornecedor: this.novoProduto.id_fornecedor ?? undefined, // 👈 converte null → undefined
+      id_fornecedor: this.novoProduto.id_fornecedor ?? undefined,
     };
-  
+
     if (this.produtoEditando) {
-      // Atualizar
       const idParaAtualizar = (this.produtoEditando as any).id_produto ?? (this.produtoEditando as any).id ?? (this.produtoEditando as any).id_patrimonio;
 
       this.produtoService.atualizarProduto(idParaAtualizar, produto).subscribe({
@@ -250,7 +231,6 @@ throw new Error('Method not implemented.');
         error: (err) => console.error('Erro ao atualizar produto:', err)
       });
     } else {
-      // Criar
       this.produtoService.criarProduto(produto).subscribe({
         next: () => {
           console.log('Produto criado com sucesso!');
@@ -261,10 +241,10 @@ throw new Error('Method not implemented.');
       });
     }
   }
-  
+
   excluirProduto(id: number) {
     if (!confirm('Tem certeza que deseja excluir este produto?')) return;
-  
+
     this.produtoService.deletarProduto(id).subscribe({
       next: () => {
         console.log('Produto excluído com sucesso!');
@@ -273,8 +253,6 @@ throw new Error('Method not implemented.');
       error: (err) => console.error('Erro ao excluir produto:', err)
     });
   }
-  
-  // 🔧 MÉTODOS DE VISUALIZAÇÃO E FILTROS
 
   mudarVisualizacao(tipo: 'grade' | 'tabela') {
     this.visualizacao = tipo;
@@ -289,50 +267,56 @@ throw new Error('Method not implemented.');
 
   aplicarFiltros() {
     this.produtosFiltrados = this.produtos.filter(produto => {
-      // Pesquisa geral (nome, sku ou categoria)
       if (this.filtros.pesquisaGeral) {
         const termo = this.filtros.pesquisaGeral.toLowerCase();
         const nomeMatch = produto.nome?.toLowerCase().includes(termo);
         const skuMatch = produto.codigo_publico?.toLowerCase().includes(termo);
         const categoriaMatch = produto.categoria?.toLowerCase().includes(termo);
+
         if (!nomeMatch && !skuMatch && !categoriaMatch) {
           return false;
         }
       }
 
-      // Filtro por nome
-      if (this.filtros.nome &&
-          !produto.nome?.toLowerCase().includes(this.filtros.nome.toLowerCase())) {
+      if (
+        this.filtros.nome &&
+        !produto.nome?.toLowerCase().includes(this.filtros.nome.toLowerCase())
+      ) {
         return false;
       }
 
-      // Filtro por SKU
-      if (this.filtros.sku &&
-          !produto.codigo_publico?.toLowerCase().includes(this.filtros.sku.toLowerCase())) {
+      if (
+        this.filtros.sku &&
+        !produto.codigo_publico?.toLowerCase().includes(this.filtros.sku.toLowerCase())
+      ) {
         return false;
       }
 
-      // Filtro por categoria
-      if (this.filtros.categoria &&
-          produto.categoria !== this.filtros.categoria) {
+      if (
+        this.filtros.categoria &&
+        produto.categoria !== this.filtros.categoria
+      ) {
         return false;
       }
 
-      // Filtro por preço mínimo
-      if (this.filtros.precoMin !== null &&
-          (produto.preco_unitario || 0) < this.filtros.precoMin) {
+      if (
+        this.filtros.precoMin !== null &&
+        (produto.preco_unitario || 0) < this.filtros.precoMin
+      ) {
         return false;
       }
 
-      // Filtro por preço máximo
-      if (this.filtros.precoMax !== null &&
-          (produto.preco_unitario || 0) > this.filtros.precoMax) {
+      if (
+        this.filtros.precoMax !== null &&
+        (produto.preco_unitario || 0) > this.filtros.precoMax
+      ) {
         return false;
       }
 
-      // Filtro por estoque mínimo
-      if (this.filtros.estoqueMin > 0 &&
-          (produto.quantidade || 0) < this.filtros.estoqueMin) {
+      if (
+        this.filtros.estoqueMin > 0 &&
+        (produto.quantidade || 0) < this.filtros.estoqueMin
+      ) {
         return false;
       }
 
@@ -345,8 +329,6 @@ throw new Error('Method not implemented.');
     this.filtros.precoMax = null;
     this.aplicarFiltros();
   }
-
-  // 🔧 MÉTODOS AUXILIARES
 
   private initializeMenu(): void {
     this.menuItems = [
@@ -363,6 +345,7 @@ throw new Error('Method not implemented.');
 
   private initializeAlerts(): void {
     this.lowStockCount = this.produtos.filter(p => (p.estoque || 0) < 5).length;
+
     if (this.lowStockCount > 0) {
       this.lowStockAlert = `Atenção! Você tem ${this.lowStockCount} produto(s) com estoque baixo.`;
     } else if (this.produtos.length === 0) {
@@ -395,21 +378,18 @@ throw new Error('Method not implemented.');
   }
 
   private carregarDadosUsuario(): void {
-    
+
   }
 
   private async carregarProdutos(): Promise<void> {
     console.log('🔄 Iniciando carregamento de produtos da API...');
-    
-    // Usar o serviço centralizado (já envia cookies com `withCredentials`)
+
     this.produtoService.listarProdutos().subscribe({
       next: (produtos: any[]) => {
         console.log('✅ Produtos carregados da API (service):', produtos);
 
-        // Convertendo e normalizando campos
         this.produtos = (produtos || []).map((p: any) => ({
           ...p,
-          // padroniza IDs: API pode retornar `id_produto`, `id` ou `id_patrimonio`
           id_produto: p.id_produto ?? p.id ?? p.id_patrimonio,
           id: p.id ?? p.id_produto ?? p.id_patrimonio,
           nome: p.nome || p.name || '',
@@ -419,10 +399,8 @@ throw new Error('Method not implemented.');
           categoria: p.categoria || 'Sem categoria'
         }));
 
-        // Inicializar produtos filtrados
         this.produtosFiltrados = [...this.produtos];
 
-        // Extrair categorias únicas para os filtros
         this.categoriasUnicas = [...new Set(this.produtos
           .map(p => p.categoria)
           .filter(cat => cat && cat !== 'Sem categoria')
@@ -433,6 +411,7 @@ throw new Error('Method not implemented.');
         this.initializeCategories();
         this.initializeLowStockProducts();
       },
+
       error: (error) => {
         console.error('❌ Erro ao carregar produtos via service:', error);
         this.produtos = [];
@@ -447,11 +426,11 @@ throw new Error('Method not implemented.');
 
   private atualizarMetricas(): void {
     this.totalProducts = this.produtos.length;
-    
-    const valorTotal = this.produtos.reduce((total, produto) => 
+
+    const valorTotal = this.produtos.reduce((total, produto) =>
       total + ((produto.preco_unitario || 0) * (produto.quantidade || 0)), 0
     );
-    
+
     this.stockValue = new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
@@ -459,7 +438,6 @@ throw new Error('Method not implemented.');
 
     this.lowStockCount = this.produtos.filter(p => (p.quantidade || 0) < 5).length;
 
-    // Atualizar metricCards
     this.metricCards = [
       {
         title: 'Total de Produtos',
@@ -490,9 +468,11 @@ throw new Error('Method not implemented.');
 
   private gerarIniciais(nome: string): string {
     const palavras = nome.trim().split(' ');
+
     if (palavras.length >= 2) {
       return (palavras[0][0] + palavras[palavras.length - 1][0]).toUpperCase();
     }
+
     return nome.substring(0, 2).toUpperCase();
   }
 
