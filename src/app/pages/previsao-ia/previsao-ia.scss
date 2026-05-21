@@ -4,7 +4,6 @@
     box-sizing: border-box;
 }
 
-/* CORREÇÃO DO FUNDO - APLICAR EM TODOS OS NÍVEIS */
 html, body {
     background-color: #D0DAED !important;
     min-height: 100%;
@@ -21,7 +20,7 @@ body {
     min-height: 100vh;
     width: 100%;
     
-    /* Camada de fundo fixa que cobre TODO o scroll */
+
     &::before {
         content: '';
         position: fixed;
@@ -34,18 +33,17 @@ body {
     }
 }
 
-/* MAIN PRINCIPAL - DEVE SER TRANSPARENTE */
 main {
     background-color: #e9e3fa;
     min-height: 100vh;
     position: relative;
-    margin-left: 240px; /* Largura do sidebar */
+    margin-left: 240px;
     padding: 30px;
     width: calc(100% - 240px);
     flex: 1;
 }
 
-/* HEADER COM FLEXBOX PARA ALINHAR BOTÃO À DIREITA */
+
 .topo {
     display: flex;
     justify-content: space-between;
@@ -54,7 +52,7 @@ main {
     position: relative;
 }
 
-/* BOTÃO GERAR PREVISÃO */
+
 .botao-gerar-previsao {
     background-color: #0B1D5A;
     color: white;
@@ -66,7 +64,7 @@ main {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(11, 29, 90, 0.2);
-    margin-left: auto; /* Empurra o botão para a direita */
+    margin-left: auto; 
 }
 
 .botao-gerar-previsao:hover {
