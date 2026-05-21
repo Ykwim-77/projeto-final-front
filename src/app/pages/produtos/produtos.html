@@ -15,7 +15,6 @@
             </div>
         </header>
 
-        <!-- Formulário de cadastro/edição -->
         <div class="overlay-cadastro" *ngIf="showCardCadastro" (click)="fecharCardCadastro()">
             <div class="cadastro-card" (click)="$event.stopPropagation()">
                 <div class="cadastro-header">
@@ -108,8 +107,7 @@
             </div>
         </section>
         <br>
-        <!-- Lista de Produtos em Grade -->
-        <!-- CORREÇÃO NA VISUALIZAÇÃO GRADE -->
+
         <section *ngIf="visualizacao === 'grade'" class="produtos-grade">
           <div *ngFor="let produto of produtosFiltrados" class="produto-card">
               <div class="produto-header">
@@ -148,8 +146,7 @@
               <p>Nenhum produto encontrado</p>
           </div>
         </section>
-                <!-- Lista de Produtos em Tabela -->
-        <!-- CORREÇÃO NA VISUALIZAÇÃO TABELA -->
+
         <section *ngIf="visualizacao === 'tabela'" class="tabela-produtos" >
           <div class="tabela-container">
             <table class="tabela">
