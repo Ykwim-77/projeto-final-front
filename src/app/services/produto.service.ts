@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
-
 export interface Produto {
   codigo_publico: any;
   sku: any;
@@ -23,7 +22,6 @@ export interface Produto {
   status?: boolean;
 }
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -32,51 +30,30 @@ export class ProdutoService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Busca todos os produtos
-   */
   listarProdutos(): Observable<Produto[]> {
     return this.http.get<Produto[]>(this.apiUrl, { withCredentials: true });
   }
 
-  /**
-   * Busca um produto por ID
-   */
   buscarProdutoPorId(id: number): Observable<Produto> {
     return this.http.get<Produto>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  /**
-   * Cria um novo produto
-   */
   criarProduto(produto: Partial <Produto>): Observable<any> {
     return this.http.post<Produto>(this.apiUrl, produto, { withCredentials: true });
   }
 
-  /**
-   * Atualiza um produto existente
-   */
   atualizarProduto(id: number, produto: Partial<Produto>): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, produto, { withCredentials: true });
   }
 
-  /**
-   * Deleta um produto
-   */
   deletarProduto(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { withCredentials: true });
   }
 
-  /**
-   * Reserva um produto (marca como indisponível)
-   */
   reservarProduto(id: number): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/reservar/${id}`, {}, { withCredentials: true });
   }
 
-  /**
-   * Libera um produto reservado (marca como disponível)
-   */
   entregarProduto(id: number): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/entregar/${id}`, {}, { withCredentials: true });
   }
