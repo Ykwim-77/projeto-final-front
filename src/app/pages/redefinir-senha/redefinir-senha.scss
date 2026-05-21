@@ -1,5 +1,3 @@
-
-
 /* RESET RADICAL - Garante que nada interfira */
 :host {
   position: fixed !important;
@@ -13,7 +11,6 @@
   overflow: hidden !important;
 }
 
-/* Reset agressivo para todos os elementos */
 :host * {
   box-sizing: border-box !important;
   margin: 0 !important;
@@ -161,7 +158,6 @@ i {
   color: red !important;
 }
 
-/* Loading Overlay Styles */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -214,7 +210,6 @@ i {
   }
 }
 
-/* Barra de Progresso Indeterminada (vai e volta) */
 .progress-bar-indeterminate {
   width: 200px;
   height: 4px;
@@ -229,7 +224,6 @@ i {
   position: absolute;
   height: 100%;
   width: 40%;
-  /* Largura do elemento que se move */
   background: linear-gradient(90deg, #002793, #3498db);
   border-radius: 2px;
   animation: indeterminate 1.5s infinite ease-in-out;
@@ -249,7 +243,6 @@ i {
   }
 }
 
-/* Alternativa: Barra que preenche e reinicia */
 .progress-bar-fill-restart {
   width: 200px;
   height: 4px;
@@ -343,21 +336,18 @@ i {
   margin: 0;
 }
 
-/* Efeito no conteúdo principal durante loading */
 .form.blur {
   filter: blur(3px);
   pointer-events: none;
   user-select: none;
 }
 
-/* Botão desabilitado durante loading */
 .login:disabled {
   background: #cccccc;
   cursor: not-allowed;
   transform: none !important;
 }
 
-/*------------Responsividade-------------*/
 @media screen and (max-width: 768px) {
   .form {
     flex-direction: column !important;
@@ -393,6 +383,7 @@ i {
     margin-top: 10px !important;
   }
 }
+
 .indicators {
   margin-top: 35px !important;
   display: flex;
@@ -406,15 +397,15 @@ i {
   gap: 10px;
   margin: 0;
   padding: 0;
-  list-style: none; /* tira os pontinhos */
+  list-style: none;
 }
+
 .indicators ul li {
   width: 12px;
   height: 12px;
   background-color: rgba(0, 0, 0, 0.2);
   border-radius: 50%;
 }
-
 
 .indicators ul li.active {
   background-color: #002793;
