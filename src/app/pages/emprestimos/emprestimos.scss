@@ -4,7 +4,6 @@
     box-sizing: border-box;
 }
 
-/* CORREÇÃO DO FUNDO - APLICAR EM TODOS OS NÍVEIS */
 html, body {
     background-color: #D0DAED !important;
     min-height: 100%;
@@ -21,7 +20,7 @@ body {
     min-height: 100vh;
     width: 100%;
     
-    /* Camada de fundo fixa que cobre TODO o scroll */
+    
     &::before {
         content: '';
         position: fixed;
@@ -34,7 +33,7 @@ body {
     }
 }
 
-/* MAIN PRINCIPAL - DEVE SER TRANSPARENTE */
+
 main {
     background-color: transparent !important;
     min-height: 100vh;
@@ -45,7 +44,6 @@ main {
     flex: 1;
 }
 
-/* GARANTIR QUE CONTAINERS PRINCIPAIS SEJAM TRANSPARENTES */
 .conteudo-principal,
 .graficos-container,
 .topo {
@@ -53,7 +51,7 @@ main {
     width: 100%;
 }
 
-/* HEADER DO TOPO - COM BOTÃO ALINHADO À DIREITA */
+
 .topo {
     background: transparent !important;
     margin-bottom: 20px;
@@ -78,7 +76,6 @@ main {
     margin-bottom: 0;
 }
 
-/* ===== CARD DE NOVO EMPRÉSTIMO - ESTILO IGUAL AO DE PRODUTOS ===== */
 .overlay-cadastro {
     position: fixed;
     top: 0;
@@ -229,7 +226,6 @@ main {
     }
 }
 
-/* ===== CAMPOS PESQUISÁVEIS AVANÇADOS ===== */
 .campo-pesquisavel {
     position: relative;
 }
@@ -410,7 +406,6 @@ main {
     }
 }
 
-/* Info produto melhorada */
 .info-produto {
     background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
     border: 2px solid #e0e0e0;
@@ -475,7 +470,6 @@ main {
     }
 }
 
-/* MENSAGEM DE ERRO */
 .mensagem-erro {
     background: #fee;
     border: 1px solid #f5c6cb;
@@ -589,7 +583,6 @@ main {
     }
 }
 
-/* ===== CARDS DE MÉTRICAS ===== */
 .conteudo-principal {
     display: flex;
     gap: 30px;
@@ -616,7 +609,6 @@ main {
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* ÍCONES DOS CARDS */
 .imgCard, .imgCard2, .imgCard3, .imgCard4 {
     width: 35px;
     height: 35px;
@@ -635,7 +627,6 @@ main {
 .imgCard3 { background-color: #d63647; }
 .imgCard4 { background-color: #f5be36; }
 
-/* TIPOGRAFIA DOS CARDS */
 .card-title {
     font-size: 14px;
     color: #6c757d;
@@ -671,7 +662,6 @@ main {
     content: "▼";
 }
 
-/* ===== CARD DE MOVIMENTAÇÕES ===== */
 .cardMovimentacoes {
     width: 100%;
     background-color: white;
@@ -692,7 +682,6 @@ main {
     padding-bottom: 10px;
 }
 
-/* ===== CONTAINER DE GRÁFICOS ===== */
 .graficos-container {
     display: flex;
     gap: 20px;
@@ -720,9 +709,6 @@ main {
     padding-bottom: 10px;
 }
 
-/* ===== ESTILOS ESPECÍFICOS PARA EMPRÉSTIMOS ===== */
-
-/* Ações Rápidas */
 .quick-actions {
     display: flex;
     flex-direction: column;
@@ -751,7 +737,6 @@ main {
     }
 }
 
-/* Filtros Rápidos */
 .filtros-rapidos {
     margin-top: 20px;
     
@@ -791,7 +776,6 @@ main {
     }
 }
 
-/* Header com Filtros */
 .card-header-filtros {
     display: flex;
     justify-content: space-between;
@@ -823,7 +807,6 @@ main {
     }
 }
 
-/* LISTA DE EMPRÉSTIMOS */
 .movimentacoes-list {
     max-height: 280px;
     overflow-y: auto;
@@ -847,7 +830,6 @@ main {
     transform: translateX(5px);
 }
 
-/* Itens de Empréstimo na Lista */
 .emprestimo-item {
     border-left: 4px solid #3498db;
     
@@ -987,7 +969,6 @@ main {
     color: #383d41;
 }
 
-/* LISTA DE EMPRÉSTIMOS ATRASADOS */
 .low-stock-list {
     max-height: 250px;
     overflow-y: auto;
@@ -1078,7 +1059,6 @@ main {
     color: #95a5a6;
 }
 
-/* MODAL DE DEVOLUÇÃO */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -1214,7 +1194,6 @@ main {
     font-weight: 900;
 }
 
-/* Animações */
 @keyframes slideDown {
     from {
         opacity: 0;
@@ -1226,7 +1205,6 @@ main {
     }
 }
 
-/* Estados de foco melhorados */
 .campo-pesquisavel:focus-within {
     .pesquisa-input {
         border-color: #0B1D5A;
@@ -1238,7 +1216,6 @@ main {
     }
 }
 
-/* Scrollbar personalizado */
 .dropdown-lista::-webkit-scrollbar {
     width: 6px;
 }
@@ -1257,7 +1234,6 @@ main {
     background: #0A2D8A;
 }
 
-/* ===== RESPONSIVIDADE ===== */
 @media (max-width: 768px) {
     main {
         margin-left: 0;
