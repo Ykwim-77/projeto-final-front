@@ -2,75 +2,84 @@
   <div class="leftside">
     <img src="assets/imagens/esqueceuSenha.png" alt="Tela de login">
   </div>
+
   <div class="rightside">
     <div class="login-title">
       <img src="assets/imagens/logoprogestao.png" alt="Logo" class="login-logo">
       <h2><strong>Pro</strong>Gest</h2>
     </div>
+
     <br>
+
     <div id="texto">
       <p>Digite o código de 6 dígitos enviado para seu email</p>
     </div>
+
     <br>
 
     <form class="input-container" (ngSubmit)="onSubmit($event)">
       <div class="code-inputs-container">
-        <input 
-          type="text" 
-          maxlength="1" 
-          class="code-input" 
-          (input)="onInput($event, 0)" 
+        <input
+          type="text"
+          maxlength="1"
+          class="code-input"
+          (input)="onInput($event, 0)"
           (keydown)="onKeyDown($event, 0)"
           (focus)="onFocus($event)"
           (paste)="onPaste($event)"
           #inputRef
           autocomplete="off"
         >
-        <input 
-          type="text" 
-          maxlength="1" 
-          class="code-input" 
-          (input)="onInput($event, 1)" 
+
+        <input
+          type="text"
+          maxlength="1"
+          class="code-input"
+          (input)="onInput($event, 1)"
           (keydown)="onKeyDown($event, 1)"
           (focus)="onFocus($event)"
           #inputRef
           autocomplete="off"
         >
-        <input 
-          type="text" 
-          maxlength="1" 
-          class="code-input" 
-          (input)="onInput($event, 2)" 
+
+        <input
+          type="text"
+          maxlength="1"
+          class="code-input"
+          (input)="onInput($event, 2)"
           (keydown)="onKeyDown($event, 2)"
           (focus)="onFocus($event)"
           #inputRef
           autocomplete="off"
         >
-        <input 
-          type="text" 
-          maxlength="1" 
-          class="code-input" 
-          (input)="onInput($event, 3)" 
+
+        <input
+          type="text"
+          maxlength="1"
+          class="code-input"
+          (input)="onInput($event, 3)"
           (keydown)="onKeyDown($event, 3)"
           (focus)="onFocus($event)"
           #inputRef
           autocomplete="off"
         >
-        <input 
-          type="text" 
-          maxlength="1" 
-          class="code-input" 
-          (input)="onInput($event, 4)" 
+
+        <input
+          type="text"
+          maxlength="1"
+          class="code-input"
+          (input)="onInput($event, 4)"
           (keydown)="onKeyDown($event, 4)"
           (focus)="onFocus($event)"
           #inputRef
           autocomplete="off"
         >
-        <input 
-          type="text" 
-          maxlength="1" 
-          class="code-input" 
-          (input)="onInput($event, 5)" 
+
+        <input
+          type="text"
+          maxlength="1"
+          class="code-input"
+          (input)="onInput($event, 5)"
           (keydown)="onKeyDown($event, 5)"
           (focus)="onFocus($event)"
           #inputRef
@@ -84,17 +93,22 @@
         {{ errorMessage }}
       </div>
 
-      <button type="submit" class="login" [disabled]="!todosCamposPreenchidos()">
+      <button
+        type="submit"
+        class="login"
+        [disabled]="!todosCamposPreenchidos()"
+      >
         Verificar Código
       </button>
     </form>
 
     <div class="reenviar-codigo">
       <p>
-        Não recebeu o código? 
-        <a 
-          href="#" 
-          (click)="reenviarCodigo()" 
+        Não recebeu o código?
+
+        <a
+          href="#"
+          (click)="reenviarCodigo()"
           [class.disabled]="!podeReenviar"
         >
           {{ podeReenviar ? 'Reenviar código' : 'Reenviar em ' + tempoRestante + 's' }}
@@ -102,7 +116,10 @@
       </p>
     </div>
 
-    <button class="voltar-login" (click)="voltarParaLogin()">
+    <button
+      class="voltar-login"
+      (click)="voltarParaLogin()"
+    >
       Voltar para Login
     </button>
   </div>
