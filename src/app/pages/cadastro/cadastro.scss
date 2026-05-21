@@ -1,7 +1,5 @@
-// src/app/pages/cadastro/cadastro.scss
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
 
-/* RESET RADICAL - Garante que nada interfira */
 :host {
   position: fixed !important;
   top: 0 !important;
@@ -14,7 +12,6 @@
   overflow: hidden !important;
 }
 
-/* Reset agressivo para todos os elementos */
 :host * {
   box-sizing: border-box !important;
   margin: 0 !important;
@@ -147,7 +144,8 @@ i {
   align-items: center !important;
 }
 
-.links-row span, .links-row a {
+.links-row span,
+.links-row a {
   font-size: 15px !important;
   cursor: pointer !important;
 }
@@ -192,13 +190,13 @@ i {
   user-select: none;
 }
 
-/*------------Responsividade-------------*/
-@media screen and (max-width: 768px){
+@media screen and (max-width: 768px) {
   .form {
     flex-direction: column !important;
   }
 
-  .leftside, .rightside {
+  .leftside,
+  .rightside {
     width: 100% !important;
     height: 50vh !important;
   }
@@ -216,12 +214,12 @@ i {
     gap: 10px !important;
     text-align: center !important;
   }
-  
+
   .login-title {
     margin-right: 0 !important;
     flex-direction: column !important;
   }
-  
+
   .login-title h2 {
     margin-right: 0 !important;
     margin-top: 10px !important;
