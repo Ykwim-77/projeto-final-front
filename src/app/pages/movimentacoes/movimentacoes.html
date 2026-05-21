@@ -1,8 +1,6 @@
 <body>
-    <!-- Menu Lateral -->
     <app-sidebar></app-sidebar>
     
-    <!-- Conteúdo Principal -->
     <main>
         <header class="topo">
             <h1 class="titulo-Topo"><strong>Movimentações</strong></h1>
@@ -11,16 +9,13 @@
         
         <br><br>
         
-        <!-- Loading State -->
         <div *ngIf="loading" class="loading-container">
             <div class="loading-spinner"></div>
             <p>Carregando movimentações...</p>
         </div>
 
-        <!-- Conteúdo Principal -->
         <div *ngIf="!loading">
             <section class="conteudo-principal flex gap-xl">
-                <!-- Card 1: Total de Movimentações -->
                 <div class="card">
                     <div class="card-title">{{ metricCards[0]?.title || 'Total' }}</div>
                     <div class="card-value">{{ totalProducts || 0 }}</div>
@@ -34,7 +29,6 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Produtos de Entrada -->
                 <div class="card">
                     <div class="card-title">{{ metricCards[1]?.title || 'Entradas' }}</div>
                     <div class="card-value">{{ produtosEntrada || 0 }}</div>
@@ -48,7 +42,6 @@
                     </div>
                 </div>
 
-                <!-- Card 3: Produtos de Saída -->
                 <div class="card">
                     <div class="card-title">{{ metricCards[2]?.title || 'Saídas' }}</div>
                     <div class="card-value">{{ produtosSaida || 0 }}</div>
@@ -76,7 +69,6 @@
             </section>
 
             <section class="valoresContainer">
-                <!-- Lista de Movimentações -->
                 <div *ngFor="let mov of filteredMovimentacoes" class="produto-card">
                     <div class="produto-icone">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" 
@@ -107,7 +99,6 @@
                     </div>
                 </div>
 
-                <!-- Mensagem quando não há dados -->
                 <div *ngIf="filteredMovimentacoes.length === 0" class="sem-dados">
                     <i class="fas fa-inbox"></i>
                     <p>Nenhuma movimentação encontrada</p>
