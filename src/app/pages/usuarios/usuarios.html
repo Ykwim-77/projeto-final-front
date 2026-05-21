@@ -1,5 +1,5 @@
 <body>
-        <app-sidebar></app-sidebar>
+    <app-sidebar></app-sidebar>
     <main>
         <header class="topo">
             <div class="topo-texto">
@@ -14,9 +14,7 @@
             </div>
         </header>
 
-        <!-- Cards de Métricas -->
         <section class="conteudo-principal flex gap-xl">
-            <!-- Card 1: Total de Usuários -->
             <div class="card">
                 <div class="card-title">{{ metricCards[0]?.title || 'Total de Usuários' }}</div>
                 <div class="card-value">{{ totalUsers || 0 }}</div>
@@ -28,7 +26,6 @@
                 </div>
             </div>
 
-            <!-- Card 2: Administradores -->
             <div class="card">
                 <div class="card-title">{{ metricCards[1]?.title || 'Administradores' }}</div>
                 <div class="card-value">{{ administradoresCount || 0 }}</div>
@@ -40,7 +37,6 @@
                 </div>
             </div>
 
-            <!-- Card 3: Gerentes -->
             <div class="card">
                 <div class="card-title">{{ metricCards[2]?.title || 'Gerentes' }}</div>
                 <div class="card-value">{{ gerentesCount || 0 }}</div>
@@ -52,7 +48,6 @@
                 </div>
             </div>
 
-            <!-- Card 4: Operadores -->
             <div class="card">
                 <div class="card-title">{{ metricCards[3]?.title || 'Operadores' }}</div>
                 <div class="card-value">{{ operadoresCount || 0 }}</div>
@@ -64,7 +59,6 @@
                 </div>
             </div>
 
-            <!-- Card 5: Clientes -->
             <div class="card">
                 <div class="card-title">{{ metricCards[4]?.title || 'Clientes' }}</div>
                 <div class="card-value">{{ clientesCount || 0 }}</div>
@@ -77,19 +71,15 @@
             </div>
         </section>
 
-        <!-- Restante do código permanece igual -->
-        <!-- Lista de Usuários -->
         <section class="usuarios-container">
             <div class="usuarios-card">
                 <div class="card-title">Usuários e Permissões</div>
 
-                <!-- Mensagem de erro -->
                 <div *ngIf="mensagemErro" class="alerta-erro">
                     <i class="fas fa-exclamation-circle"></i>
                     {{ mensagemErro }}
                 </div>
 
-                <!-- Carregando -->
                 <div *ngIf="isCarregando" class="carregando">
                     <i class="fas fa-spinner fa-spin"></i> Carregando usuários...
                 </div>
@@ -102,15 +92,12 @@
                                 <span class="user-name">{{ user.name }}</span>
                             </div>
 
-                            <!-- BOTÕES DE AÇÃO -->
                             <div class="user-actions">
-                                <!-- Botão de Editar Usuário - AGORA EM TODOS OS USUÁRIOS -->
                                 <button class="btn-editar" (click)="abrirModalEditarUsuario(user)">
                                     <i class="fas fa-edit"></i>
                                     Editar
                                 </button>
 
-                                <!-- Botão de Editar Permissões (apenas para ADM/Gerente em outros usuários) -->
                                 <button
                                     *ngIf="(userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G') && userLogado?.id_usuario !== user.id_usuario"
                                     class="btn-permissoes" (click)="abrirModalEditarPermissoes(user)">
@@ -139,12 +126,10 @@
             </div>
         </section>
 
-        <!-- Lista de Clientes -->
         <section class="usuarios-container">
             <div class="usuarios-card">
                 <div class="card-title">Clientes</div>
 
-                <!-- Mensagem de erro -->
                 <div *ngIf="mensagemErro" class="alerta-erro">
                     <i class="fas fa-exclamation-circle"></i>
                     {{ mensagemErro }}
@@ -158,15 +143,12 @@
                                 <span class="user-name">{{ cliente.name }}</span>
                             </div>
 
-                            <!-- BOTÕES DE AÇÃO PARA CLIENTES -->
                             <div class="user-actions">
-                                <!-- Botão de Editar Cliente - AGORA EM TODOS OS CLIENTES -->
                                 <button class="btn-editar" (click)="abrirModalEditarUsuario(cliente)">
                                     <i class="fas fa-edit"></i>
                                     Editar
                                 </button>
 
-                                <!-- Botão de Visualizar Detalhes do Cliente -->
                                 <button class="btn-visualizar-cliente" (click)="abrirModalDetalhesCliente(cliente)">
                                     <i class="fas fa-eye"></i>
                                     Detalhes
@@ -183,7 +165,6 @@
                             {{ getPermissionsDescription(cliente.role) }}
                         </div>
 
-                        <!-- Informações adicionais do cliente -->
                         <div class="cliente-info-adicional" *ngIf="cliente.infoAdicional">
                             <div class="info-item">
                                 <i class="fas fa-phone"></i>
@@ -208,7 +189,7 @@
         <br>
         
     </main>
-        <!-- Modal de Edição Completa de Usuário -->
+
     <div *ngIf="isModalEditarUsuarioAberto && usuarioSelecionadoParaEdicao" class="modal-overlay">
         <div class="modal-editar-usuario">
             <div class="modal-header">
@@ -220,7 +201,6 @@
 
             <div class="modal-body">
                 <form (ngSubmit)="salvarEdicaoUsuario()" #editarUsuarioForm="ngForm">
-                    <!-- Nome -->
                     <div class="form-group">
                         <label for="nomeEditar">Nome Completo:</label>
                         <input type="text" id="nomeEditar" name="nomeEditar"
@@ -230,7 +210,6 @@
                         </div>
                     </div>
 
-                    <!-- Email -->
                     <div class="form-group">
                         <label for="emailEditar">Email:</label>
                         <input type="email" id="emailEditar" name="emailEditar"
@@ -240,7 +219,6 @@
                         </div>
                     </div>
 
-                    <!-- Senha -->
                     <div class="form-group">
                         <label for="senhaEditar">Nova Senha:</label>
                         <input type="password" id="senhaEditar" name="senhaEditar"
@@ -250,7 +228,6 @@
                         <small class="texto-ajuda">Deixe em branco para manter a senha atual</small>
                     </div>
 
-                    <!-- Tipo de Usuário -->
                     <div class="form-group"
                         *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'">
                         <label for="perfilEditar">Tipo de Usuário:</label>
@@ -264,7 +241,6 @@
                         </select>
                     </div>
 
-                    <!-- Status Ativo/Inativo -->
                     <div class="form-group"
                         *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A'">
                         <label class="checkbox-container">
@@ -276,7 +252,6 @@
                         </label>
                     </div>
 
-                    <!-- Descrição das Permissões -->
                     <div class="permissoes-descricao"
                         *ngIf="userLogado?.role === 'admin' || userLogado?.tipo_usuario === 'A' || userLogado?.tipo_usuario === 'G'">
                         <h4>Permissões Atribuídas:</h4>
@@ -317,7 +292,6 @@
         </div>
     </div>
 
-    <!-- Modal de Detalhes do Cliente -->
     <div *ngIf="isModalDetalhesClienteAberto && clienteSelecionado" class="modal-overlay">
         <div class="modal-detalhes-cliente">
             <div class="modal-header">
@@ -328,7 +302,6 @@
             </div>
 
             <div class="detalhes-cliente-body">
-                <!-- Informações Pessoais -->
                 <div class="detalhes-section">
                     <h4>Informações Pessoais</h4>
                     <div class="detalhes-grid">
@@ -361,7 +334,6 @@
                     </div>
                 </div>
 
-                <!-- Endereço -->
                 <div class="detalhes-section" *ngIf="clienteSelecionado.infoAdicional?.endereco">
                     <h4>Endereço</h4>
                     <div class="detalhe-item">
@@ -369,7 +341,6 @@
                     </div>
                 </div>
 
-                <!-- Estatísticas -->
                 <div class="detalhes-section">
                     <h4>Estatísticas</h4>
                     <div class="estatisticas-cliente">
@@ -388,7 +359,6 @@
                     </div>
                 </div>
 
-                <!-- Ações -->
                 <div class="form-actions">
                     <button type="button" class="btn-cancelar" (click)="fecharModalDetalhesCliente()">
                         Fechar
@@ -406,7 +376,6 @@
         </div>
     </div>
 
-    <!-- Modal de Edição de Permissões -->
     <div *ngIf="isModalEditarPermissoesAberto && usuarioSelecionado" class="modal-overlay">
         <div class="modal-editar-permissoes">
             <div class="modal-header">
@@ -418,7 +387,6 @@
 
             <div class="modal-body">
                 <form (ngSubmit)="salvarPermissoes()" #permissoesForm="ngForm">
-                    <!-- Tipo de Usuário -->
                     <div class="form-group">
                         <label for="perfilPermissoes">Tipo de Usuário:</label>
                         <select id="perfilPermissoes" name="perfilPermissoes"
@@ -431,7 +399,6 @@
                         </select>
                     </div>
 
-                    <!-- Status Ativo/Inativo -->
                     <div class="form-group">
                         <label class="checkbox-container">
                             <input type="checkbox"
@@ -442,7 +409,6 @@
                         </label>
                     </div>
 
-                    <!-- Descrição das Permissões -->
                     <div class="permissoes-descricao">
                         <h4>Permissões Atribuídas:</h4>
                         <div *ngIf="usuarioSelecionado.role === 'admin'" class="permissao-item">
@@ -476,77 +442,4 @@
         </div>
     </div>
 
-    <!-- Modal de Cadastro de Usuário -->
-    <div *ngIf="isCardCadastroAberto" class="modal-overlay" (click)="fecharCardCadastro()">
-        <div class="modal-cadastro-usuario" (click)="$event.stopPropagation()">
-            <div class="modal-header">
-                <h3>Novo Usuário</h3>
-                <button class="fechar-btn" (click)="fecharCardCadastro()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-
-            <div class="modal-body">
-                <form (ngSubmit)="cadastrarUsuario(cadastroForm)" #cadastroForm="ngForm">
-                    <div class="form-group">
-                        <label for="nome">Nome Completo:</label>
-                        <input type="text" id="nome" name="nome"
-                            [(ngModel)]="novoUsuario.nome" required #nomeInput="ngModel">
-                        <div *ngIf="nomeInput.invalid && nomeInput.touched" class="erro-validacao">
-                            Nome é obrigatório
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email"
-                            [(ngModel)]="novoUsuario.email" required #emailInput="ngModel">
-                        <div *ngIf="emailInput.invalid && emailInput.touched" class="erro-validacao">
-                            Email é obrigatório
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="senha">Senha:</label>
-                        <input type="password" id="senha" name="senha"
-                            [(ngModel)]="novoUsuario.senha" required #senhaInput="ngModel">
-                        <div *ngIf="senhaInput.invalid && senhaInput.touched" class="erro-validacao">
-                            Senha é obrigatória
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="perfil">Tipo de Usuário:</label>
-                        <select id="perfil" name="perfil"
-                            [(ngModel)]="novoUsuario.perfil" required #perfilInput="ngModel">
-                            <option value="">Selecione...</option>
-                            <option value="A">Administrador</option>
-                            <option value="G">Gerente</option>
-                            <option value="O">Operador</option>
-                            <option value="C">Cliente</option>
-                        </select>
-                        <div *ngIf="perfilInput.invalid && perfilInput.touched" class="erro-validacao">
-                            Tipo de usuário é obrigatório
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="observacoes">Observações (Opcional):</label>
-                        <textarea id="observacoes" name="observacoes"
-                            [(ngModel)]="novoUsuario.observacoes" rows="3"
-                            placeholder="Informações adicionais sobre o usuário..."></textarea>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="btn-cancelar" (click)="fecharCardCadastro()">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="btn-salvar" [disabled]="!cadastroForm.valid">
-                            Criar Usuário
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</body>
+    <div *
