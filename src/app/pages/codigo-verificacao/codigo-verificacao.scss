@@ -1,7 +1,5 @@
-// src/app/pages/codigo-verificacao/codigo-verificacao.scss
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
 
-/* RESET RADICAL - Garante que nada interfira */
 :host {
   position: fixed !important;
   top: 0 !important;
@@ -14,7 +12,6 @@
   overflow: hidden !important;
 }
 
-/* Reset agressivo para todos os elementos */
 :host * {
   box-sizing: border-box !important;
   margin: 0 !important;
@@ -67,6 +64,7 @@
   align-items: center !important;
   justify-content: center !important;
 }
+
 .login-logo {
   width: 150px !important;
   height: auto !important;
@@ -89,7 +87,6 @@
   height: auto !important;
 }
 
-/* 🔥 ESTILO IDÊNTICO: Container dos inputs de código */
 .code-inputs-container {
   display: flex !important;
   justify-content: center !important;
@@ -98,7 +95,6 @@
   width: 100% !important;
 }
 
-/* 🔥 ESTILO IDÊNTICO: Inputs quadradinhos */
 .code-input {
   width: 50px !important;
   height: 50px !important;
@@ -115,21 +111,18 @@
     background-color: white !important;
   }
 
-  /* Remove o spinner nos navegadores */
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
 
-  /* Firefox */
   &[type=number] {
     -moz-appearance: textfield;
     appearance: textfield;
   }
 }
 
-/* 🔥 ESTILO IDÊNTICO: Botão principal */
 .login {
   align-items: center !important;
   text-align: center !important;
@@ -144,7 +137,6 @@
   border-radius: 5px !important;
 }
 
-/* 🔥 ESTILO IDÊNTICO: Link reenviar código */
 .reenviar-codigo {
   width: 300px !important;
   text-align: left !important;
@@ -168,7 +160,6 @@
   text-decoration: none !important;
 }
 
-/* 🔥 ESTILO IDÊNTICO: Botão voltar */
 .voltar-login {
   width: 300px !important;
   height: 45px !important;
@@ -181,8 +172,6 @@
   border-radius: 5px !important;
 }
 
-
-/* 🔥 ESTILO IDÊNTICO: Mensagem de erro */
 .error-message {
   width: 300px !important;
   margin-top: 10px !important;
@@ -202,13 +191,13 @@
   margin-bottom: 10px;
 }
 
-/*------------Responsividade-------------*/
-@media screen and (max-width: 768px){
+@media screen and (max-width: 768px) {
   .form {
     flex-direction: column !important;
   }
 
-  .leftside, .rightside {
+  .leftside,
+  .rightside {
     width: 100% !important;
     height: 50vh !important;
   }
@@ -225,7 +214,7 @@
     margin-right: 0 !important;
     flex-direction: column !important;
   }
-  
+
   .login-title h2 {
     margin-right: 0 !important;
     margin-top: 10px !important;
