@@ -18,12 +18,10 @@ export interface Emprestimo {
   usuario?: any;
   patrimonio?: any;
 
-  // compatibility fields (optional)
   produto?: string;
   dataEmprestimo?: string;
   dataDevolucao?: string | null;
 
-  // UI/backwards-compatibility aliases
   id_movimentacao?: number;
   tipo_movimentacao?: string;
   origem?: string;
@@ -32,7 +30,6 @@ export interface Emprestimo {
   usuarioNome?: string;
   departamento?: string;
   contato?: string;
-  // Removed duplicate declaration of id_patrimonio
 }
 
 @Injectable({
