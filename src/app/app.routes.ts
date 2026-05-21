@@ -8,7 +8,6 @@ import { ProdutosComponent } from './pages/produtos/produtos';
 import { UsuariosComponent } from './pages/usuarios/usuarios';
 import { EmprestimosComponent } from './pages/emprestimos/emprestimos';
 import { PrevisaoIa } from './pages/previsao-ia/previsao-ia';
-// import { CadastroComponent } from './pages/cadastro/cadastro'; // ← Mantenha comentado se não existe
 import { AuthGuard } from './guards/auth.guard';
 import { MovimentacoesComponent } from './pages/movimentacoes/movimentacoes';
 
