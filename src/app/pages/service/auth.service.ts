@@ -10,7 +10,6 @@ export class AuthService {
   
   constructor(private http: HttpClient) {}
 
-  // ✅ MÉTODO LOGIN CORRIGIDO
   login(email: string, password: string): Observable<any> {
     return new Observable<any>(observer => {
       setTimeout(() => {
@@ -39,11 +38,9 @@ export class AuthService {
     });
   }
 
-  // ✅ MÉTODO CRIAR USUÁRIO CORRIGIDO
   criarUsuario(dadosCadastro: any): Observable<any> {
     return new Observable<any>(observer => {
       setTimeout(() => {
-        // Simulação: se email contiver "existente", retorna erro
         if (dadosCadastro.email && dadosCadastro.email.includes('existente')) {
           observer.error({
             error: {
@@ -51,7 +48,6 @@ export class AuthService {
             }
           });
         } else {
-          // Sucesso no cadastro
           const response = {
             success: true,
             mensagem: 'Usuário cadastrado com sucesso!',
@@ -68,7 +64,6 @@ export class AuthService {
     });
   }
 
-  // ✅ MÉTODO ESQUECEU SENHA CORRIGIDO
   esqueceuSenha(email: string): Observable<any> {
     return new Observable<any>(observer => {
       setTimeout(() => {
@@ -82,7 +77,6 @@ export class AuthService {
     });
   }
 
-  // ✅ MÉTODO VALIDATE TOKEN CORRIGIDO
   validateToken(): Observable<boolean> {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -90,7 +84,6 @@ export class AuthService {
     return of(isValid).pipe(delay(500));
   }
 
-  // ✅ MÉTODO VERIFICAR CÓDIGO CORRIGIDO
   verificarCodigo(codigo: string): Observable<any> {
     return new Observable<any>(observer => {
       setTimeout(() => {
@@ -112,7 +105,6 @@ export class AuthService {
     });
   }
 
-  // ✅ MÉTODO REENVIAR CÓDIGO CORRIGIDO
   reenviarCodigo(): Observable<any> {
     return of({ 
       success: true, 
@@ -120,30 +112,25 @@ export class AuthService {
     }).pipe(delay(1000));
   }
 
-  // ✅ MÉTODO SALVAR TOKEN
   salvarToken(token: string, user: any): void {
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-  // ✅ MÉTODO OBTER USUÁRIO LOGADO
   getUsuarioLogado(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
 
-  // ✅ MÉTODO LOGOUT
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
 
-  // ✅ MÉTODO ADICIONAL: Verificar se está autenticado (síncrono)
   isAuthenticated(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  // ✅ MÉTODO ADICIONAL: Obter token
   getToken(): string | null {
     return localStorage.getItem('token');
   }
