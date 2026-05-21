@@ -24,8 +24,6 @@ export class EmprestimosComponent implements OnInit {
   usuariosFiltrados: Usuario[] = [];
   carregando = false;
   mensagemErro = '';
-
-  // Métricas
   metricCards: any[] = [];
   emprestimosAtivos = 0;
   emprestimosAtrasados = 0;
@@ -35,29 +33,18 @@ export class EmprestimosComponent implements OnInit {
   filtroStatus = 'todos';
   filtroPesquisa = '';
   emprestimosFiltrados: any[] = [];
-
-  // Modal para novo empréstimo
   isModalNovoEmprestimoAberto = false;
   novoEmprestimo: any = {};
   produtosDisponiveis: Produto[] = [];
   produtoModalSelecionado: Produto | null = null;
-
-  // Modal para editar empréstimo
   isModalEditarEmprestimoAberto = false;
   emprestimoSelecionado: any = null;
-
-  // Modal para devolução
   isModalDevolucaoAberto = false;
   emprestimoDevolucao: any = null;
-
-  // Usuário logado
   userLogado: any = null;
-
-  // Propriedades para pesquisa e seleção
   produtoPesquisa = '';
   selecionadoProduto: Produto | null = null;
   mostrarDropdownProdutos = false;
-
   usuarioPesquisa = '';
   selecionadoUsuario: Usuario | null = null;
   mostrarDropdownUsuarios = false;
@@ -121,13 +108,11 @@ export class EmprestimosComponent implements OnInit {
       this.mensagemErro = 'Preencha todos os campos obrigatórios';
       return;
     }
-
     const emprestimoData = {
       ...emprestimo,
       id_patrimonio: this.selecionadoProduto?.id_patrimonio,
       id_usuario: this.selecionadoUsuario?.id_usuario
     };
-
     this.emprestimoService.criarEmprestimo(emprestimoData).subscribe({
       next: () => {
         this.fecharModalNovoEmprestimo();
@@ -189,7 +174,6 @@ export class EmprestimosComponent implements OnInit {
     });
   }
 
-  // Métodos para métricas e filtros
   calcularMetricas(): void {
     this.totalEmprestimos = this.emprestimos.length;
     this.emprestimosAtivos = this.emprestimos.filter(e => e.status === 'ativo').length;
@@ -201,13 +185,9 @@ export class EmprestimosComponent implements OnInit {
 
   aplicarFiltro(): void {
     let filtrados = this.emprestimos;
-
-    // Filtro por status
     if (this.filtroStatus !== 'todos') {
       filtrados = filtrados.filter(e => e.status === this.filtroStatus);
     }
-
-    // Filtro por pesquisa (produto ou usuário)
     if (this.filtroPesquisa.trim()) {
       const pesquisa = this.filtroPesquisa.toLowerCase();
       filtrados = filtrados.filter(e =>
@@ -215,11 +195,9 @@ export class EmprestimosComponent implements OnInit {
         e.usuario?.toLowerCase().includes(pesquisa)
       );
     }
-
     this.emprestimosFiltrados = filtrados;
   }
 
-  // Métodos para modais
   abrirModalEditarEmprestimo(emprestimo: any): void {
     this.emprestimoSelecionado = { ...emprestimo };
     this.isModalEditarEmprestimoAberto = true;
@@ -258,171 +236,3 @@ export class EmprestimosComponent implements OnInit {
   confirmarDevolucao(): void {
     if (this.emprestimoDevolucao) {
       this.emprestimoService.devolverEmprestimo(this.emprestimoDevolucao.id_emprestimo).subscribe({
-        next: () => {
-          this.fecharModalDevolucao();
-          this.carregarEmprestimos();
-        },
-        error: (err: any) => {
-          console.error('Erro ao confirmar devolução:', err);
-          this.mensagemErro = 'Erro ao confirmar devolução';
-        }
-      });
-    }
-  }
-
-  marcarComoDevolvido(emprestimo: any): void {
-    this.emprestimoService.devolverEmprestimo(emprestimo.id_emprestimo).subscribe({
-      next: () => {
-        this.carregarEmprestimos();
-      },
-      error: (err: any) => {
-        console.error('Erro ao marcar como devolvido:', err);
-      }
-    });
-  }
-
-  renovarEmprestimo(emprestimo: any): void {
-    // Lógica para renovar empréstimo
-    console.log('Renovar empréstimo:', emprestimo);
-  }
-
-  gerarRelatorio(): void {
-    // Lógica para gerar relatório
-    console.log('Gerar relatório');
-  }
-
-  // Mapeamento de tipos de usuário
-  private mapTipoUsuario(tipo: string): string {
-    const tipos: { [key: string]: string } = {
-      'A': 'admin',
-      'G': 'gerente',
-      'O': 'operador',
-      'C': 'cliente',
-      'admin': 'admin',
-      'gerente': 'gerente',
-      'operador': 'operador',
-      'cliente': 'cliente'
-    };
-    return tipos[tipo] || tipo;
-  }
-
-  // Métodos auxiliares
-  getStatusClass(status: string): string {
-    switch (status) {
-      case 'ativo': return 'ativo';
-      case 'atrasado': return 'atrasado';
-      case 'devolvido': return 'devolvido';
-      default: return '';
-    }
-  }
-
-  getStatusIcon(status: string): string {
-    switch (status) {
-      case 'ativo': return 'fas fa-clock';
-      case 'atrasado': return 'fas fa-exclamation-triangle';
-      case 'devolvido': return 'fas fa-check';
-      default: return 'fas fa-question';
-    }
-  }
-
-  getStatusDescription(status: string): string {
-    switch (status) {
-      case 'ativo': return 'Ativo';
-      case 'atrasado': return 'Atrasado';
-      case 'devolvido': return 'Devolvido';
-      default: return 'Desconhecido';
-    }
-  }
-
-  onStatusChange(status: string): void {
-    if (this.emprestimoSelecionado) {
-      this.emprestimoSelecionado.status = status;
-    }
-  }
-
-  onPesquisaChange(): void {
-    this.aplicarFiltro();
-  }
-
-  // Métodos para pesquisa e seleção
-  filtrarProdutos(): void {
-    if (this.produtoPesquisa.trim()) {
-      this.produtosFiltrados = this.produtos.filter(p =>
-        p.nome.toLowerCase().includes(this.produtoPesquisa.toLowerCase()) ||
-        p.id_patrimonio.toString().includes(this.produtoPesquisa) ||
-        (p.codigo_publico && p.codigo_publico.toLowerCase().includes(this.produtoPesquisa.toLowerCase()))
-      );
-    } else {
-      this.produtosFiltrados = this.produtos;
-    }
-  }
-
-  selecionarProduto(produto: Produto): void {
-    this.selecionadoProduto = produto;
-    this.produtoPesquisa = produto.nome;
-    this.mostrarDropdownProdutos = false;
-  }
-
-  removerProduto(): void {
-    this.selecionadoProduto = null;
-    this.produtoPesquisa = '';
-  }
-
-  onBlurProduto(): void {
-    setTimeout(() => {
-      this.mostrarDropdownProdutos = false;
-    }, 200);
-  }
-
-  filtrarUsuarios(): void {
-    if (this.usuarioPesquisa.trim()) {
-      this.usuariosFiltrados = this.usuariosDisponiveis.filter(u =>
-        u.nome.toLowerCase().includes(this.usuarioPesquisa.toLowerCase()) ||
-        u.email.toLowerCase().includes(this.usuarioPesquisa.toLowerCase())
-      );
-    } else {
-      this.usuariosFiltrados = this.usuariosDisponiveis;
-    }
-  }
-
-  selecionarUsuario(usuario: Usuario): void {
-    this.selecionadoUsuario = usuario;
-    this.usuarioPesquisa = usuario.nome;
-    this.mostrarDropdownUsuarios = false;
-  }
-
-  removerUsuario(): void {
-    this.selecionadoUsuario = null;
-    this.usuarioPesquisa = '';
-  }
-
-  onBlurUsuario(): void {
-    setTimeout(() => {
-      this.mostrarDropdownUsuarios = false;
-    }, 200);
-  }
-
-  onQuantidadeChange(): void {
-    // Validação adicional se necessário
-  }
-
-  calcularDataDevolucao(): void {
-    if (this.novoEmprestimo.prazo_dias && this.novoEmprestimo.prazo_dias > 0) {
-      const hoje = new Date();
-      hoje.setDate(hoje.getDate() + this.novoEmprestimo.prazo_dias);
-      this.novoEmprestimo.data_devolucao = hoje.toISOString().split('T')[0];
-    }
-  }
-
-  fecharCardCadastro(): void {
-    this.fecharModalNovoEmprestimo();
-  }
-
-  formValid(): boolean {
-    return !!(this.selecionadoProduto && this.selecionadoUsuario && this.novoEmprestimo.quantidade && this.novoEmprestimo.quantidade > 0);
-  }
-
-  editarEmprestimo(emprestimo: any): void {
-    this.abrirModalEditarEmprestimo(emprestimo);
-  }
-}
